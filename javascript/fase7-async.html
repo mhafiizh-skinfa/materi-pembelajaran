@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fase 7 — Asynchronous JavaScript</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+
+    /* ===== COVER ===== */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1a2f1a 50%, #0f172a 100%);
+      padding: 40px;
+      page-break-after: always;
+    }
+
+    .cover .logo {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      border-radius: 20px;
+      display: flex; align-items: center;
+      justify-content: center;
+      font-size: 40px; margin-bottom: 32px;
+      box-shadow: 0 8px 32px rgba(16,185,129,0.4);
+    }
+
+    .cover h1 {
+      font-size: 44px; font-weight: 800;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .cover h2 {
+      font-size: 22px; color: #94a3b8;
+      font-weight: 400; margin-bottom: 40px;
+    }
+
+    .cover .badge-list {
+      display: flex; gap: 12px;
+      flex-wrap: wrap; justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .cover .badge {
+      padding: 8px 20px; border-radius: 20px;
+      font-size: 14px; font-weight: 600;
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: #6ee7b7;
+    }
+
+    .cover .info-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; padding: 24px 40px;
+      display: flex; gap: 40px;
+    }
+
+    .cover .info-box div { text-align: center; }
+    .cover .info-box span {
+      display: block; font-size: 28px;
+      font-weight: 700; color: #10b981;
+    }
+    .cover .info-box p {
+      font-size: 13px; color: #94a3b8; margin-top: 4px;
+    }
+
+    /* ===== SECTION ===== */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      page-break-before: always;
+    }
+
+    .section-header {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 36px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(16,185,129,0.3);
+    }
+
+    .section-header .icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      border-radius: 12px;
+      display: flex; align-items: center;
+      justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 26px; font-weight: 700; color: #f1f5f9;
+    }
+
+    .section-header p {
+      font-size: 14px; color: #94a3b8; margin-top: 2px;
+    }
+
+    /* ===== STEP TITLE ===== */
+    .step-title {
+      font-size: 20px; font-weight: 700;
+      color: #f1f5f9; margin: 36px 0 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .step-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px; height: 22px;
+      background: linear-gradient(180deg, #10b981, #06b6d4);
+      border-radius: 2px;
+    }
+
+    /* ===== CONCEPT BOX ===== */
+    .concept-box {
+      background: rgba(16,185,129,0.07);
+      border: 1px solid rgba(16,185,129,0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+
+    .concept-box h3 {
+      font-size: 15px; color: #6ee7b7;
+      margin-bottom: 10px; font-weight: 600;
+    }
+
+    .concept-box p,
+    .concept-box li {
+      font-size: 14px; color: #cbd5e1; line-height: 1.9;
+    }
+
+    .concept-box ul { padding-left: 20px; }
+    .concept-box code {
+      background: rgba(16,185,129,0.15);
+      color: #6ee7b7;
+      padding: 1px 6px; border-radius: 4px;
+      font-size: 13px;
+    }
+
+    /* ===== COMPARE BOX ===== */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .compare-card {
+      border-radius: 10px;
+      padding: 18px;
+      font-size: 13px;
+    }
+
+    .compare-card.bad {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+    }
+
+    .compare-card.good {
+      background: rgba(16,185,129,0.08);
+      border: 1px solid rgba(16,185,129,0.25);
+    }
+
+    .compare-card h4 {
+      font-size: 13px; font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .compare-card.bad  h4 { color: #fca5a5; }
+    .compare-card.good h4 { color: #6ee7b7; }
+
+    .compare-card pre {
+      background: transparent;
+      border: none; padding: 0;
+      font-size: 12.5px;
+    }
+
+    /* ===== FLOW BOX ===== */
+    .flow-box {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .flow-item {
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 10px;
+      padding: 12px 18px;
+      text-align: center;
+      font-size: 13px;
+      flex: 1; min-width: 100px;
+    }
+
+    .flow-item .fi-icon { font-size: 22px; margin-bottom: 4px; }
+    .flow-item .fi-label { color: #6ee7b7; font-weight: 700; font-size: 12px; }
+    .flow-item .fi-desc  { color: #94a3b8; font-size: 11px; margin-top: 2px; }
+
+    .flow-arrow {
+      font-size: 20px; color: #10b981;
+      padding: 0 8px; flex-shrink: 0;
+    }
+
+    /* ===== TABLE ===== */
+    .table-wrap { overflow-x: auto; margin-bottom: 28px; }
+
+    table {
+      width: 100%; border-collapse: collapse; font-size: 14px;
+    }
+
+    thead tr { background: rgba(16,185,129,0.15); }
+
+    th {
+      padding: 12px 16px; text-align: left;
+      color: #6ee7b7; font-weight: 600;
+      border-bottom: 2px solid rgba(16,185,129,0.3);
+    }
+
+    td {
+      padding: 11px 16px; color: #cbd5e1;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    tr:hover td { background: rgba(255,255,255,0.03); }
+
+    /* ===== CODE BLOCK ===== */
+    .code-wrap { margin-bottom: 28px; }
+
+    .code-label {
+      display: inline-block;
+      background: rgba(16,185,129,0.15);
+      color: #6ee7b7; font-size: 12px;
+      font-weight: 600; padding: 4px 12px;
+      border-radius: 6px 6px 0 0;
+      border: 1px solid rgba(16,185,129,0.3);
+      border-bottom: none;
+    }
+
+    pre {
+      background: #0d1117;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 0 8px 8px 8px;
+      padding: 24px;
+      overflow-x: auto;
+      font-size: 13.5px;
+      line-height: 1.9;
+    }
+
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      color: #e2e8f0;
+    }
+
+    /* Syntax highlighting */
+    .kw  { color: #c792ea; font-weight: 600; }
+    .str { color: #c3e88d; }
+    .num { color: #f78c6c; }
+    .cm  { color: #546e7a; font-style: italic; }
+    .fn  { color: #82aaff; }
+    .cl  { color: #ffcb6b; }
+    .th  { color: #89ddff; }
+    .op  { color: #89ddff; }
+    .aw  { color: #c792ea; font-weight: 700; }
+
+    /* ===== NOTE / WARNING ===== */
+    .note {
+      display: flex; gap: 12px; align-items: flex-start;
+      border-radius: 10px; padding: 14px 18px;
+      margin-bottom: 24px;
+    }
+
+    .note.info {
+      background: rgba(16,185,129,0.07);
+      border: 1px solid rgba(16,185,129,0.2);
+    }
+
+    .note.warn {
+      background: rgba(234,179,8,0.07);
+      border: 1px solid rgba(234,179,8,0.2);
+    }
+
+    .note.danger {
+      background: rgba(239,68,68,0.07);
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+
+    .note .icon { font-size: 18px; flex-shrink: 0; padding-top: 1px; }
+    .note.info  p { font-size: 13px; color: #a7f3d0; }
+    .note.warn  p { font-size: 13px; color: #fde68a; }
+    .note.danger p { font-size: 13px; color: #fca5a5; }
+
+    /* ===== LATIHAN ===== */
+    .latihan-box {
+      background: rgba(16,185,129,0.05);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-left: 4px solid #10b981;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .latihan-header {
+      display: flex; align-items: center;
+      gap: 10px; margin-bottom: 14px;
+    }
+
+    .latihan-num {
+      background: #10b981; color: white;
+      font-size: 12px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+    .latihan-num.medium {
+      background: #f59e0b;
+    }
+
+    .latihan-num.hard {
+      background: #ef4444;
+    }
+
+    .latihan-box h3 {
+      font-size: 15px; color: #6ee7b7; font-weight: 600;
+    }
+
+    .latihan-box p {
+      font-size: 14px; color: #a7f3d0; margin-bottom: 12px;
+    }
+
+    .latihan-box pre {
+      background: #071a13;
+      border-color: rgba(16,185,129,0.15);
+      font-size: 13px;
+      border-radius: 8px;
+    }
+
+    /* ===== ANSWER ===== */
+    .answer-box {
+      background: rgba(234,179,8,0.05);
+      border: 1px solid rgba(234,179,8,0.2);
+      border-left: 4px solid #eab308;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .answer-box summary {
+      cursor: pointer; color: #fde047;
+      font-weight: 600; font-size: 15px;
+      list-style: none;
+    }
+
+    .answer-box summary::before {
+      content: '🔑 ';
+    }
+
+    .answer-box pre {
+      margin-top: 16px;
+      background: #14110a;
+      border-color: rgba(234,179,8,0.15);
+      font-size: 13px;
+    }
+
+    /* ===== TAG ===== */
+    .tag {
+      display: inline-block; padding: 3px 10px;
+      border-radius: 20px; font-size: 12px;
+      font-weight: 600; margin: 2px;
+    }
+    .tag-green  { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+    .tag-blue   { background: rgba(59,130,246,0.2);  color: #93c5fd; }
+    .tag-yellow { background: rgba(234,179,8,0.2);   color: #fde047; }
+    .tag-red    { background: rgba(239,68,68,0.2);   color: #fca5a5; }
+
+    /* ===== PRINT ===== */
+    @media print {
+      body { background: #0f172a !important; }
+      .cover { page-break-after: always; }
+      .section { page-break-before: always; }
+      pre { white-space: pre-wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<div class="cover">
+  <div class="logo">⚡</div>
+  <h1>Asynchronous JavaScript</h1>
+  <h2>Callback → Promise → Async/Await</h2>
+
+  <div class="badge-list">
+    <span class="badge">📗 Fase 7</span>
+    <span class="badge">🟡 Level Menengah</span>
+    <span class="badge">⏱️ 2–3 Minggu</span>
+    <span class="badge">💻 JavaScript ES6+</span>
+  </div>
+
+  <div class="info-box">
+    <div><span>3</span><p>Teknik Async</p></div>
+    <div><span>4</span><p>Sub Materi</p></div>
+    <div><span>5</span><p>Latihan</p></div>
+    <div><span>1</span><p>Proyek Praktik</p></div>
+  </div>
+</div>
+
+
+<!-- ==================== SECTION 1: SYNC VS ASYNC ==================== -->
+<div class="section">
+  <div class="section-header">
+    <div class="icon">🔄</div>
+    <div>
+      <h2>Step 7.1 — Synchronous vs Asynchronous</h2>
+      <p>Memahami perbedaan alur eksekusi kode JavaScript</p>
+    </div>
+  </div>
+
+  <!-- Konsep -->
+  <div class="concept-box">
+    <h3>📌 Definisi</h3>
+    <ul>
+      <li><strong style="color:#6ee7b7">Synchronous</strong> → kode dijalankan <strong>berurutan</strong>, satu per satu. Harus tunggu yang sebelumnya selesai dulu.</li>
+      <li><strong style="color:#93c5fd">Asynchronous</strong> → kode bisa dijalankan <strong>tanpa menunggu</strong>. Lanjut ke baris berikutnya sambil menunggu proses selesai.</li>
+    </ul>
+  </div>
+
+  <!-- Analogi -->
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <h4>🐢 Synchronous — Antrian Kasir</h4>
+      <code style="color:#fca5a5;font-size:13px">
+        Orang ke-2 HARUS tunggu<br>
+        orang ke-1 selesai dulu.<br><br>
+        Satu per satu → lambat!
+      </code>
+    </div>
+    <div class="compare-card good">
+      <h4>🚀 Asynchronous — Restoran Nomor Antrian</h4>
+      <code style="color:#6ee7b7;font-size:13px">
+        Kamu pesan → dapat nomor → duduk.<br>
+        Orang lain bisa pesan juga.<br><br>
+        Makanan datang → baru diproses ✅
+      </code>
+    </div>
+  </div>
+
+  <!-- Flow -->
+  <div class="flow-box">
+    <div class="flow-item">
+      <div class="fi-icon">📝</div>
+      <div class="fi-label">Kode Ditulis</div>
+      <div class="fi-desc">JS Engine membaca</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="fi-icon">⚡</div>
+      <div class="fi-label">Call Stack</div>
+      <div class="fi-desc">Jalankan sync dulu</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="fi-icon">⏳</div>
+      <div class="fi-label">Web APIs</div>
+      <div class="fi-desc">Proses async di sini</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="fi-icon">📋</div>
+      <div class="fi-label">Queue</div>
+      <div class="fi-desc">Tunggu giliran</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-item">
+      <div class="fi-icon">✅</div>
+      <div class="fi-label">Event Loop</div>
+      <div class="fi-desc">Masuk call stack lagi</div>
+    </div>
+  </div>
+
+  <!-- Kode contoh -->
+  <div class="code-wrap">
+    <span class="code-label">📄 Sync vs Async</span>
+    <pre><code><span class="cm">// ===== SYNCHRONOUS =====</span>
+console.<span class="fn">log</span>(<span class="str">"1. Mulai"</span>);
+console.<span class="fn">log</span>(<span class="str">"2. Proses"</span>);
+console.<span class="fn">log</span>(<span class="str">"3. Selesai"</span>);
+<span class="cm">// Output SELALU urut: 1 → 2 → 3</span>
+
+
+<span class="cm">// ===== ASYNCHRONOUS =====</span>
+console.<span class="fn">log</span>(<span class="str">"1. Mulai"</span>);
+
+<span class="fn">setTimeout</span>(() <span class="op">=&gt;</span> {
+  console.<span class="fn">log</span>(<span class="str">"2. Proses (butuh 2 detik)"</span>);
+}, <span class="num">2000</span>);
+
+console.<span class="fn">log</span>(<span class="str">"3. Selesai"</span>);
+<span class="cm">// Output:</span>
+<span class="cm">// 1. Mulai</span>
+<span class="cm">// 3. Selesai      ← langsung lanjut!</span>
+<span class="cm">// 2. Proses ...   ← muncul setelah 2 detik</span>
+
+
+<span class="cm">// ===== KENAPA BUTUH ASYNC? =====</span>
+<span class="cm">// Operasi yang butuh waktu:</span>
+<span class="cm">// ✅ Ambil data dari API  → fetch()</span>
+<span class="cm">// ✅ Baca / tulis file    → fs.readFile()</span>
+<span class="cm">// ✅ Query ke database    → db.query()</span>
+<span class="cm">// ✅ Timer / delay        → setTimeout()</span>
+<span class="cm">// Jika SYNC → browser FREEZE menunggu! ❌</span>
+<span class="cm">// Jika ASYNC → tetap berjalan lancar ✅</span></code></pre>
+  </div>
+
+
+  <!-- ===== STEP 7.2: CALLBACK ===== -->
+  <div class="step-title">Step 7.2 — Callback</div>
+
+  <div class="concept-box">
+    <h3>📌 Konsep</h3>
+    <p>Callback = <strong style="color:#6ee7b7">function yang dikirim sebagai argumen</strong> ke function lain, dan dipanggil setelah operasi selesai.</p>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Callback Dasar</span>
+    <pre><code><span class="cm">// Callback sederhana</span>
+<span class="kw">function</span> <span class="fn">sapa</span>(nama, callback) {
+  console.<span class="fn">log</span>(<span class="str">`Halo, <span class="op">${</span>nama<span class="op">}</span>!`</span>);
+  <span class="fn">callback</span>(nama);
+}
+
+<span class="fn">sapa</span>(<span class="str">"Budi"</span>, (nama) <span class="op">=&gt;</span> {
+  console.<span class="fn">log</span>(<span class="str">`Selamat datang, <span class="op">${</span>nama<span class="op">}</span>!`</span>);
+});
+<span class="cm">// Halo, Budi!</span>
+<span class="cm">// Selamat datang, Budi!</span>
+
+
+<span class="cm">// Simulasi Async dengan setTimeout</span>
+<span class="kw">function</span> <span class="fn">ambilData</span>(callback) {
+  console.<span class="fn">log</span>(<span class="str">"⏳ Mengambil data..."</span>);
+  <span class="fn">setTimeout</span>(() <span class="op">=&gt;</span> {
+    <span class="kw">const</span> data <span class="op">=</span> { id: <span class="num">1</span>, nama: <span class="str">"Budi"</span>, nilai: <span class="num">85</span> };
+    <span class="fn">callback</span>(<span class="kw">null</span>, data); <span class="cm">// null = tidak ada error</span>
+  }, <span class="num">2000</span>);
+}
+
+<span class="fn">ambilData</span>((error, data) <span class="op">=&gt;</span> {
+  <span class="kw">if</span> (error) {
+    console.<span class="fn">log</span>(<span class="str">"❌ Error:"</span>, error);
+    <span class="kw">return</span>;
+  }
+  console.<span class="fn">log</span>(<span class="str">"✅ Data diterima:"</span>, data);
+});
+console.<span class="fn">log</span>(<span class="str">"⚡ Kode lain tetap jalan..."</span>);
+<span class="cm">// ⏳ Mengambil data...</span>
+<span class="cm">// ⚡ Kode lain tetap jalan...</span>
+<span class="cm">// ✅ Data diterima: { id:1, nama:'Budi', nilai:85 }</span></code></pre>
+  </div>
+
+  <div class="note danger">
+    <span class="icon">❌</span>
+    <p><strong>Callback Hell</strong> — jika callback terlalu bersarang, kode jadi susah dibaca (Pyramid of Doom). Solusinya → gunakan <strong>Promise</strong>!</p>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">❌ Callback Hell</span>
+    <pre><code><span class="cm">// Makin dalam makin susah dibaca!</span>
+<span class="fn">ambilUser</span>(<span class="num">1</span>, (err, user) <span class="op">=&gt;</span> {
+  <span class="fn">ambilPost</span>(user.id, (err, post) <span class="op">=&gt;</span> {
+    <span class="fn">ambilKomentar</span>(post.id, (err, komentar) <span class="op">=&gt;</span> {
+      <span class="fn">simpanLog</span>(komentar, (err, log) <span class="op">=&gt;</span> {
+        <span class="cm">// 😵 Pyramid of Doom!</span>
+        <span class="cm">// semakin dalam = semakin susah maintain</span>
+      });
+    });
+  });
+});</code></pre>
+  </div>
+
+
+  <!-- ===== STEP 7.3: PROMISE ===== -->
+  <div class="step-title">Step 7.3 — Promise</div>
+
+  <div class="concept-box">
+    <h3>📌 Konsep — 3 Status Promise</h3>
+    <ul>
+      <li>⏳ <strong style="color:#fde047">Pending</strong> &nbsp;&nbsp;&nbsp;→ masih dalam proses</li>
+      <li>✅ <strong style="color:#6ee7b7">Fulfilled</strong> → berhasil (resolve dipanggil)</li>
+      <li>❌ <strong style="color:#fca5a5">Rejected</strong> &nbsp;→ gagal (reject dipanggil)</li>
+    </ul>
+  </div>
+
+  <!-- Table metode promise -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Fungsi</th>
+          <th>Kapan Jalan</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-green">.then()</span></td>
+          <td>Tangkap hasil sukses</td>
+          <td>Saat Promise fulfilled ✅</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-red">.catch()</span></td>
+          <td>Tangkap error</td>
+          <td>Saat Promise rejected ❌</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-yellow">.finally()</span></td>
+          <td>Selalu dijalankan</td>
+          <td>Baik sukses maupun gagal</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-blue">Promise.all()</span></td>
+          <td>Jalankan semua paralel</td>
+          <td>Tunggu semua selesai</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-blue">Promise.allSettled()</span></td>
+          <td>Jalankan semua paralel</td>
+          <td>Tidak peduli ada yang gagal</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-blue">Promise.race()</span></td>
+          <td>Ambil yang tercepat</td>
+          <td>Selesai pertama kali</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Membuat & Menggunakan Promise</span>
+    <pre><code><span class="cm">// Membuat Promise</span>
+<span class="kw">function</span> <span class="fn">ambilSiswa</span>(id) {
+  <span class="kw">return new</span> <span class="cl">Promise</span>((resolve, reject) <span class="op">=&gt;</span> {
+    <span class="fn">setTimeout</span>(() <span class="op">=&gt;</span> {
+      <span class="kw">const</span> db <span class="op">=</span> [
+        { id: <span class="num">1</span>, nama: <span class="str">"Budi"</span>,  nilai: <span class="num">85</span> },
+        { id: <span class="num">2</span>, nama: <span class="str">"Ani"</span>,   nilai: <span class="num">92</span> },
+        { id: <span class="num">3</span>, nama: <span class="str">"Citra"</span>, nilai: <span class="num">67</span> },
+      ];
+      <span class="kw">const</span> siswa <span class="op">=</span> db.<span class="fn">find</span>(s <span class="op">=&gt;</span> s.id <span class="op">===</span> id);
+
+      <span class="kw">if</span> (siswa) <span class="fn">resolve</span>(siswa);
+      <span class="kw">else</span>       <span class="fn">reject</span>(<span class="kw">new</span> <span class="cl">Error</span>(<span class="str">`Siswa id <span class="op">${</span>id<span class="op">}</span> tidak ditemukan`</span>));
+    }, <span class="num">1000</span>);
+  });
+}
+
+<span class="cm">// Menggunakan Promise</span>
+<span class="fn">ambilSiswa</span>(<span class="num">2</span>)
+  .<span class="fn">then</span>(siswa  <span class="op">=&gt;</span> console.<span class="fn">log</span>(<span class="str">"✅"</span>, siswa.nama, siswa.nilai))
+  .<span class="fn">catch</span>(err   <span class="op">=&gt;</span> console.<span class="fn">log</span>(<span class="str">"❌"</span>, err.message))
+  .<span class="fn">finally</span>(()  <span class="op">=&gt;</span> console.<span class="fn">log</span>(<span class="str">"🏁 Selesai!"</span>));
+
+
+<span class="cm">// Promise.all → paralel, tunggu semua selesai</span>
+<span class="cl">Promise</span>.<span class="fn">all</span>([<span class="fn">ambilSiswa</span>(<span class="num">1</span>), <span class="fn">ambilSiswa</span>(<span class="num">2</span>), <span class="fn">ambilSiswa</span>(<span class="num">3</span>)])
+  .<span class="fn">then</span>(([s1, s2, s3]) <span class="op">=&gt;</span> console.<span class="fn">log</span>(s1.nama, s2.nama, s3.nama))
+  .<span class="fn">catch</span>(err <span class="op">=&gt;</span> console.<span class="fn">log</span>(<span class="str">"❌ Salah satu gagal:"</span>, err.message));
+
+
+<span class="cm">// Promise.allSettled → tidak peduli ada yang gagal</span>
+<span class="cl">Promise</span>.<span class="fn">allSettled</span>([<span class="fn">ambilSiswa</span>(<span class="num">1</span>), <span class="fn">ambilSiswa</span>(<span class="num">99</span>)])
+  .<span class="fn">then</span>(results <span class="op">=&gt;</span> {
+    results.<span class="fn">forEach</span>((r, i) <span class="op">=&gt;</span> {
+      <span class="kw">if</span> (r.status <span class="op">===</span> <span class="str">"fulfilled"</span>)
+        console.<span class="fn">log</span>(<span class="str">`✅ <span class="op">${</span>i<span class="op">}</span>:`</span>, r.value.nama);
+      <span class="kw">else</span>
+        console.<span class="fn">log</span>(<span class="str">`❌ <span class="op">${</span>i<span class="op">}</span>:`</span>, r.reason.message);
+    });
+  });</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Promise Chaining</span>
+    <pre><code><span class="cm">// Chaining → jauh lebih rapi dari callback hell! ✅</span>
+<span class="fn">ambilUser</span>(<span class="num">1</span>)
+  .<span class="fn">then</span>(user <span class="op">=&gt;</span> {
+    console.<span class="fn">log</span>(<span class="str">"👤 User:"</span>, user.nama);
+    <span class="kw">return</span> <span class="fn">ambilPost</span>(user.id);    <span class="cm">// return promise baru</span>
+  })
+  .<span class="fn">then</span>(post <span class="op">=&gt;</span> {
+    console.<span class="fn">log</span>(<span class="str">"📝 Post:"</span>, post.judul);
+    <span class="kw">return</span> <span class="fn">ambilKomentar</span>(post.id); <span class="cm">// return promise baru</span>
+  })
+  .<span class="fn">then</span>(komentar <span class="op">=&gt;</span> {
+    console.<span class="fn">log</span>(<span class="str">"💬 Komentar:"</span>, komentar);
+  })
+  .<span class="fn">catch</span>(err <span class="op">=&gt;</span> {
+    console.<span class="fn">log</span>(<span class="str">"❌ Error:"</span>, err.message); <span class="cm">// tangkap SEMUA error</span>
+  })
+  .<span class="fn">finally</span>(() <span class="op">=&gt;</span> console.<span class="fn">log</span>(<span class="str">"🏁 Selesai!"</span>));</code></pre>
+  </div>
+
+
+  <!-- ===== STEP 7.4: ASYNC/AWAIT ===== -->
+  <div class="step-title">Step 7.4 — Async / Await ✅</div>
+
+  <div class="concept-box">
+    <h3>📌 Konsep</h3>
+    <ul>
+      <li><code>async</code> → menandai function sebagai asynchronous</li>
+      <li><code>await</code> → tunggu Promise selesai, baru lanjut ke baris berikutnya</li>
+      <li><code>await</code> hanya bisa dipakai <strong style="color:#6ee7b7">di dalam async function</strong></li>
+      <li>Kode terlihat seperti <strong style="color:#93c5fd">synchronous</strong>, tapi tetap async!</li>
+    </ul>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <h4>😵 Promise Chaining</h4>
+      <pre><code style="color:#fca5a5;font-size:12px">ambilUser(1)
+  .then(user => {
+    return ambilPost(user.id);
+  })
+  .then(post => {
+    return ambilKomentar(post.id);
+  })
+  .then(komentar => {
+    console.log(komentar);
+  })
+  .catch(err => {...})</code></pre>
+    </div>
+    <div class="compare-card good">
+      <h4>✅ Async / Await</h4>
+      <pre><code style="color:#6ee7b7;font-size:12px">async function getData() {
+  try {
+    const user     = await ambilUser(1);
+    const post     = await ambilPost(user.id);
+    const komentar = await ambilKomentar(post.id);
+    console.log(komentar);
+  } catch(err) {...}
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Async/Await Lengkap</span>
+    <pre><code><span class="cm">// Fungsi helper delay</span>
+<span class="kw">function</span> <span class="fn">delay</span>(ms) {
+  <span class="kw">return new</span> <span class="cl">Promise</span>(resolve <span class="op">=&gt;</span> <span class="fn">setTimeout</span>(resolve, ms));
+}
+
+<span class="cm">// Async/Await dengan try-catch</span>
+<span class="kw">async function</span> <span class="fn">tampilSiswa</span>(id) {
+  <span class="kw">try</span> {
+    console.<span class="fn">log</span>(<span class="str">`⏳ Mencari siswa id: <span class="op">${</span>id<span class="op">}</span>...`</span>);
+    <span class="kw">const</span> siswa <span class="op">=</span> <span class="aw">await</span> <span class="fn">ambilSiswa</span>(id); <span class="cm">// tunggu sampai selesai</span>
+    console.<span class="fn">log</span>(<span class="str">`✅ <span class="op">${</span>siswa.nama<span class="op">}</span> | Nilai: <span class="op">${</span>siswa.nilai<span class="op">}</span>`</span>);
+  } <span class="kw">catch</span> (error) {
+    console.<span class="fn">log</span>(<span class="str">`❌ <span class="op">${</span>error.message<span class="op">}</span>`</span>);
+  } <span class="kw">finally</span> {
+    console.<span class="fn">log</span>(<span class="str">"🏁 Pencarian selesai!\n"</span>);
+  }
+}
+
+<span class="fn">tampilSiswa</span>(<span class="num">1</span>);  <span class="cm">// ✅ Budi | Nilai: 85</span>
+<span class="fn">tampilSiswa</span>(<span class="num">99</span>); <span class="cm">// ❌ Siswa id 99 tidak ditemukan</span>
+
+
+<span class="cm">// ❌ Sequential (lambat) → nunggu satu-satu</span>
+<span class="kw">async function</span> <span class="fn">lambat</span>() {
+  <span class="kw">const</span> a <span class="op">=</span> <span class="aw">await</span> <span class="fn">ambilSiswa</span>(<span class="num">1</span>); <span class="cm">// tunggu 1 detik</span>
+  <span class="kw">const</span> b <span class="op">=</span> <span class="aw">await</span> <span class="fn">ambilSiswa</span>(<span class="num">2</span>); <span class="cm">// tunggu 1 detik lagi</span>
+  <span class="kw">const</span> c <span class="op">=</span> <span class="aw">await</span> <span class="fn">ambilSiswa</span>(<span class="num">3</span>); <span class="cm">// tunggu 1 detik lagi → total 3 detik!</span>
+}
+
+<span class="cm">// ✅ Parallel (cepat) → jalankan bersamaan</span>
+<span class="kw">async function</span> <span class="fn">cepat</span>() {
+  <span class="kw">const</span> [a, b, c] <span class="op">=</span> <span class="aw">await</span> <span class="cl">Promise</span>.<span class="fn">all</span>([
+    <span class="fn">ambilSiswa</span>(<span class="num">1</span>),
+    <span class="fn">ambilSiswa</span>(<span class="num">2</span>),
+    <span class="fn">ambilSiswa</span>(<span class="num">3</span>),
+  ]); <span class="cm">// total hanya ~1 detik! 🚀</span>
+  console.<span class="fn">log</span>(a.nama, b.nama, c.nama);
+}
+
+
+<span class="cm">// Fetch API dengan Async/Await</span>
+<span class="kw">async function</span> <span class="fn">ambilDataUser</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> response <span class="op">=</span> <span class="aw">await</span> <span class="fn">fetch</span>(<span class="str">"https://jsonplaceholder.typicode.com/users/1"</span>);
+
+    <span class="kw">if</span> (<span class="op">!</span>response.ok) {
+      <span class="kw">throw new</span> <span class="cl">Error</span>(<span class="str">`HTTP Error: <span class="op">${</span>response.status<span class="op">}</span>`</span>);
+    }
+
+    <span class="kw">const</span> user <span class="op">=</span> <span class="aw">await</span> response.<span class="fn">json</span>();
+    console.<span class="fn">log</span>(<span class="str">"✅ Nama  :"</span>, user.name);
+    console.<span class="fn">log</span>(<span class="str">"✅ Email :"</span>, user.email);
+    console.<span class="fn">log</span>(<span class="str">"✅ Kota  :"</span>, user.address.city);
+
+  } <span class="kw">catch</span> (error) {
+    console.<span class="fn">log</span>(<span class="str">"❌ Gagal:"</span>, error.message);
+  }
+}
+
+<span class="fn">ambilDataUser</span>();</code></pre>
+  </div>
+
+
+  <!-- ===== LATIHAN ===== -->
+  <div class="step-title">📝 Latihan Praktik</div>
+
+  <!-- Latihan 1 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 1</span>
+      <h3>Callback Dasar</h3>
+    </div>
+    <p>Lengkapi bagian <strong style="color:#6ee7b7">______</strong> dengan jawaban yang tepat:</p>
+    <pre><code>// 1A: Lengkapi function dengan callback
+function hitungDenganDelay(a, b, ______) {
+  setTimeout(() => {
+    const hasil = a + b;
+    ______(hasil);          // panggil callback dengan hasil
+  }, 1000);
+}
+
+hitungDenganDelay(10, 20, (hasil) => {
+  console.log("Hasil:", ______);  // Hasil: 30
+});
+
+
+// 1B: Callback dengan kondisi error
+function bagi(a, b, ______) {
+  setTimeout(() => {
+    if (b === ______) {
+      callback(______, null);      // kirim error
+    } else {
+      callback(______, a / b);     // kirim hasil
+    }
+  }, 500);
+}
+
+bagi(10, 2, (error, hasil) => {
+  if (______) {
+    console.log("❌ Error:", error);
+  } else {
+    console.log("✅ Hasil:", hasil);  // ✅ Hasil: 5
+  }
+});
+
+bagi(10, 0, (error, hasil) => {
+  if (error) {
+    console.log("❌ Error:", ______); // ❌ Error: Tidak bisa bagi 0!
+  }
+});</code></pre>
+  </div>
+
+  <!-- Latihan 2 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 2</span>
+      <h3>Membuat Promise</h3>
+    </div>
+    <p>Lengkapi bagian <strong style="color:#6ee7b7">______</strong> dengan jawaban yang tepat:</p>
+    <pre><code>// 2A: Promise dengan delay
+function tunggu(detik) {
+  return ______ Promise((______, ______) => {
+    setTimeout(() => {
+      ______(`Selesai menunggu ${detik} detik!`);
+    }, detik * 1000);
+  });
+}
+
+tunggu(2)
+  .______(pesan => console.log("✅", pesan))
+  .______(err   => console.log("❌", err));
+
+
+// 2B: Promise dengan kondisi
+function cekUmur(umur) {
+  return new Promise((resolve, ______) => {
+    if (umur ______ 17) {
+      ______(`✅ Umur ${umur} → Boleh daftar!`);
+    } else {
+      ______(`❌ Umur ${umur} → Belum cukup umur!`);
+    }
+  });
+}
+
+cekUmur(20)
+  .then(pesan   => console.log(______))  // ✅ Umur 20 → Boleh daftar!
+  .catch(error  => console.log(______)); // -
+
+cekUmur(15)
+  .then(pesan   => console.log(pesan))
+  .catch(error  => console.log(______)); // ❌ Umur 15 → Belum cukup umur!</code></pre>
+  </div>
+
+  <!-- Latihan 3 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num medium">LATIHAN 3</span>
+      <h3>Promise Chaining</h3>
+    </div>
+    <p>Lengkapi promise chaining berikut:</p>
+    <pre><code>function ambilKelas(id) {
+  return new Promise(resolve =>
+    setTimeout(() => resolve({ id, nama: "XII RPL 1" }), 500)
+  );
+}
+
+function ambilSiswaByKelas(kelasId) {
+  return new Promise(resolve =>
+    setTimeout(() => resolve([
+      { id: 1, nama: "Budi", kelasId },
+      { id: 2, nama: "Ani",  kelasId },
+    ]), 500)
+  );
+}
+
+function ambilNilai(siswaId) {
+  return new Promise(resolve =>
+    setTimeout(() => resolve({ siswaId, nilai: 80 + siswaId * 3 }), 500)
+  );
+}
+
+// Lengkapi chaining:
+ambilKelas(1)
+  .______(kelas => {
+    console.log("📚 Kelas:", kelas.______);
+    return ambilSiswaByKelas(______);
+  })
+  .______(siswa => {
+    console.log("👥 Jumlah:", siswa.______);
+    return ambilNilai(siswa[0].______);
+  })
+  .______(nilai => {
+    console.log("📊 Nilai:", nilai.______);
+  })
+  .______(err => console.log("❌", err));</code></pre>
+  </div>
+
+  <!-- Latihan 4 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num medium">LATIHAN 4</span>
+      <h3>Async / Await</h3>
+    </div>
+    <p>Ubah Promise chaining ke Async/Await:</p>
+    <pre><code>function ambilProduk(id) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const produk = [
+        { id: 1, nama: "Laptop",  harga: 8500000 },
+        { id: 2, nama: "Mouse",   harga: 250000  },
+        { id: 3, nama: "Monitor", harga: 3200000 },
+      ];
+      const hasil = produk.find(p => p.id === id);
+      if (hasil) resolve(hasil);
+      else       reject(new Error(`Produk id ${id} tidak ada`));
+    }, 800);
+  });
+}
+
+// Tugasmu: Lengkapi Async/Await
+______ function tampilProduk(id) {
+  ______ {
+    console.log(`⏳ Mencari produk id ${id}...`);
+    const produk = ______ ambilProduk(id);
+    console.log(`✅ ${produk.______}: Rp${produk.______.toLocaleString("id-ID")}`);
+  } ______ (error) {
+    console.log(`❌ ${error.______}`);
+  } ______ {
+    console.log("🏁 Selesai!\n");
+  }
+}
+
+tampilProduk(1);   // ✅ Laptop: Rp8.500.000
+tampilProduk(99);  // ❌ Produk id 99 tidak ada
+
+
+// Async/Await dengan Promise.all (paralel)
+______ function ambilSemua() {
+  try {
+    const [p1, p2, p3] = ______ Promise.______([
+      ambilProduk(1),
+      ambilProduk(2),
+      ambilProduk(3),
+    ]);
+    [p1, p2, p3].forEach(p => {
+      console.log(`- ${p.______}: Rp${p.______.toLocaleString("id-ID")}`);
+    });
+  } catch (______) {
+    console.log("❌", error.message);
+  }
+}
+ambilSemua();</code></pre>
+  </div>
+
+  <!-- Latihan 5 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num hard">LATIHAN 5 🔴</span>
+      <h3>Challenge — Fetch API Nyata</h3>
+    </div>
+    <p>Gunakan Fetch API untuk ambil data dari <strong style="color:#6ee7b7">jsonplaceholder.typicode.com</strong>:</p>
+    <pre><code>// 5A: Ambil 5 post pertama
+______ function ambilPosts() {
+  ______ {
+    const response = ______ fetch("https://jsonplaceholder.typicode.com/posts");
+
+    if (!response.______) {
+      throw new ______(`HTTP Error: ${response.______}`);
+    }
+
+    const posts = ______ response.______();
+    const lima  = posts.______(0, 5);
+
+    lima.forEach((post, i) => {
+      console.log(`${i+1}. ${post.______}`);
+      console.log(`   ${post.______.substring(0, 60)}...`);
+    });
+
+  } ______ (error) {
+    console.log("❌ Gagal:", error.______);
+  }
+}
+ambilPosts();
+
+
+// 5B: Ambil data paralel (users + posts sekaligus)
+______ function dashboard() {
+  try {
+    const [users, posts] = ______ Promise.______([ 
+      fetch("https://jsonplaceholder.typicode.com/users").then(r => r.______()),
+      fetch("https://jsonplaceholder.typicode.com/posts").then(r => r.______()),
+    ]);
+    console.log(`👥 Total User : ${users.______}`);
+    console.log(`📝 Total Post : ${posts.______}`);
+  } catch (error) {
+    console.log("❌", error.______);
+  }
+}
+dashboard();</code></pre>
+  </div>
+
+  <!-- KUNCI JAWABAN -->
+  <div class="answer-box">
+    <details>
+      <summary>Kunci Jawaban — Klik untuk buka</summary>
+      <pre><code>// LATIHAN 1
+callback | callback(hasil) | hasil
+callback | 0 | "Tidak bisa bagi 0!" | null | hasil
+error | error
+
+// LATIHAN 2A
+new | resolve | reject | resolve | .then | .catch
+
+// LATIHAN 2B
+reject | >= | resolve | reject | pesan | error | error
+
+// LATIHAN 3
+.then | kelas.nama | kelas.id
+.then | siswa.length | siswa[0].id
+.then | nilai.nilai
+.catch
+
+// LATIHAN 4
+async | try | await | produk.nama | produk.harga
+catch | finally
+async | await | all | p.nama | p.harga | error
+
+// LATIHAN 5A
+async | try | await | ok | Error | status
+await | json() | slice
+post.title | post.body | catch | message
+
+// LATIHAN 5B
+async | await | all
+json() | json()
+users.length | posts.length | message</code></pre>
+    </details>
+  </div>
+
+</div><!-- end section -->
+
+</body>
+</html>

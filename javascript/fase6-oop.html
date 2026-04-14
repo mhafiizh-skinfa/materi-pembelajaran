@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fase 6 — OOP (Object Oriented Programming)</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+
+    /* ===== COVER PAGE ===== */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+      padding: 40px;
+      page-break-after: always;
+    }
+
+    .cover .logo {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px; margin-bottom: 32px;
+      box-shadow: 0 8px 32px rgba(59,130,246,0.4);
+    }
+
+    .cover h1 {
+      font-size: 48px; font-weight: 800;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .cover h2 {
+      font-size: 24px; color: #94a3b8;
+      font-weight: 400; margin-bottom: 40px;
+    }
+
+    .cover .badge-list {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .cover .badge {
+      padding: 8px 20px; border-radius: 20px;
+      font-size: 14px; font-weight: 600;
+      background: rgba(59,130,246,0.15);
+      border: 1px solid rgba(59,130,246,0.3);
+      color: #93c5fd;
+    }
+
+    .cover .info-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; padding: 24px 40px;
+      display: flex; gap: 40px;
+    }
+
+    .cover .info-box div { text-align: center; }
+    .cover .info-box span {
+      display: block; font-size: 28px;
+      font-weight: 700; color: #3b82f6;
+    }
+    .cover .info-box p { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+
+    /* ===== SECTION ===== */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      page-break-before: always;
+    }
+
+    .section-header {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 36px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(59,130,246,0.3);
+    }
+
+    .section-header .icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      border-radius: 12px;
+      display: flex; align-items: center;
+      justify-content: center; font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 26px; font-weight: 700; color: #f1f5f9;
+    }
+
+    .section-header p {
+      font-size: 14px; color: #94a3b8; margin-top: 2px;
+    }
+
+    /* ===== CONCEPT BOX ===== */
+    .concept-box {
+      background: rgba(59,130,246,0.08);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-left: 4px solid #3b82f6;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+
+    .concept-box h3 {
+      font-size: 15px; color: #93c5fd;
+      margin-bottom: 10px; font-weight: 600;
+    }
+
+    .concept-box p, .concept-box li {
+      font-size: 14px; color: #cbd5e1; line-height: 1.8;
+    }
+
+    .concept-box ul { padding-left: 20px; }
+
+    /* ===== TABLE ===== */
+    .table-wrap { overflow-x: auto; margin-bottom: 28px; }
+
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead tr { background: rgba(59,130,246,0.2); }
+
+    th {
+      padding: 12px 16px; text-align: left;
+      color: #93c5fd; font-weight: 600;
+      border-bottom: 2px solid rgba(59,130,246,0.3);
+    }
+
+    td {
+      padding: 11px 16px; color: #cbd5e1;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    tr:hover td { background: rgba(255,255,255,0.03); }
+
+    /* ===== CODE BLOCK ===== */
+    .code-wrap { margin-bottom: 28px; }
+
+    .code-label {
+      display: inline-block;
+      background: rgba(59,130,246,0.2);
+      color: #93c5fd; font-size: 12px;
+      font-weight: 600; padding: 4px 12px;
+      border-radius: 6px 6px 0 0;
+      border: 1px solid rgba(59,130,246,0.3);
+      border-bottom: none;
+    }
+
+    pre {
+      background: #0d1117;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 0 8px 8px 8px;
+      padding: 24px;
+      overflow-x: auto;
+      font-size: 13.5px;
+      line-height: 1.8;
+    }
+
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      color: #e2e8f0;
+    }
+
+    /* Syntax highlighting */
+    .kw  { color: #c792ea; font-weight: 600; } /* keyword */
+    .str { color: #c3e88d; }                   /* string */
+    .num { color: #f78c6c; }                   /* number */
+    .cm  { color: #546e7a; font-style: italic;}/* comment */
+    .fn  { color: #82aaff; }                   /* function */
+    .cl  { color: #ffcb6b; }                   /* class */
+    .th  { color: #89ddff; }                   /* this */
+    .op  { color: #89ddff; }                   /* operator */
+
+    /* ===== LATIHAN BOX ===== */
+    .latihan-box {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16,185,129,0.25);
+      border-left: 4px solid #10b981;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .latihan-box .latihan-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .latihan-box .latihan-num {
+      background: #10b981;
+      color: white; font-size: 12px;
+      font-weight: 700; padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .latihan-box h3 {
+      font-size: 15px; color: #6ee7b7; font-weight: 600;
+    }
+
+    .latihan-box p {
+      font-size: 14px; color: #a7f3d0; margin-bottom: 12px;
+    }
+
+    .latihan-box pre {
+      background: #071a13;
+      border-color: rgba(16,185,129,0.2);
+      font-size: 13px;
+    }
+
+    /* ===== ANSWER BOX ===== */
+    .answer-box {
+      background: rgba(234,179,8,0.06);
+      border: 1px solid rgba(234,179,8,0.25);
+      border-left: 4px solid #eab308;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .answer-box summary {
+      cursor: pointer;
+      color: #fde047;
+      font-weight: 600; font-size: 15px;
+    }
+
+    .answer-box pre {
+      margin-top: 16px;
+      background: #14110a;
+      border-color: rgba(234,179,8,0.2);
+      font-size: 13px;
+    }
+
+    /* ===== BADGE / TAG ===== */
+    .tag {
+      display: inline-block; padding: 3px 10px;
+      border-radius: 20px; font-size: 12px;
+      font-weight: 600; margin: 2px;
+    }
+    .tag-blue   { background: rgba(59,130,246,0.2);  color: #93c5fd; }
+    .tag-green  { background: rgba(16,185,129,0.2);  color: #6ee7b7; }
+    .tag-yellow { background: rgba(234,179,8,0.2);   color: #fde047; }
+    .tag-red    { background: rgba(239,68,68,0.2);   color: #fca5a5; }
+
+    /* ===== NOTE BOX ===== */
+    .note {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: rgba(234,179,8,0.07);
+      border: 1px solid rgba(234,179,8,0.2);
+      border-radius: 10px; padding: 14px 18px;
+      margin-bottom: 24px;
+    }
+    .note .icon { font-size: 18px; flex-shrink: 0; }
+    .note p { font-size: 13px; color: #fde68a; }
+
+    /* ===== STEP TITLE ===== */
+    .step-title {
+      font-size: 20px; font-weight: 700;
+      color: #f1f5f9; margin: 36px 0 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .step-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px; height: 22px;
+      background: linear-gradient(180deg, #3b82f6, #06b6d4);
+      border-radius: 2px;
+    }
+
+    /* ===== PRINT ===== */
+    @media print {
+      body { background: #0f172a !important; }
+      .cover { page-break-after: always; }
+      .section { page-break-before: always; }
+      pre { white-space: pre-wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<div class="cover">
+  <div class="logo">🏗️</div>
+  <h1>OOP</h1>
+  <h2>Object Oriented Programming</h2>
+
+  <div class="badge-list">
+    <span class="badge">📘 Fase 6</span>
+    <span class="badge">🟡 Level Menengah</span>
+    <span class="badge">⏱️ 2–3 Minggu</span>
+    <span class="badge">💻 JavaScript ES6+</span>
+  </div>
+
+  <div class="info-box">
+    <div><span>4</span><p>Pilar OOP</p></div>
+    <div><span>8</span><p>Sub Materi</p></div>
+    <div><span>5</span><p>Latihan</p></div>
+    <div><span>1</span><p>Proyek Praktik</p></div>
+  </div>
+</div>
+
+
+<!-- ==================== SECTION: APA ITU OOP ==================== -->
+<div class="section">
+  <div class="section-header">
+    <div class="icon">💡</div>
+    <div>
+      <h2>Step 6.1 — Apa itu OOP?</h2>
+      <p>Konsep dasar pemrograman berorientasi objek</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <h3>📌 Definisi</h3>
+    <p>OOP = cara menulis program dengan <strong style="color:#93c5fd">mengelompokkan data & fungsi</strong> ke dalam sebuah "cetakan" yang bisa dibuat berkali-kali.</p>
+    <br>
+    <p>🍪 <strong style="color:#93c5fd">Analogi:</strong> OOP seperti <strong>Cetakan Kue</strong></p>
+    <ul style="margin-top:8px">
+      <li>Cetakan Kue = <strong>CLASS</strong> (blueprint / template)</li>
+      <li>Kue jadi &nbsp;&nbsp;&nbsp;&nbsp; = <strong>OBJECT</strong> (hasil dari class)</li>
+      <li>Satu cetakan bisa buat <strong>BANYAK kue</strong> → satu class bisa buat <strong>BANYAK object</strong></li>
+    </ul>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Pilar</th>
+          <th>Arti</th>
+          <th>Analogi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-blue">Encapsulation</span></td>
+          <td>Sembunyikan data internal</td>
+          <td>Kapsul obat — isi tersembunyi</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-green">Inheritance</span></td>
+          <td>Class anak mewarisi class induk</td>
+          <td>Anak mewarisi sifat orang tua</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-yellow">Polymorphism</span></td>
+          <td>Satu method, beda perilaku</td>
+          <td>Hewan bersuara berbeda-beda</td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-red">Abstraction</span></td>
+          <td>Sembunyikan detail kompleks</td>
+          <td>Setir mobil — tak perlu tahu mesinnya</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- Step 6.2 -->
+  <div class="step-title">Step 6.2 — Class (ES6+)</div>
+
+  <div class="concept-box">
+    <h3>📌 Anatomi Class</h3>
+    <ul>
+      <li><strong style="color:#c792ea">class</strong> → keyword untuk membuat class</li>
+      <li><strong style="color:#82aaff">constructor()</strong> → dijalankan otomatis saat <code>new NamaClass()</code></li>
+      <li><strong style="color:#89ddff">this</strong> → merujuk ke object yang sedang dibuat</li>
+      <li><strong>Method</strong> → function di dalam class</li>
+    </ul>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 javascript</span>
+    <pre><code><span class="kw">class</span> <span class="cl">Siswa</span> {
+
+  <span class="cm">// Constructor → dijalankan otomatis saat "new Siswa(...)"</span>
+  <span class="fn">constructor</span>(nama, kelas, nilai) {
+    <span class="th">this</span>.nama  <span class="op">=</span> nama;
+    <span class="th">this</span>.kelas <span class="op">=</span> kelas;
+    <span class="th">this</span>.nilai <span class="op">=</span> nilai;
+  }
+
+  <span class="cm">// Method biasa</span>
+  <span class="fn">sapa</span>() {
+    <span class="kw">return</span> <span class="str">`Halo, saya <span class="op">${</span><span class="th">this</span>.nama<span class="op">}</span> dari kelas <span class="op">${</span><span class="th">this</span>.kelas<span class="op">}</span>`</span>;
+  }
+
+  <span class="fn">getStatus</span>() {
+    <span class="kw">return</span> <span class="th">this</span>.nilai <span class="op">&gt;=</span> <span class="num">75</span>
+      <span class="op">?</span> <span class="str">"✅ Lulus"</span>
+      <span class="op">:</span> <span class="str">"❌ Tidak Lulus"</span>;
+  }
+
+  <span class="fn">getGrade</span>() {
+    <span class="kw">if</span>      (<span class="th">this</span>.nilai <span class="op">&gt;=</span> <span class="num">90</span>) <span class="kw">return</span> <span class="str">"A"</span>;
+    <span class="kw">else if</span> (<span class="th">this</span>.nilai <span class="op">&gt;=</span> <span class="num">80</span>) <span class="kw">return</span> <span class="str">"B"</span>;
+    <span class="kw">else if</span> (<span class="th">this</span>.nilai <span class="op">&gt;=</span> <span class="num">70</span>) <span class="kw">return</span> <span class="str">"C"</span>;
+    <span class="kw">else if</span> (<span class="th">this</span>.nilai <span class="op">&gt;=</span> <span class="num">60</span>) <span class="kw">return</span> <span class="str">"D"</span>;
+    <span class="kw">else</span>                       <span class="kw">return</span> <span class="str">"E"</span>;
+  }
+}
+
+<span class="cm">// Membuat object (instance)</span>
+<span class="kw">const</span> siswa1 <span class="op">=</span> <span class="kw">new</span> <span class="cl">Siswa</span>(<span class="str">"Budi"</span>,  <span class="str">"XII-A"</span>, <span class="num">85</span>);
+<span class="kw">const</span> siswa2 <span class="op">=</span> <span class="kw">new</span> <span class="cl">Siswa</span>(<span class="str">"Ani"</span>,   <span class="str">"XII-B"</span>, <span class="num">92</span>);
+
+console.<span class="fn">log</span>(siswa1.<span class="fn">sapa</span>());      <span class="cm">// Halo, saya Budi dari kelas XII-A</span>
+console.<span class="fn">log</span>(siswa2.<span class="fn">getGrade</span>()); <span class="cm">// A</span>
+console.<span class="fn">log</span>(siswa1 <span class="kw">instanceof</span> <span class="cl">Siswa</span>); <span class="cm">// true</span></code></pre>
+  </div>
+
+
+  <!-- Step 6.3 -->
+  <div class="step-title">Step 6.3 — Getter & Setter</div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 javascript</span>
+    <pre><code><span class="kw">class</span> <span class="cl">Produk</span> {
+  <span class="fn">constructor</span>(nama, harga, stok) {
+    <span class="th">this</span>.nama   <span class="op">=</span> nama;
+    <span class="th">this</span>._harga <span class="op">=</span> harga; <span class="cm">// "_" = konvensi semi-private</span>
+    <span class="th">this</span>._stok  <span class="op">=</span> stok;
+  }
+
+  <span class="cm">// GETTER → akses seperti property, bukan method</span>
+  <span class="kw">get</span> <span class="fn">harga</span>() {
+    <span class="kw">return</span> <span class="str">`Rp<span class="op">${</span><span class="th">this</span>._harga.<span class="fn">toLocaleString</span>(<span class="str">"id-ID"</span>)<span class="op">}</span>`</span>;
+  }
+
+  <span class="kw">get</span> <span class="fn">info</span>() {
+    <span class="kw">return</span> <span class="str">`<span class="op">${</span><span class="th">this</span>.nama<span class="op">}</span> | <span class="op">${</span><span class="th">this</span>.harga<span class="op">}</span> | Stok: <span class="op">${</span><span class="th">this</span>._stok<span class="op">}</span>`</span>;
+  }
+
+  <span class="cm">// SETTER → validasi sebelum mengubah nilai</span>
+  <span class="kw">set</span> <span class="fn">harga</span>(nilaiHarga) {
+    <span class="kw">if</span> (nilaiHarga <span class="op">&lt;</span> <span class="num">0</span>) {
+      console.<span class="fn">log</span>(<span class="str">"❌ Harga tidak boleh negatif!"</span>);
+      <span class="kw">return</span>;
+    }
+    <span class="th">this</span>._harga <span class="op">=</span> nilaiHarga;
+  }
+
+  <span class="kw">set</span> <span class="fn">stok</span>(jumlah) {
+    <span class="kw">if</span> (jumlah <span class="op">&lt;</span> <span class="num">0</span>) {
+      console.<span class="fn">log</span>(<span class="str">"❌ Stok tidak boleh negatif!"</span>);
+      <span class="kw">return</span>;
+    }
+    <span class="th">this</span>._stok <span class="op">=</span> jumlah;
+  }
+}
+
+<span class="kw">const</span> laptop <span class="op">=</span> <span class="kw">new</span> <span class="cl">Produk</span>(<span class="str">"Laptop ASUS"</span>, <span class="num">8500000</span>, <span class="num">10</span>);
+console.<span class="fn">log</span>(laptop.harga);  <span class="cm">// Rp8.500.000</span>
+console.<span class="fn">log</span>(laptop.info);   <span class="cm">// Laptop ASUS | Rp8.500.000 | Stok: 10</span>
+
+laptop.harga <span class="op">=</span> <span class="num">9000000</span>;     <span class="cm">// ✅</span>
+laptop.stok  <span class="op">=</span> <span class="op">-</span><span class="num">5</span>;          <span class="cm">// ❌ Stok tidak boleh negatif!</span></code></pre>
+  </div>
+
+
+  <!-- Step 6.4 -->
+  <div class="step-title">Step 6.4 — Inheritance (Pewarisan)</div>
+
+  <div class="concept-box">
+    <h3>📌 Konsep</h3>
+    <ul>
+      <li><span class="kw" style="color:#c792ea">extends</span> → keyword untuk mewarisi class parent</li>
+      <li><span class="fn" style="color:#82aaff">super()</span> → memanggil constructor class parent</li>
+      <li>Child class bisa <strong style="color:#93c5fd">override</strong> method dari parent</li>
+      <li>Child class bisa tambah <strong style="color:#6ee7b7">property & method baru</strong></li>
+    </ul>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 javascript</span>
+    <pre><code><span class="cm">// CLASS INDUK (Parent)</span>
+<span class="kw">class</span> <span class="cl">Hewan</span> {
+  <span class="fn">constructor</span>(nama, suara, kaki) {
+    <span class="th">this</span>.nama  <span class="op">=</span> nama;
+    <span class="th">this</span>.suara <span class="op">=</span> suara;
+    <span class="th">this</span>.kaki  <span class="op">=</span> kaki;
+  }
+  <span class="fn">bersuara</span>() {
+    <span class="kw">return</span> <span class="str">`<span class="op">${</span><span class="th">this</span>.nama<span class="op">}</span> berkata: "<span class="op">${</span><span class="th">this</span>.suara<span class="op">}</span>!"`</span>;
+  }
+  <span class="fn">makan</span>(makanan) {
+    <span class="kw">return</span> <span class="str">`<span class="op">${</span><span class="th">this</span>.nama<span class="op">}</span> sedang makan <span class="op">${</span>makanan<span class="op">}</span> 🍽️`</span>;
+  }
+}
+
+<span class="cm">// CLASS ANAK (Child)</span>
+<span class="kw">class</span> <span class="cl">Kucing</span> <span class="kw">extends</span> <span class="cl">Hewan</span> {
+  <span class="fn">constructor</span>(nama, warna) {
+    <span class="kw">super</span>(nama, <span class="str">"Meow"</span>, <span class="num">4</span>); <span class="cm">// panggil constructor parent</span>
+    <span class="th">this</span>.warna <span class="op">=</span> warna;
+  }
+  <span class="fn">menggulungBadan</span>() {
+    <span class="kw">return</span> <span class="str">`<span class="op">${</span><span class="th">this</span>.nama<span class="op">}</span> sedang menggulung badan 🐱`</span>;
+  }
+  <span class="cm">// Override method dari parent</span>
+  <span class="fn">bersuara</span>() {
+    <span class="kw">return</span> <span class="str">`<span class="op">${</span><span class="kw">super</span>.<span class="fn">bersuara</span>()<span class="op">}</span> ...lembut sekali!`</span>;
+  }
+}
+
+<span class="kw">class</span> <span class="cl">Anjing</span> <span class="kw">extends</span> <span class="cl">Hewan</span> {
+  <span class="fn">constructor</span>(nama, ras) {
+    <span class="kw">super</span>(nama, <span class="str">"Woof"</span>, <span class="num">4</span>);
+    <span class="th">this</span>.ras <span class="op">=</span> ras;
+  }
+  <span class="fn">jaga</span>() {
+    <span class="kw">return</span> <span class="str">`<span class="op">${</span><span class="th">this</span>.nama<span class="op">}</span> (<span class="op">${</span><span class="th">this</span>.ras<span class="op">}</span>) sedang menjaga rumah 🐕`</span>;
+  }
+}
+
+<span class="kw">const</span> kucing <span class="op">=</span> <span class="kw">new</span> <span class="cl">Kucing</span>(<span class="str">"Kitty"</span>, <span class="str">"oranye"</span>);
+<span class="kw">const</span> anjing <span class="op">=</span> <span class="kw">new</span> <span class="cl">Anjing</span>(<span class="str">"Rex"</span>, <span class="str">"Herder"</span>);
+
+console.<span class="fn">log</span>(kucing.<span class="fn">bersuara</span>());       <span class="cm">// Kitty berkata: "Meow!" ...lembut sekali!</span>
+console.<span class="fn">log</span>(kucing.<span class="fn">makan</span>(<span class="str">"ikan"</span>));   <span class="cm">// dari parent ✅</span>
+console.<span class="fn">log</span>(anjing.<span class="fn">jaga</span>());          <span class="cm">// Rex (Herder) sedang menjaga rumah 🐕</span>
+console.<span class="fn">log</span>(kucing <span class="kw">instanceof</span> <span class="cl">Hewan</span>); <span class="cm">// true</span></code></pre>
+  </div>
+
+
+  <!-- Step 6.5 -->
+  <div class="step-title">Step 6.5 — Encapsulation (Private Field)</div>
+
+  <div class="concept-box">
+    <h3>📌 Konsep</h3>
+    <ul>
+      <li>Private field diawali dengan <strong style="color:#f78c6c">#</strong></li>
+      <li>Tidak bisa diakses dari luar class → <strong style="color:#fca5a5">lebih aman!</strong></li>
+      <li>Gunakan public method untuk akses data private</li>
+    </ul>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 javascript</span>
+    <pre><code><span class="kw">class</span> <span class="cl">RekeningBank</span> {
+  <span class="cm">// Private fields</span>
+  #saldo;
+  #pin;
+  #riwayat <span class="op">=</span> [];
+
+  <span class="fn">constructor</span>(pemilik, saldoAwal, pin) {
+    <span class="th">this</span>.pemilik <span class="op">=</span> pemilik; <span class="cm">// public</span>
+    <span class="th">this</span>.#saldo  <span class="op">=</span> saldoAwal; <span class="cm">// private</span>
+    <span class="th">this</span>.#pin    <span class="op">=</span> pin;       <span class="cm">// private</span>
+  }
+
+  #<span class="fn">validasiPin</span>(pin) {
+    <span class="kw">return</span> <span class="th">this</span>.#pin <span class="op">===</span> pin;
+  }
+
+  <span class="fn">setor</span>(jumlah, pin) {
+    <span class="kw">if</span> (<span class="op">!</span><span class="th">this</span>.#<span class="fn">validasiPin</span>(pin)) <span class="kw">return</span> <span class="str">"❌ PIN salah!"</span>;
+    <span class="kw">if</span> (jumlah <span class="op">&lt;=</span> <span class="num">0</span>)              <span class="kw">return</span> <span class="str">"❌ Jumlah tidak valid!"</span>;
+    <span class="th">this</span>.#saldo <span class="op">+=</span> jumlah;
+    <span class="kw">return</span> <span class="str">`✅ Setor Rp<span class="op">${</span>jumlah.<span class="fn">toLocaleString</span>(<span class="str">"id-ID"</span>)<span class="op">}</span> berhasil`</span>;
+  }
+
+  <span class="fn">tarik</span>(jumlah, pin) {
+    <span class="kw">if</span> (<span class="op">!</span><span class="th">this</span>.#<span class="fn">validasiPin</span>(pin))  <span class="kw">return</span> <span class="str">"❌ PIN salah!"</span>;
+    <span class="kw">if</span> (jumlah <span class="op">&gt;</span> <span class="th">this</span>.#saldo)     <span class="kw">return</span> <span class="str">"❌ Saldo tidak cukup!"</span>;
+    <span class="th">this</span>.#saldo <span class="op">-=</span> jumlah;
+    <span class="kw">return</span> <span class="str">`✅ Tarik Rp<span class="op">${</span>jumlah.<span class="fn">toLocaleString</span>(<span class="str">"id-ID"</span>)<span class="op">}</span> berhasil`</span>;
+  }
+
+  <span class="fn">cekSaldo</span>(pin) {
+    <span class="kw">if</span> (<span class="op">!</span><span class="th">this</span>.#<span class="fn">validasiPin</span>(pin)) <span class="kw">return</span> <span class="str">"❌ PIN salah!"</span>;
+    <span class="kw">return</span> <span class="str">`💰 Saldo: Rp<span class="op">${</span><span class="th">this</span>.#saldo.<span class="fn">toLocaleString</span>(<span class="str">"id-ID"</span>)<span class="op">}</span>`</span>;
+  }
+}
+
+<span class="kw">const</span> rek <span class="op">=</span> <span class="kw">new</span> <span class="cl">RekeningBank</span>(<span class="str">"Budi"</span>, <span class="num">1000000</span>, <span class="str">"1234"</span>);
+console.<span class="fn">log</span>(rek.<span class="fn">cekSaldo</span>(<span class="str">"1234"</span>));      <span class="cm">// 💰 Saldo: Rp1.000.000</span>
+console.<span class="fn">log</span>(rek.<span class="fn">setor</span>(<span class="num">500000</span>, <span class="str">"1234"</span>)); <span class="cm">// ✅ Setor berhasil</span>
+console.<span class="fn">log</span>(rek.<span class="fn">tarik</span>(<span class="num">200000</span>, <span class="str">"0000"</span>)); <span class="cm">// ❌ PIN salah!</span>
+<span class="cm">// console.log(rek.#saldo); // ❌ SyntaxError!</span></code></pre>
+  </div>
+
+
+  <!-- Step 6.6 -->
+  <div class="step-title">Step 6.6 — Polymorphism</div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 javascript</span>
+    <pre><code><span class="kw">class</span> <span class="cl">Bentuk</span> {
+  <span class="fn">hitungLuas</span>()     { <span class="kw">return</span> <span class="num">0</span>; }
+  <span class="fn">hitungKeliling</span>() { <span class="kw">return</span> <span class="num">0</span>; }
+  <span class="fn">info</span>() {
+    <span class="kw">return</span> <span class="str">`Luas: <span class="op">${</span><span class="th">this</span>.<span class="fn">hitungLuas</span>().<span class="fn">toFixed</span>(<span class="num">2</span>)<span class="op">}</span> | Keliling: <span class="op">${</span><span class="th">this</span>.<span class="fn">hitungKeliling</span>().<span class="fn">toFixed</span>(<span class="num">2</span>)<span class="op">}</span>`</span>;
+  }
+}
+
+<span class="kw">class</span> <span class="cl">Persegi</span> <span class="kw">extends</span> <span class="cl">Bentuk</span> {
+  <span class="fn">constructor</span>(sisi) { <span class="kw">super</span>(); <span class="th">this</span>.sisi <span class="op">=</span> sisi; }
+  <span class="fn">hitungLuas</span>()     { <span class="kw">return</span> <span class="th">this</span>.sisi <span class="op">**</span> <span class="num">2</span>; }
+  <span class="fn">hitungKeliling</span>() { <span class="kw">return</span> <span class="num">4</span> <span class="op">*</span> <span class="th">this</span>.sisi; }
+}
+
+<span class="kw">class</span> <span class="cl">Lingkaran</span> <span class="kw">extends</span> <span class="cl">Bentuk</span> {
+  <span class="fn">constructor</span>(r) { <span class="kw">super</span>(); <span class="th">this</span>.r <span class="op">=</span> r; }
+  <span class="fn">hitungLuas</span>()     { <span class="kw">return</span> Math.PI <span class="op">*</span> <span class="th">this</span>.r <span class="op">**</span> <span class="num">2</span>; }
+  <span class="fn">hitungKeliling</span>() { <span class="kw">return</span> <span class="num">2</span> <span class="op">*</span> Math.PI <span class="op">*</span> <span class="th">this</span>.r; }
+}
+
+<span class="kw">const</span> bentukList <span class="op">=</span> [
+  <span class="kw">new</span> <span class="cl">Persegi</span>(<span class="num">5</span>),
+  <span class="kw">new</span> <span class="cl">Lingkaran</span>(<span class="num">7</span>),
+];
+
+<span class="cm">// Polymorphism → method sama, hasil beda!</span>
+bentukList.<span class="fn">forEach</span>(b <span class="op">=&gt;</span> console.<span class="fn">log</span>(b.<span class="fn">info</span>()));
+<span class="cm">// Persegi  → Luas: 25.00  | Keliling: 20.00</span>
+<span class="cm">// Lingkaran → Luas: 153.94 | Keliling: 43.98</span></code></pre>
+  </div>
+
+
+  <!-- LATIHAN -->
+  <div class="step-title">📝 Latihan Praktik</div>
+
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 1</span>
+      <h3>Membuat Class Dasar</h3>
+    </div>
+    <p>Lengkapi class <strong>Kendaraan</strong> berikut:</p>
+    <pre><code>______ Kendaraan {
+
+  ______(merk, model, tahun, warna) {
+    this.______ = merk;
+    this.______ = model;
+    this.______ = tahun;
+    this.______ = warna;
+  }
+
+  info() {
+    return `${this.______} ${this.______} (${this.______}) - ${this.______}`;
+  }
+
+  umurKendaraan() {
+    return 2025 - this.______;
+  }
+}
+
+const mobil1 = ______ Kendaraan("Toyota", "Avanza", 2020, "Putih");
+console.log(mobil1.info());
+// Toyota Avanza (2020) - Putih
+console.log(mobil1.umurKendaraan()); // 5</code></pre>
+  </div>
+
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 2</span>
+      <h3>Getter & Setter</h3>
+    </div>
+    <p>Lengkapi class <strong>Produk</strong> dengan getter & setter yang memiliki validasi:</p>
+    <pre><code>class Produk {
+  constructor(nama, harga, stok) {
+    this.nama   = nama;
+    this._harga = harga;
+    this._stok  = stok;
+  }
+
+  get harga() {
+    return `Rp${this._harga.toLocaleString("______")}`;
+  }
+
+  get info() {
+    return `${this.______} | ${this.______} | Stok: ${this.______}`;
+  }
+
+  set harga(nilai) {
+    if (nilai ______ 0) {
+      console.log("❌ Harga tidak boleh negatif!");
+      ______;
+    }
+    this._harga = ______;
+  }
+
+  set stok(jumlah) {
+    if (______ < ______) {
+      console.log("❌ Stok tidak boleh negatif!");
+      return;
+    }
+    this.______ = jumlah;
+  }
+}
+
+const hp = new Produk("Samsung A54", 4500000, 15);
+console.log(hp.harga);  // Rp4.500.000
+hp.stok = -3;           // ❌ Stok tidak boleh negatif!</code></pre>
+  </div>
+
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 3</span>
+      <h3>Inheritance</h3>
+    </div>
+    <p>Lengkapi class <strong>Manager</strong> dan <strong>Karyawan</strong> yang mewarisi <strong>Pegawai</strong>:</p>
+    <pre><code>class Pegawai {
+  constructor(nama, nip, gajiPokok) {
+    this.nama      = nama;
+    this.nip       = nip;
+    this.gajiPokok = gajiPokok;
+  }
+  hitungGaji() { return this.gajiPokok; }
+  info()       { return `${this.nama} | NIP: ${this.nip}`; }
+}
+
+// Manager: dapat tunjangan 50% dari gaji pokok
+class Manager ______ Pegawai {
+  constructor(nama, nip, gajiPokok, departemen) {
+    ______(nama, nip, gajiPokok);
+    this.departemen = ______;
+    this.tunjangan  = gajiPokok * ______;
+  }
+  hitungGaji() { return ______ + this.tunjangan; }
+  info()       { return `${______} | Dept: ${this.______}`; }
+}
+
+const mgr = new Manager("Bu Rina", "MGR001", 10000000, "IT");
+console.log(mgr.info());
+// Bu Rina | NIP: MGR001 | Dept: IT
+console.log(`Gaji: Rp${mgr.hitungGaji().toLocaleString("id-ID")}`);
+// Gaji: Rp15.000.000</code></pre>
+  </div>
+
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 4</span>
+      <h3>Encapsulation — Private Field</h3>
+    </div>
+    <p>Lengkapi class <strong>TodoList</strong> dengan private field:</p>
+    <pre><code>class TodoList {
+  ______ = [];   // private: daftar todo
+  ______ = 0;    // private: id counter
+
+  tambah(judul) {
+    this.______++;
+    this.______.push({ id: this.______, judul, selesai: false });
+    return `✅ "${______}" ditambahkan`;
+  }
+
+  selesaikan(id) {
+    const todo = this.______.find(t => t.id === ______);
+    if (!todo)        return "❌ Tidak ditemukan!";
+    if (todo.selesai) return "⚠️ Sudah selesai!";
+    todo.selesai = ______;
+    return `✅ "${todo.______}" selesai!`;
+  }
+
+  get belumSelesai() {
+    return this.______.filter(t => !t.______);
+  }
+}
+
+const todo = new TodoList();
+console.log(todo.tambah("Belajar OOP"));     // ✅ "Belajar OOP" ditambahkan
+console.log(todo.selesaikan(1));             // ✅ "Belajar OOP" selesai!
+console.log(todo.selesaikan(1));             // ⚠️ Sudah selesai!</code></pre>
+  </div>
+
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 5 🔴</span>
+      <h3>Challenge — Sistem Toko</h3>
+    </div>
+    <p>Buat sistem toko dengan class <strong>Produk</strong> dan <strong>KeranjangBelanja</strong> menggunakan OOP lengkap (private field, getter, method):</p>
+    <pre><code>class Produk {
+  #stok;
+  constructor(id, nama, harga, stok) { ... }
+  get stok()       { return this.______; }
+  get tersedia()   { return this.______ > 0; }
+  kurangiStok(jml) { ... }
+}
+
+class KeranjangBelanja {
+  ______ = [];
+
+  tambahItem(produk, jumlah = 1) { ... }
+  hapusItem(idProduk)            { ... }
+
+  get totalHarga() { ... }
+  get ringkasan()  { ... }
+}
+
+// Test:
+const p1 = new Produk(1, "Laptop",   8500000, 5);
+const p2 = new Produk(2, "Mouse",    250000, 10);
+const p3 = new Produk(3, "Keyboard", 450000,  0); // habis!
+
+const keranjang = new KeranjangBelanja();
+console.log(keranjang.tambahItem(p1));  // ✅ Laptop x1 ditambahkan
+console.log(keranjang.tambahItem(p3));  // ❌ Keyboard habis!
+console.log(`Total: Rp${keranjang.totalHarga.toLocaleString("id-ID")}`);
+// Total: Rp8.500.000</code></pre>
+  </div>
+
+  <!-- KUNCI JAWABAN -->
+  <div class="answer-box">
+    <details>
+      <summary>🔑 Kunci Jawaban — Klik untuk buka</summary>
+      <pre><code>// LATIHAN 1
+class Kendaraan | constructor
+this.merk | this.model | this.tahun | this.warna
+this.merk, this.model, this.tahun, this.warna
+2025 - this.tahun | new Kendaraan(...)
+
+// LATIHAN 2
+"id-ID" | this.nama | this.harga | this._stok
+nilai < 0 | return | this._harga = nilai
+jumlah < 0 | this._stok = jumlah
+
+// LATIHAN 3
+extends | super() | departemen | 0.5
+this.gajiPokok + this.tunjangan
+super.info() | this.departemen
+
+// LATIHAN 4
+#todos = [] | #idCounter = 0
+this.#idCounter++ | this.#todos.push | this.#idCounter
+judul | this.#todos.find | id | true | judul
+this.#todos.filter(t => !t.selesai)
+
+// LATIHAN 5
+#stok | this.#stok | this.#stok > 0
+#items = []
+tambahItem → cek tersedia → push ke #items
+totalHarga → reduce harga * jumlah
+ringkasan  → map nama x jumlah = harga</code></pre>
+    </details>
+  </div>
+
+</div><!-- end section -->
+
+</body>
+</html>

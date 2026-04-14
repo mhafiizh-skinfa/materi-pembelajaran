@@ -1,0 +1,2584 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fase 2 — Core Node.js</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-main:    #0f172a;
+      --bg-card:    #1e293b;
+      --bg-sidebar: #0d1526;
+      --bg-hover:   #273548;
+      --accent-blue:   #3b82f6;
+      --accent-green:  #10b981;
+      --accent-yellow: #f59e0b;
+      --accent-red:    #ef4444;
+      --accent-purple: #8b5cf6;
+      --accent-cyan:   #06b6d4;
+      --text-main:  #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim:   #64748b;
+      --border:     #334155;
+      --radius:     10px;
+      --sidebar-w:  280px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-main); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+    /* ══════════════════ SIDEBAR ══════════════════ */
+    #sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      position: fixed;
+      top: 0; left: 0;
+      overflow-y: auto;
+      z-index: 100;
+      transition: transform .3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg-sidebar);
+      z-index: 1;
+    }
+
+    .sidebar-header .phase-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 99px;
+      letter-spacing: .5px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .sidebar-header h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    .sidebar-nav { padding: 12px 0 24px; flex: 1; }
+
+    .nav-group-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 14px 20px 6px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 20px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      border-left: 3px solid transparent;
+      transition: all .2s;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-hover);
+      color: var(--text-main);
+      border-left-color: var(--accent-blue);
+    }
+
+    .nav-link.active {
+      background: rgba(59,130,246,.12);
+      color: var(--accent-blue);
+      border-left-color: var(--accent-blue);
+    }
+
+    .nav-link .nav-icon { font-size: 15px; width: 20px; text-align: center; }
+
+    .nav-link.sub {
+      padding-left: 44px;
+      font-size: 12.5px;
+      font-weight: 400;
+    }
+
+    /* ══════════════════ MAIN CONTENT ══════════════════ */
+    #main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      max-width: 100%;
+    }
+
+    /* ── Top Bar ── */
+    .topbar {
+      background: linear-gradient(135deg, #0f172a 0%, #1a1f3e 50%, #0f2a1a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 56px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topbar::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(59,130,246,.15) 0%, transparent 70%);
+    }
+
+    .topbar::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: 30%;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(16,185,129,.1) 0%, transparent 70%);
+    }
+
+    .topbar-inner { position: relative; z-index: 1; }
+
+    .topbar .phase-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      margin-bottom: 10px;
+    }
+
+    .topbar h1 {
+      font-size: 36px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #e2e8f0, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .topbar p {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 600px;
+    }
+
+    .topbar-meta {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .topbar-meta span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+      background: rgba(255,255,255,.05);
+      padding: 5px 12px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Page Content ── */
+    .page-content { padding: 40px 56px 80px; max-width: 960px; }
+
+    /* ── Section ── */
+    .section {
+      margin-bottom: 64px;
+      scroll-margin-top: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px; height: 42px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .section-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ── Sub Section ── */
+    .sub-section { margin-bottom: 40px; }
+
+    .sub-section h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sub-section h3::before {
+      content: '';
+      width: 4px; height: 18px;
+      background: var(--accent-cyan);
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .sub-section h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent-yellow);
+      margin: 20px 0 10px;
+    }
+
+    p { color: var(--text-muted); margin-bottom: 12px; line-height: 1.8; }
+
+    ul, ol {
+      color: var(--text-muted);
+      padding-left: 22px;
+      margin-bottom: 14px;
+    }
+
+    li { margin-bottom: 6px; line-height: 1.8; }
+
+    strong { color: var(--text-main); font-weight: 600; }
+
+    code {
+      font-family: 'Fira Code', monospace;
+      background: rgba(255,255,255,.08);
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 13px;
+      color: var(--accent-cyan);
+    }
+
+    /* ── Code Block ── */
+    .code-block {
+      background: #1a1f2e;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin: 16px 0;
+      position: relative;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      background: #151b2d;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-header .file-name {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .code-header .file-name::before {
+      content: '📄';
+      font-size: 12px;
+    }
+
+    .code-header .lang-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .lang-js   { background: rgba(245,158,11,.15); color: var(--accent-yellow); }
+    .lang-bash { background: rgba(16,185,129,.15);  color: var(--accent-green);  }
+    .lang-json { background: rgba(139,92,246,.15);  color: var(--accent-purple); }
+    .lang-html { background: rgba(239,68,68,.15);   color: var(--accent-red);    }
+
+    .copy-btn {
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+
+    .copy-btn:hover { background: rgba(255,255,255,.12); color: var(--text-main); }
+    .copy-btn.copied { background: rgba(16,185,129,.15); color: var(--accent-green); border-color: var(--accent-green); }
+
+    .code-block pre {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: transparent !important;
+    }
+
+    .code-block pre code {
+      background: transparent !important;
+      padding: 20px !important;
+      font-family: 'Fira Code', monospace !important;
+      font-size: 13.5px !important;
+      line-height: 1.7 !important;
+      display: block;
+      overflow-x: auto;
+      color: inherit;
+    }
+
+    /* ── Info Boxes ── */
+    .box {
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      margin: 16px 0;
+      display: flex;
+      gap: 14px;
+      border-left: 4px solid;
+    }
+
+    .box-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+
+    .box-body { flex: 1; }
+
+    .box-body strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 5px;
+    }
+
+    .box-body p { margin: 0; font-size: 14px; }
+
+    .box-info    { background: rgba(59,130,246,.08);  border-color: var(--accent-blue);   }
+    .box-info    .box-body strong { color: var(--accent-blue);   }
+    .box-warning { background: rgba(245,158,11,.08); border-color: var(--accent-yellow); }
+    .box-warning .box-body strong { color: var(--accent-yellow); }
+    .box-success { background: rgba(16,185,129,.08);  border-color: var(--accent-green);  }
+    .box-success .box-body strong { color: var(--accent-green);  }
+    .box-danger  { background: rgba(239,68,68,.08);   border-color: var(--accent-red);    }
+    .box-danger  .box-body strong { color: var(--accent-red);    }
+    .box-task    { background: rgba(139,92,246,.08);  border-color: var(--accent-purple); }
+    .box-task    .box-body strong { color: var(--accent-purple); }
+
+    /* ── Table ── */
+    .table-wrap { overflow-x: auto; margin: 16px 0; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th {
+      background: #151b2d;
+      color: var(--accent-cyan);
+      font-weight: 600;
+      padding: 11px 16px;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 10px 16px;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(51,65,85,.5);
+    }
+
+    tr:hover td { background: rgba(255,255,255,.02); }
+
+    td code { font-size: 12px; }
+
+    /* ── Badge ── */
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    .badge-blue   { background: rgba(59,130,246,.15);  color: var(--accent-blue);   }
+    .badge-green  { background: rgba(16,185,129,.15);  color: var(--accent-green);  }
+    .badge-yellow { background: rgba(245,158,11,.15);  color: var(--accent-yellow); }
+    .badge-red    { background: rgba(239,68,68,.15);   color: var(--accent-red);    }
+    .badge-purple { background: rgba(139,92,246,.15);  color: var(--accent-purple); }
+
+    /* ── Grid Cards ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      transition: border-color .2s;
+    }
+
+    .card:hover { border-color: var(--accent-blue); }
+
+    .card-icon { font-size: 26px; margin-bottom: 10px; }
+
+    .card h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .card p { font-size: 13px; margin: 0; }
+
+    /* ── Arch Diagram ── */
+    .arch-diagram {
+      background: #0a0f1e;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: 16px 0;
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      color: var(--accent-green);
+      line-height: 1.8;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent-blue), transparent);
+      margin: 48px 0;
+      opacity: .3;
+    }
+
+    /* ── Mini Project Card ── */
+    .project-card {
+      background: linear-gradient(135deg, rgba(59,130,246,.08), rgba(139,92,246,.08));
+      border: 1px solid rgba(139,92,246,.3);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+    }
+
+    .project-card h3 {
+      color: var(--accent-purple);
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .project-card .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    /* ── Quiz ── */
+    .quiz-section {
+      background: linear-gradient(135deg, rgba(16,185,129,.06), rgba(6,182,212,.06));
+      border: 1px solid rgba(16,185,129,.2);
+      border-radius: 12px;
+      padding: 28px;
+      margin-top: 48px;
+    }
+
+    .quiz-section h2 {
+      color: var(--accent-green);
+      font-size: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .quiz-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .quiz-item .q-num {
+      display: inline-block;
+      background: var(--accent-green);
+      color: #000;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 99px;
+      margin-bottom: 8px;
+    }
+
+    .quiz-item p { margin: 0; color: var(--text-main); font-size: 14px; }
+
+    /* ── Steps ── */
+    .steps { margin: 16px 0; }
+
+    .step-item {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .step-num {
+      width: 32px; height: 32px;
+      background: var(--accent-blue);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      color: #fff;
+    }
+
+    .step-body { flex: 1; }
+
+    .step-body h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .step-body p { font-size: 13px; margin: 0; }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 56px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer p { font-size: 13px; color: var(--text-dim); margin: 0; }
+
+    .footer-nav { display: flex; gap: 12px; }
+
+    .footer-nav a {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* ── Hamburger ── */
+    .hamburger {
+      display: none;
+      position: fixed;
+      top: 16px; left: 16px;
+      z-index: 200;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 20px; height: 2px;
+      background: var(--text-main);
+      border-radius: 2px;
+      transition: all .3s;
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.6);
+      z-index: 99;
+    }
+
+    /* ════════════════ PRINT ════════════════ */
+    @media print {
+      #sidebar, .hamburger, .overlay, .copy-btn { display: none !important; }
+      #main { margin-left: 0 !important; }
+      .topbar { background: #fff !important; color: #000 !important; border-bottom: 2px solid #000; padding: 20px; }
+      .topbar h1 { -webkit-text-fill-color: #000 !important; font-size: 24px; }
+      .topbar p, .topbar-meta span { color: #444 !important; }
+      body { background: #fff !important; color: #000 !important; font-size: 12pt; }
+      .page-content { padding: 20px !important; max-width: 100% !important; }
+      .section { page-break-inside: avoid; margin-bottom: 30px; }
+      .section-header { border-bottom: 2px solid #000 !important; }
+      .section-number { background: #000 !important; }
+      .section-header h2 { color: #000 !important; }
+      .sub-section h3 { color: #000 !important; font-size: 14pt; }
+      .sub-section h3::before { background: #000 !important; }
+      .sub-section h4 { color: #333 !important; }
+      p, li, td { color: #333 !important; }
+      .code-block { border: 1px solid #ccc !important; page-break-inside: avoid; background: #f8f8f8 !important; }
+      .code-header { background: #eee !important; border-bottom: 1px solid #ccc !important; }
+      .code-header .file-name { color: #333 !important; }
+      .code-block pre code { color: #000 !important; background: #f8f8f8 !important; font-size: 10pt !important; }
+      .box { border-left: 3px solid #000 !important; background: #f9f9f9 !important; }
+      .box-body strong, .box-body p { color: #000 !important; }
+      th { background: #eee !important; color: #000 !important; }
+      td { color: #333 !important; }
+      .badge { border: 1px solid #999 !important; color: #000 !important; background: #eee !important; }
+      .arch-diagram { background: #f0f0f0 !important; color: #000 !important; border: 1px solid #ccc !important; }
+      .quiz-section { background: #f9f9f9 !important; border: 1px solid #ccc !important; }
+      .quiz-section h2 { color: #000 !important; }
+      .quiz-item { background: #fff !important; border: 1px solid #ccc !important; }
+      .quiz-item p { color: #000 !important; }
+      .project-card { background: #f9f9f9 !important; border: 1px solid #ccc !important; }
+      .project-card h3 { color: #000 !important; }
+      .footer { border-top: 1px solid #ccc !important; }
+      .footer p { color: #666 !important; }
+      .card { border: 1px solid #ccc !important; background: #f9f9f9 !important; }
+      .card h4 { color: #000 !important; }
+      strong { color: #000 !important; }
+      code { background: #eee !important; color: #c00 !important; }
+      .topbar::before, .topbar::after { display: none; }
+      .divider { background: #ccc !important; }
+    }
+
+    /* ════════════════ RESPONSIVE ════════════════ */
+    @media (max-width: 768px) {
+      #sidebar { transform: translateX(-100%); }
+      #sidebar.open { transform: translateX(0); }
+      #main { margin-left: 0; }
+      .topbar { padding: 64px 24px 32px; }
+      .topbar h1 { font-size: 26px; }
+      .page-content { padding: 28px 24px 60px; }
+      .hamburger { display: flex; }
+      .overlay.active { display: block; }
+      .footer { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <div class="phase-badge">Fase 2</div>
+    <h2>Core Node.js</h2>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-group-title">Pendahuluan</div>
+    <a href="#intro"    class="nav-link"><span class="nav-icon">🏠</span>Overview Fase 2</a>
+
+    <div class="nav-group-title">Materi</div>
+    <a href="#step-2-1" class="nav-link"><span class="nav-icon">🚀</span>2.1 Pengenalan Node.js</a>
+    <a href="#step-2-2" class="nav-link"><span class="nav-icon">📦</span>2.2 Module System</a>
+    <a href="#step-2-3" class="nav-link"><span class="nav-icon">📥</span>2.3 NPM</a>
+    <a href="#step-2-4" class="nav-link"><span class="nav-icon">🔧</span>2.4 Core Modules</a>
+    <a href="#step-2-4-1" class="nav-link sub"><span class="nav-icon">📁</span>path</a>
+    <a href="#step-2-4-2" class="nav-link sub"><span class="nav-icon">💻</span>os</a>
+    <a href="#step-2-4-3" class="nav-link sub"><span class="nav-icon">🗂️</span>fs</a>
+    <a href="#step-2-4-4" class="nav-link sub"><span class="nav-icon">⚡</span>events</a>
+    <a href="#step-2-4-5" class="nav-link sub"><span class="nav-icon">🌐</span>http</a>
+    <a href="#step-2-5" class="nav-link"><span class="nav-icon">⚙️</span>2.5 process Object</a>
+    <a href="#step-2-6" class="nav-link"><span class="nav-icon">🌊</span>2.6 Streams & Buffer</a>
+    <a href="#step-2-7" class="nav-link"><span class="nav-icon">🛡️</span>2.7 Error Handling</a>
+
+    <div class="nav-group-title">Project & Evaluasi</div>
+    <a href="#mini-project" class="nav-link"><span class="nav-icon">🏗️</span>Mini Project</a>
+    <a href="#evaluasi"     class="nav-link"><span class="nav-icon">📝</span>Evaluasi & Quiz</a>
+  </nav>
+</aside>
+
+<!-- ══ HAMBURGER ══ -->
+<button class="hamburger" id="hamburger" aria-label="Toggle sidebar">
+  <span></span><span></span><span></span>
+</button>
+<div class="overlay" id="overlay"></div>
+
+<!-- ══ MAIN ══ -->
+<main id="main">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="phase-label">📗 Materi Node.js</div>
+      <h1>Fase 2 — Core Node.js</h1>
+      <p>Pelajari konsep inti Node.js dari arsitektur, module system, NPM, hingga core modules bawaan yang wajib dikuasai.</p>
+      <div class="topbar-meta">
+        <span>⏱️ Estimasi 2–3 Minggu</span>
+        <span>📚 7 Sub-topik</span>
+        <span>💻 2 Mini Project</span>
+        <span>🎯 Tingkat: Pemula</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <!-- ══ INTRO ══ -->
+    <section class="section" id="intro">
+      <div class="section-header">
+        <div class="section-number">📋</div>
+        <div>
+          <h2>Overview Fase 2</h2>
+          <p>Apa yang akan dipelajari di fase ini</p>
+        </div>
+      </div>
+
+      <p>Setelah menguasai fondasi JavaScript di Fase 1, kini saatnya masuk ke <strong>inti dari Node.js</strong>. Fase ini akan membekali murid dengan pemahaman mendalam tentang bagaimana Node.js bekerja dan modul-modul bawaan yang sangat sering digunakan.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">🚀</div>
+          <h4>Pengenalan Node.js</h4>
+          <p>Arsitektur, Event Loop, dan cara kerja Node.js</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📦</div>
+          <h4>Module System</h4>
+          <p>CommonJS, ES Module, dan cara kerja module caching</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📥</div>
+          <h4>NPM</h4>
+          <p>Manajemen package, SemVer, dan scripts</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔧</div>
+          <h4>Core Modules</h4>
+          <p>fs, path, os, http, events — modul bawaan Node.js</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚙️</div>
+          <h4>process Object</h4>
+          <p>Info runtime, env variables, CLI arguments</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌊</div>
+          <h4>Streams & Buffer</h4>
+          <p>Baca/tulis data secara efisien dengan streaming</p>
+        </div>
+      </div>
+
+      <div class="box box-info">
+        <div class="box-icon">💡</div>
+        <div class="box-body">
+          <strong>Prasyarat</strong>
+          <p>Pastikan Fase 1 (Fondasi JavaScript) sudah dikuasai, terutama <strong>async/await, Promise, dan OOP</strong> sebelum melanjutkan ke fase ini.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══ STEP 2.1 ══ -->
+    <section class="section" id="step-2-1">
+      <div class="section-header">
+        <div class="section-number">1</div>
+        <div>
+          <h2>Step 2.1 — Pengenalan Node.js</h2>
+          <p>Memahami apa itu Node.js, arsitektur, dan cara kerjanya</p>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Apa itu Node.js?</h3>
+        <p>Node.js adalah <strong>runtime environment</strong> yang memungkinkan JavaScript berjalan di luar browser — di server, komputer, atau terminal. Node.js bukan bahasa pemrograman baru, melainkan platform yang menggunakan <strong>V8 Engine</strong> milik Google Chrome untuk mengeksekusi JavaScript.</p>
+
+        <div class="box box-info">
+          <div class="box-icon">📌</div>
+          <div class="box-body">
+            <strong>Ingat!</strong>
+            <p>Node.js <strong>BUKAN</strong> bahasa pemrograman. Node.js adalah <strong>runtime environment</strong>. Bahasanya tetap JavaScript.</p>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Aspek</th><th>Browser JavaScript</th><th>Node.js</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Environment</td><td>Browser</td><td>Server / Terminal</td></tr>
+              <tr><td>Global object</td><td><code>window</code></td><td><code>global</code></td></tr>
+              <tr><td>DOM Access</td><td>✅ Ada</td><td>❌ Tidak ada</td></tr>
+              <tr><td><code>document</code>, <code>alert</code></td><td>✅ Ada</td><td>❌ Tidak ada</td></tr>
+              <tr><td>File System (<code>fs</code>)</td><td>❌ Tidak ada</td><td>✅ Ada</td></tr>
+              <tr><td>HTTP Server</td><td>❌ Tidak ada</td><td>✅ Ada</td></tr>
+              <tr><td>Module System</td><td>ES Module</td><td>CommonJS + ES Module</td></tr>
+              <tr><td>Penggunaan</td><td>Frontend/UI</td><td>Backend/Server</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Sejarah Singkat Node.js</h3>
+        <div class="steps">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h4>2009 — Kelahiran Node.js</h4>
+              <p>Ryan Dahl menciptakan Node.js menggunakan V8 Engine milik Google Chrome. Tujuannya: membuat web server yang cepat & ringan dengan I/O non-blocking.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h4>2010 — NPM Lahir</h4>
+              <p>Node Package Manager (NPM) hadir, memudahkan distribusi dan penggunaan package/library JavaScript.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h4>2011 — Windows Support</h4>
+              <p>Node.js mulai bisa berjalan di Windows, memperluas jangkauan pengguna secara signifikan.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <h4>2015 — Node.js Foundation</h4>
+              <p>Dibentuk Node.js Foundation untuk mengelola pengembangan secara terbuka dan terstruktur.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <h4>Sekarang — Dipakai Perusahaan Besar</h4>
+              <p>Netflix, LinkedIn, Uber, NASA, PayPal menggunakan Node.js untuk aplikasi production mereka.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Arsitektur Node.js</h3>
+        <div class="arch-diagram">┌─────────────────────────────────────────────────┐
+│             Node.js Architecture                │
+│                                                 │
+│   JavaScript Code  ← kode yang kita tulis      │
+│         ↓                                       │
+│     V8 Engine      ← kompilasi JS ke bytecode   │
+│         ↓                                       │
+│   Node.js Bindings ← jembatan JS &lt;→ C++         │
+│         ↓                                       │
+│    Node.js APIs    ← fs, http, path, dll        │
+│         ↓                                       │
+│      libuv         ← handle async I/O           │
+│         ↓                                       │
+│   Operating System ← Windows / Linux / macOS   │
+└───────────────────────��─────────────────────────┘</div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Event Loop & Non-Blocking I/O</h3>
+        <p>Ini adalah konsep TERPENTING yang membedakan Node.js dari platform lain. Node.js menggunakan model <strong>Single Thread, Non-Blocking I/O</strong>.</p>
+
+        <div class="arch-diagram">BLOCKING (tradisional):       NON-BLOCKING (Node.js):
+─────────────────────         ─────────────────────
+Req 1 → TUNGGU selesai        Req 1 → kirim ke background
+Req 2 → TUNGGU selesai        Req 2 → kirim ke background
+Req 3 → TUNGGU selesai        Req 3 → kirim ke background
+                              Req 2 selesai → proses hasil
+                              Req 1 selesai → proses hasil
+                              Req 3 selesai → proses hasil
+
+😫 Seperti kasir bank:        😎 Seperti restoran:
+1 kasir, antrian panjang      1 pelayan ambil semua pesanan
+                              dapur proses semua sekaligus!</div>
+
+        <div class="box box-success">
+          <div class="box-icon">✅</div>
+          <div class="box-body">
+            <strong>Keunggulan Node.js</strong>
+            <p>Karena non-blocking, Node.js bisa menangani ribuan koneksi secara bersamaan dengan resource yang minimal. Sangat cocok untuk aplikasi real-time dan API server.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>💻 Kode Pertama Node.js</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">hello.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">// file: hello.js
+
+// 1. Hello World
+console.log("Halo, Node.js!")
+
+// 2. Cek global object (seperti 'window' di browser)
+console.log(typeof global) // "object"
+
+// 3. Info versi & platform
+console.log("Node version :", process.version)
+console.log("Platform     :", process.platform)
+console.log("Arsitektur   :", process.arch)
+console.log("Working Dir  :", process.cwd())
+
+// 4. Demonstrasi non-blocking
+console.log("=== Demo Non-Blocking ===")
+console.log("1. Sebelum setTimeout")
+
+setTimeout(() => {
+  console.log("3. Dalam setTimeout (setelah 0ms)")
+}, 0)
+
+console.log("2. Setelah setTimeout — tapi ini muncul DULUAN!")
+
+// OUTPUT:
+// 1. Sebelum setTimeout
+// 2. Setelah setTimeout — tapi ini muncul DULUAN!
+// 3. Dalam setTimeout (setelah 0ms)</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">terminal</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-bash">BASH</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-bash"># Jalankan file dengan Node.js
+node hello.js
+
+# Jika sudah install nodemon (auto-restart saat file berubah)
+nodemon hello.js</code></pre>
+        </div>
+      </div>
+
+      <div class="box box-task">
+        <div class="box-icon">🎯</div>
+        <div class="box-body">
+          <strong>Tugas 2.1</strong>
+          <p>Buat file <code>info-sistem.js</code> yang menampilkan:<br>
+          1. Versi Node.js yang digunakan<br>
+          2. Nama platform (OS)<br>
+          3. Jumlah core CPU (<code>os.cpus().length</code>)<br>
+          4. Total RAM dalam satuan GB<br>
+          5. Free RAM dalam satuan GB<br>
+          6. Uptime sistem dalam format jam:menit:detik</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ STEP 2.2 ══ -->
+    <section class="section" id="step-2-2">
+      <div class="section-header">
+        <div class="section-number">2</div>
+        <div>
+          <h2>Step 2.2 — Module System</h2>
+          <p>Memecah kode menjadi file-file kecil yang terorganisir</p>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Mengapa Module Diperlukan?</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Tanpa Module</th><th>Dengan Module</th></tr></thead>
+            <tbody>
+              <tr><td>Semua kode dalam 1 file</td><td>Kode dipecah per tanggung jawab</td></tr>
+              <tr><td>Susah dibaca & di-maintain</td><td>Mudah dibaca dan dipahami</td></tr>
+              <tr><td>Tidak bisa di-reuse</td><td>Mudah di-reuse di file lain</td></tr>
+              <tr><td>Sulit di-test</td><td>Mudah di-test per modul</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>CommonJS — Sistem Module Default Node.js</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">utils/matematika.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">// ── FILE: utils/matematika.js ──
+
+const tambah  = (a, b) => a + b
+const kurang  = (a, b) => a - b
+const kali    = (a, b) => a * b
+const bagi    = (a, b) => {
+  if (b === 0) throw new Error("Tidak bisa bagi dengan nol!")
+  return a / b
+}
+const pangkat = (a, b) => Math.pow(a, b)
+const modulus = (a, b) => a % b
+
+// Export — expose keluar
+module.exports = { tambah, kurang, kali, bagi, pangkat, modulus }</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">app.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">// ── FILE: app.js ──
+
+// Import dengan destructuring
+const { tambah, kurang, kali, bagi } = require('./utils/matematika')
+
+console.log(tambah(10, 5))   // 15
+console.log(kurang(10, 5))   // 5
+console.log(kali(10, 5))     // 50
+console.log(bagi(10, 5))     // 2
+
+// Error handling
+try {
+  console.log(bagi(10, 0))
+} catch (err) {
+  console.log("Error:", err.message) // Tidak bisa bagi dengan nol!
+}</code></pre>
+        </div>
+
+        <h4>Berbagai Cara Export</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">contoh-export.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">// CARA 1: Export object (paling umum)
+module.exports = { tambah, kurang }
+
+// CARA 2: Export satu fungsi/nilai
+module.exports = function(nama) {
+  return `Halo, ${nama}!`
+}
+// Import: const sapa = require('./sapa')
+
+// CARA 3: Export class
+class Kalkulator {
+  tambah(a, b) { return a + b }
+  kurang(a, b) { return a - b }
+}
+module.exports = Kalkulator
+// Import: const Kalkulator = require('./Kalkulator')
+
+// CARA 4: exports.namaFungsi (shorthand)
+exports.tambah = (a, b) => a + b
+exports.kurang = (a, b) => a - b</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>3 Jenis Module di Node.js</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">jenis-module.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">// 1. Built-in Module → sudah ada di Node.js, tidak perlu install
+const fs   = require('fs')
+const path = require('path')
+const http = require('http')
+const os   = require('os')
+
+// 2. Custom Module → buatan sendiri, pakai path relatif
+const matematika = require('./utils/matematika')  // harus pakai ./
+const config     = require('./config/database')
+
+// 3. Third-Party Module → dari NPM, perlu install dulu
+const express  = require('express')   // npm install express
+const mongoose = require('mongoose')  // npm install mongoose</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Module Caching</h3>
+        <p>Node.js meng-cache module setelah pertama kali di-<code>require()</code>. Artinya pemanggilan ke file yang sama akan mengembalikan <strong>objek yang sama persis</strong>.</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">counter.js + app.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">// ── FILE: counter.js ──
+let count = 0
+module.exports = {
+  increment: () => ++count,
+  getCount:  () => count
+}
+
+// ── FILE: app.js ──
+const counter1 = require('./counter')
+const counter2 = require('./counter') // ← objek SAMA dengan counter1!
+
+counter1.increment()
+counter1.increment()
+
+console.log(counter1.getCount()) // 2
+console.log(counter2.getCount()) // 2 juga! (bukan 0)
+// Karena counter1 === counter2 (module cache!)</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>💻 Praktik — Module Validasi</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">utils/validasi.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">// ── FILE: utils/validasi.js ──
+
+const cekEmail = (email) => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return regex.test(email)
+}
+
+const cekPassword = (password) => {
+  return {
+    valid          : password.length >= 8,
+    panjang        : password.length >= 8,
+    adaHurufBesar  : /[A-Z]/.test(password),
+    adaAngka       : /[0-9]/.test(password),
+  }
+}
+
+const cekNamaLengkap = (nama) => {
+  const parts = nama.trim().split(' ')
+  return parts.length >= 2
+}
+
+module.exports = { cekEmail, cekPassword, cekNamaLengkap }</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">test-validasi.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">const { cekEmail, cekPassword, cekNamaLengkap } = require('./utils/validasi')
+
+console.log("=== CEK EMAIL ===")
+console.log(cekEmail("budi@gmail.com"))    // true
+console.log(cekEmail("budi-tidak-valid"))  // false
+
+console.log("\n=== CEK PASSWORD ===")
+console.log(cekPassword("Ab123456"))
+// { valid: true, panjang: true, adaHurufBesar: true, adaAngka: true }
+
+console.log("\n=== CEK NAMA ===")
+console.log(cekNamaLengkap("Budi Santoso")) // true
+console.log(cekNamaLengkap("Budi"))         // false</code></pre>
+        </div>
+      </div>
+
+      <div class="box box-task">
+        <div class="box-icon">🎯</div>
+        <div class="box-body">
+          <strong>Tugas 2.2</strong>
+          <p>Buat module <code>utils/konversi.js</code> yang berisi fungsi:<br>
+          • <code>celsiusKeFahrenheit(c)</code> → <code>(c × 9/5) + 32</code><br>
+          • <code>kilogramKePound(kg)</code> → <code>kg × 2.205</code><br>
+          • <code>kmKeMil(km)</code> → <code>km × 0.621</code><br>
+          • <code>rupiahKeDolar(rp, kurs)</code> → <code>rp / kurs</code><br>
+          Export semua fungsi, lalu import dan test di file <code>app.js</code></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ STEP 2.3 ══ -->
+    <section class="section" id="step-2-3">
+      <div class="section-header">
+        <div class="section-number">3</div>
+        <div>
+          <h2>Step 2.3 — NPM (Node Package Manager)</h2>
+          <p>Mengelola dependencies dan package dalam project</p>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Apa itu NPM?</h3>
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-icon">📦</div>
+            <h4>Registry</h4>
+            <p>Tempat download package (npmjs.com memiliki &gt;2 juta package)</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🔧</div>
+            <h4>Package Manager</h4>
+            <p>Tool untuk install, update, dan uninstall dependencies</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">▶️</div>
+            <h4>Script Runner</h4>
+            <p>Menjalankan script seperti <code>npm start</code>, <code>npm run dev</code></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Inisialisasi Project & package.json</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">terminal</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-bash">BASH</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-bash"># Buat folder project
+mkdir belajar-npm
+cd belajar-npm
+
+# Init dengan wizard (tanya satu-satu)
+npm init
+
+# Init langsung dengan setting default (lebih cepat)
+npm init -y</code></pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">package.json</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-json">JSON</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-json">{
+  "name"       : "belajar-npm",
+  "version"    : "1.0.0",
+  "description": "Project belajar Node.js",
+  "main"       : "index.js",
+  "scripts": {
+    "start"    : "node index.js",
+    "dev"      : "nodemon index.js",
+    "test"     : "jest"
+  },
+  "keywords"   : ["nodejs", "belajar"],
+  "author"     : "Nama Kamu &lt;email@kamu.com&gt;",
+  "license"    : "ISC",
+  "dependencies": {
+    "express"  : "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon"  : "^3.0.1"
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Semantic Versioning (SemVer)</h3>
+        <div class="arch-diagram">Format: MAJOR . MINOR . PATCH
+Contoh:   4   .  18   .  2
+
+MAJOR → perubahan BESAR, tidak backward compatible (breaking change)
+MINOR → fitur BARU, masih backward compatible
+PATCH → bug fix kecil
+
+Simbol di package.json:
+^4.18.2  → boleh update MINOR &amp; PATCH  (4.18.3 ✅, 4.19.0 ✅, 5.0.0 ❌)
+~4.18.2  → boleh update PATCH saja     (4.18.3 ✅, 4.19.0 ❌)
+4.18.2   → harus PERSIS versi ini (exact)
+*        → versi TERBARU (sangat tidak disarankan!)</div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Perintah NPM Lengkap</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">terminal</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-bash">BASH</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-bash"># ── INSTALL ──
+npm install lodash              # install versi terbaru
+npm install lodash@4.17.21      # install versi spesifik
+npm install nodemon --save-dev  # sebagai devDependency
+npm install -g nodemon          # install global
+npm install                     # install semua dari package.json
+
+# ── UPDATE & UNINSTALL ──
+npm update lodash               # update ke versi terbaru yang compatible
+npm uninstall lodash            # hapus package
+npm uninstall -g nodemon        # hapus global package
+
+# ── INFO & AUDIT ──
+npm list                        # lihat semua package terinstall
+npm list --depth=0              # lihat top-level saja
+npm outdated                    # cek package yang sudah outdated
+npm audit                       # cek celah keamanan
+npm audit fix                   # auto-fix celah keamanan
+
+# ── RUN SCRIPT ──
+npm start                       # jalankan script "start"
+npm test                        # jalankan script "test"
+npm run dev                     # jalankan script custom "dev"
+
+# ── NPX (jalankan tanpa install) ──
+npx nodemon index.js            # jalankan nodemon tanpa install global
+npx create-react-app my-app     # buat project React</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Dependencies vs DevDependencies</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Tipe</th><th>Kapan Dipakai</th><th>Contoh Package</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="badge badge-blue">dependencies</span></td>
+                <td>Dibutuhkan saat aplikasi <strong>berjalan</strong> (production)</td>
+                <td><code>express</code>, <code>mongoose</code>, <code>bcrypt</code></td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-yellow">devDependencies</span></td>
+                <td>Hanya saat <strong>pengembangan</strong> (development)</td>
+                <td><code>nodemon</code>, <code>jest</code>, <code>eslint</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="box box-warning">
+          <div class="box-icon">⚠️</div>
+          <div class="box-body">
+            <strong>Wajib!</strong>
+            <p>Selalu buat file <code>.gitignore</code> dan masukkan <code>node_modules/</code> di dalamnya! Jangan pernah commit folder <code>node_modules</code> ke Git. Ukurannya bisa ratusan MB!</p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">.gitignore</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-bash">TEXT</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-bash">node_modules/
+.env
+dist/
+*.log
+.DS_Store</code></pre>
+        </div>
+      </div>
+
+      <div class="box box-task">
+        <div class="box-icon">🎯</div>
+        <div class="box-body">
+          <strong>Tugas 2.3</strong>
+          <p>1. Buat project NPM baru dengan <code>npm init -y</code><br>
+          2. Install package <code>chalk@4</code> dan <code>lodash</code><br>
+          3. Install <code>nodemon</code> sebagai devDependency<br>
+          4. Tambah script <code>"dev": "nodemon index.js"</code> di package.json<br>
+          5. Buat <code>index.js</code> yang menggunakan chalk untuk warna teks dan lodash untuk manipulasi array<br>
+          6. Jalankan dengan <code>npm run dev</code></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ STEP 2.4 ══ -->
+    <section class="section" id="step-2-4">
+      <div class="section-header">
+        <div class="section-number">4</div>
+        <div>
+          <h2>Step 2.4 — Built-in Core Modules</h2>
+          <p>Modul bawaan Node.js yang wajib dikuasai</p>
+        </div>
+      </div>
+
+      <p>Node.js hadir dengan banyak modul bawaan (built-in) yang siap pakai tanpa perlu install. Berikut modul-modul paling penting:</p>
+
+      <!-- 2.4.1 path -->
+      <div class="sub-section" id="step-2-4-1">
+        <h3>2.4.1 — <code>path</code> Module</h3>
+        <p>Digunakan untuk memanipulasi path file dan direktori secara aman dan lintas OS (Windows/Linux/macOS).</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">path-module.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">const path = require('path')
+
+const filePath = '/home/budi/documents/laporan/data.json'
+
+// Method-method penting
+console.log(path.basename(filePath))          // data.json
+console.log(path.dirname(filePath))           // /home/budi/documents/laporan
+console.log(path.extname(filePath))           // .json
+console.log(path.basename(filePath, '.json')) // data (tanpa ekstensi)
+
+// path.join → gabung path (otomatis sesuai OS)
+const fullPath = path.join(__dirname, 'data', 'users.json')
+// Windows: C:\project\data\users.json
+// Linux  : /project/data/users.json
+
+// path.resolve → absolute path dari cwd
+console.log(path.resolve('data', 'users.json'))
+// /home/budi/project/data/users.json
+
+// path.parse → pecah jadi object
+const parsed = path.parse(filePath)
+console.log(parsed)
+/*
+{
+  root: '/',
+  dir: '/home/budi/documents/laporan',
+  base: 'data.json',
+  ext: '.json',
+  name: 'data'
+}
+*/
+
+// path.format → kebalikan parse
+const formatted = path.format({
+  dir : '/home/budi/documents',
+  name: 'output',
+  ext : '.txt'
+})
+console.log(formatted) // /home/budi/documents/output.txt
+
+// __dirname vs __filename
+console.log(__dirname)   // path folder file ini berada
+console.log(__filename)  // path lengkap file ini</code></pre>
+        </div>
+
+        <div class="box box-info">
+          <div class="box-icon">💡</div>
+          <div class="box-body">
+            <strong>Tips Penting!</strong>
+            <p>Selalu gunakan <code>path.join()</code> untuk menggabungkan path, jangan pakai string concatenation (<code>'/folder' + '/file'</code>). Ini memastikan separator yang benar di setiap OS.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.4.2 os -->
+      <div class="sub-section" id="step-2-4-2">
+        <h3>2.4.2 — <code>os</code> Module</h3>
+        <p>Memberikan informasi tentang sistem operasi tempat Node.js berjalan.</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">os-module.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">const os = require('os')
+
+// Informasi sistem
+console.log("Platform    :", os.platform())   // win32 | linux | darwin
+console.log("OS Type     :", os.type())       // Windows_NT | Linux | Darwin
+console.log("OS Release  :", os.release())    // versi OS
+console.log("Arsitektur  :", os.arch())       // x64 | arm64
+console.log("Hostname    :", os.hostname())   // nama komputer
+console.log("Home Dir    :", os.homedir())    // C:\Users\Budi
+console.log("Temp Dir    :", os.tmpdir())     // direktori temp
+
+// Informasi Memory
+const totalRAM = (os.totalmem() / 1024 / 1024 / 1024).toFixed(2)
+const freeRAM  = (os.freemem()  / 1024 / 1024 / 1024).toFixed(2)
+const usedRAM  = (totalRAM - freeRAM).toFixed(2)
+
+console.log(`\nTotal RAM : ${totalRAM} GB`)
+console.log(`Free RAM  : ${freeRAM} GB`)
+console.log(`Used RAM  : ${usedRAM} GB`)
+
+// Informasi CPU
+const cpus = os.cpus()
+console.log(`\nJumlah Core : ${cpus.length}`)
+console.log(`Model CPU   : ${cpus[0].model}`)
+console.log(`Speed       : ${cpus[0].speed} MHz`)
+
+// Uptime sistem
+const uptime = os.uptime()
+const jam    = Math.floor(uptime / 3600)
+const menit  = Math.floor((uptime % 3600) / 60)
+console.log(`\nUptime: ${jam} jam ${menit} menit`)</code></pre>
+        </div>
+      </div>
+
+      <!-- 2.4.3 fs -->
+      <div class="sub-section" id="step-2-4-3">
+        <h3>2.4.3 — <code>fs</code> Module (File System)</h3>
+        <p>Digunakan untuk membaca, menulis, menghapus, dan memanipulasi file dan direktori.</p>
+
+        <h4>Cara 1: Synchronous (Blocking)</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">fs-sync.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">const fs = require('fs')
+
+// Tulis file (sync — blocking)
+fs.writeFileSync('catatan.txt', 'Halo dari writeFileSync!')
+console.log('File dibuat!')
+
+// Baca file (sync)
+const isi = fs.readFileSync('catatan.txt', 'utf-8')
+console.log('Isi file:', isi)
+
+// Append (tambah ke akhir)
+fs.appendFileSync('catatan.txt', '\nBaris kedua!')
+
+// Cek apakah file/folder exist
+console.log('File exist:', fs.existsSync('catatan.txt')) // true
+
+// Info file (stat)
+const stat = fs.statSync('catatan.txt')
+console.log('Ukuran    :', stat.size, 'bytes')
+console.log('Dibuat    :', stat.birthtime)
+console.log('Is file?  :', stat.isFile())
+console.log('Is folder?:', stat.isDirectory())
+
+// Rename / Pindah
+fs.renameSync('catatan.txt', 'renamed.txt')
+
+// Hapus file
+fs.unlinkSync('renamed.txt')
+console.log('File dihapus!')</code></pre>
+        </div>
+
+        <h4>Cara 2: Asynchronous dengan Promise (Recommended)</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">fs-async.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">const fs = require('fs').promises
+// atau: const fs = require('fs/promises')
+
+const operasiFile = async () => {
+  try {
+    // Buat folder jika belum ada
+    await fs.mkdir('data-output', { recursive: true })
+
+    // Tulis file JSON
+    const dataUsers = [
+      { id: 1, nama: 'Budi', email: 'budi@email.com' },
+      { id: 2, nama: 'Sari', email: 'sari@email.com' },
+    ]
+    await fs.writeFile(
+      'data-output/users.json',
+      JSON.stringify(dataUsers, null, 2), // null, 2 → pretty print
+      'utf-8'
+    )
+    console.log('✅ File users.json dibuat')
+
+    // Baca file JSON
+    const raw  = await fs.readFile('data-output/users.json', 'utf-8')
+    const data = JSON.parse(raw)
+    console.log('📖 Data dibaca:', data)
+
+    // Append ke file log
+    await fs.appendFile(
+      'data-output/log.txt',
+      `[${new Date().toISOString()}] Program dijalankan\n`
+    )
+
+    // List isi folder
+    const files = await fs.readdir('data-output')
+    console.log('📁 Isi folder:', files)
+
+    // Copy file
+    await fs.copyFile(
+      'data-output/users.json',
+      'data-output/users-backup.json'
+    )
+    console.log('✅ File di-backup!')
+
+  } catch (err) {
+    console.error('❌ Error:', err.message)
+  }
+}
+
+operasiFile()</code></pre>
+        </div>
+
+        <div class="box box-warning">
+          <div class="box-icon">⚠️</div>
+          <div class="box-body">
+            <strong>Kapan Pakai Sync vs Async?</strong>
+            <p>Gunakan <strong>Sync</strong> hanya untuk inisialisasi awal (misal: baca config saat startup). Untuk operasi dalam request/response, selalu gunakan <strong>Async</strong> agar server tidak blocking!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.4.4 events -->
+      <div class="sub-section" id="step-2-4-4">
+        <h3>2.4.4 — <code>events</code> Module</h3>
+        <p>Event Emitter adalah pola desain inti di Node.js — hampir semua objek built-in menggunakannya (fs, http, streams, dll).</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">events-module.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">const EventEmitter = require('events')
+const emitter = new EventEmitter()
+
+// on() → daftar listener (bisa dipanggil berkali-kali)
+emitter.on('halo', (nama) => {
+  console.log(`Halo, ${nama}!`)
+})
+
+// once() → listener hanya jalan SEKALI
+emitter.once('login', (user) => {
+  console.log(`${user} berhasil login (hanya sekali)`)
+})
+
+// emit() → trigger event
+emitter.emit('halo', 'Budi')   // Halo, Budi!
+emitter.emit('halo', 'Sari')   // Halo, Sari!
+emitter.emit('login', 'Admin') // Admin berhasil login
+emitter.emit('login', 'Admin') // tidak jalan (once)
+
+// off() → hapus listener
+const handler = (msg) => console.log('Pesan:', msg)
+emitter.on('pesan', handler)
+emitter.emit('pesan', 'pertama')   // jalan
+emitter.off('pesan', handler)
+emitter.emit('pesan', 'kedua')     // tidak jalan
+
+// listenerCount
+console.log('Listeners:', emitter.listenerCount('halo')) // 1</code></pre>
+        </div>
+
+        <h4>Class Mewarisi EventEmitter</h4>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">bank-account.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">const EventEmitter = require('events')
+
+class BankAccount extends EventEmitter {
+  constructor(pemilik, saldo = 0) {
+    super()
+    this.pemilik = pemilik
+    this.saldo   = saldo
+    this.riwayat = []
+  }
+
+  setor(jumlah) {
+    if (jumlah <= 0) {
+      this.emit('error-transaksi', 'Jumlah setor harus lebih dari 0')
+      return
+    }
+    this.saldo += jumlah
+    const trx = { tipe: 'setor', jumlah, saldo: this.saldo }
+    this.riwayat.push(trx)
+    this.emit('setor', trx)
+  }
+
+  tarik(jumlah) {
+    if (jumlah > this.saldo) {
+      this.emit('error-transaksi', 'Saldo tidak mencukupi!')
+      return
+    }
+    this.saldo -= jumlah
+    const trx = { tipe: 'tarik', jumlah, saldo: this.saldo }
+    this.riwayat.push(trx)
+    this.emit('tarik', trx)
+  }
+}
+
+// Penggunaan
+const akun = new BankAccount('Budi', 500000)
+
+akun.on('setor', (t) =>
+  console.log(`✅ Setor Rp${t.jumlah.toLocaleString()} | Saldo: Rp${t.saldo.toLocaleString()}`)
+)
+akun.on('tarik', (t) =>
+  console.log(`💸 Tarik Rp${t.jumlah.toLocaleString()} | Saldo: Rp${t.saldo.toLocaleString()}`)
+)
+akun.on('error-transaksi', (msg) =>
+  console.log(`❌ Error: ${msg}`)
+)
+
+akun.setor(200000)  // ✅ Setor Rp200.000 | Saldo: Rp700.000
+akun.tarik(150000)  // 💸 Tarik Rp150.000 | Saldo: Rp550.000
+akun.tarik(1000000) // ❌ Error: Saldo tidak mencukupi!</code></pre>
+        </div>
+      </div>
+
+      <!-- 2.4.5 http -->
+      <div class="sub-section" id="step-2-4-5">
+        <h3>2.4.5 — <code>http</code> Module</h3>
+        <p>Membuat HTTP server tanpa framework. Ini adalah dasar dari semua framework seperti Express.js.</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">server.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">const http = require('http')
+
+// Simulasi database (array)
+let produk = [
+  { id: 1, nama: 'Laptop',   harga: 8000000, stok: 10 },
+  { id: 2, nama: 'Mouse',    harga: 150000,  stok: 50 },
+  { id: 3, nama: 'Keyboard', harga: 350000,  stok: 30 },
+]
+
+// Helper: baca body request
+const parseBody = (req) => new Promise((resolve, reject) => {
+  let body = ''
+  req.on('data',  chunk => body += chunk.toString())
+  req.on('end',   ()    => {
+    try { resolve(JSON.parse(body || '{}')) }
+    catch (e) { resolve({}) }
+  })
+  req.on('error', reject)
+})
+
+// Helper: kirim JSON response
+const sendJSON = (res, statusCode, data) => {
+  res.writeHead(statusCode, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify(data, null, 2))
+}
+
+const server = http.createServer(async (req, res) => {
+  const { url, method } = req
+  const pathname = url.split('?')[0]
+
+  console.log(`[${method}] ${url}`)
+
+  // GET /produk → semua produk
+  if (pathname === '/produk' && method === 'GET') {
+    return sendJSON(res, 200, { total: produk.length, data: produk })
+  }
+
+  // GET /produk/:id
+  const matchGet = pathname.match(/^\/produk\/(\d+)$/)
+  if (matchGet && method === 'GET') {
+    const item = produk.find(p => p.id === parseInt(matchGet[1]))
+    if (!item) return sendJSON(res, 404, { pesan: 'Produk tidak ditemukan' })
+    return sendJSON(res, 200, { data: item })
+  }
+
+  // POST /produk
+  if (pathname === '/produk' && method === 'POST') {
+    const body = await parseBody(req)
+    if (!body.nama || !body.harga)
+      return sendJSON(res, 400, { pesan: 'nama dan harga wajib diisi' })
+    const baru = { id: produk.length + 1, ...body, stok: body.stok || 0 }
+    produk.push(baru)
+    return sendJSON(res, 201, { pesan: 'Produk ditambah', data: baru })
+  }
+
+  // DELETE /produk/:id
+  const matchDel = pathname.match(/^\/produk\/(\d+)$/)
+  if (matchDel && method === 'DELETE') {
+    const id     = parseInt(matchDel[1])
+    const before = produk.length
+    produk       = produk.filter(p => p.id !== id)
+    if (produk.length === before)
+      return sendJSON(res, 404, { pesan: 'Produk tidak ditemukan' })
+    return sendJSON(res, 200, { pesan: 'Produk dihapus' })
+  }
+
+  // 404
+  sendJSON(res, 404, { pesan: `Route ${method} ${url} tidak ditemukan` })
+})
+
+server.listen(3000, () => {
+  console.log('🚀 Server jalan di http://localhost:3000')
+  console.log('Endpoint: GET/POST /produk | GET/DELETE /produk/:id')
+})</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ STEP 2.5 ══ -->
+    <section class="section" id="step-2-5">
+      <div class="section-header">
+        <div class="section-number">5</div>
+        <div>
+          <h2>Step 2.5 — process Object</h2>
+          <p>Informasi dan kontrol atas proses Node.js yang sedang berjalan</p>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Informasi Dasar process</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">process-info.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">// Info dasar process
+console.log(process.version)        // v20.11.0
+console.log(process.platform)       // win32 | linux | darwin
+console.log(process.arch)           // x64 | arm64
+console.log(process.pid)            // Process ID (misal: 12345)
+console.log(process.cwd())          // current working directory
+console.log(process.execPath)       // path executable node
+console.log(process.uptime())       // berapa detik process berjalan
+console.log(process.memoryUsage())  // penggunaan memory (bytes)
+
+// Environment Variables
+console.log(process.env.NODE_ENV)   // production | development | test
+console.log(process.env.PATH)       // PATH environment variable
+
+// Command Line Arguments
+// Jalankan: node app.js Budi 25
+console.log(process.argv)
+// ['path/node', 'path/app.js', 'Budi', '25']
+
+const args = process.argv.slice(2)   // ['Budi', '25']
+console.log(`Nama: ${args[0]}, Umur: ${args[1]}`)</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>CLI Kalkulator dengan process.argv</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">kalkulator-cli.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">// Jalankan: node kalkulator-cli.js 10 + 5
+const args = process.argv.slice(2)  // ['10', '+', '5']
+
+if (args.length !== 3) {
+  console.log('Usage: node kalkulator-cli.js &lt;angka&gt; &lt;operator&gt; &lt;angka&gt;')
+  console.log('Contoh: node kalkulator-cli.js 10 + 5')
+  process.exit(1)
+}
+
+const [a, op, b] = args
+const num1 = parseFloat(a)
+const num2 = parseFloat(b)
+
+if (isNaN(num1) || isNaN(num2)) {
+  console.log('❌ Error: Input harus berupa angka!')
+  process.exit(1)
+}
+
+let hasil
+switch (op) {
+  case '+':  hasil = num1 + num2; break
+  case '-':  hasil = num1 - num2; break
+  case 'x':
+  case '*':  hasil = num1 * num2; break
+  case '/':
+    if (num2 === 0) { console.log('❌ Error: Tidak bisa bagi 0!'); process.exit(1) }
+    hasil = num1 / num2; break
+  default:
+    console.log(`❌ Operator "${op}" tidak dikenal! Gunakan: + - x /`)
+    process.exit(1)
+}
+
+console.log(`✅ ${a} ${op} ${b} = ${hasil}`)
+
+// Exit events
+process.on('exit', (code) => {
+  console.log(`Program selesai dengan exit code: ${code}`)
+})
+
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err.message)
+  process.exit(1)
+})</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>💻 Praktik — CLI Kalkulator BMI Interaktif</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">bmi-calculator.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">const readline = require('readline')
+
+const rl = readline.createInterface({
+  input : process.stdin,
+  output: process.stdout
+})
+
+const tanya = (pertanyaan) =>
+  new Promise(resolve => rl.question(pertanyaan, resolve))
+
+const hitungBMI = (berat, tinggi) => {
+  const tinggiM = tinggi / 100
+  const bmi     = berat / (tinggiM * tinggiM)
+  let kategori
+
+  if      (bmi < 18.5) kategori = '⚠️  Berat badan kurang'
+  else if (bmi < 25.0) kategori = '✅ Normal'
+  else if (bmi < 30.0) kategori = '⚠️  Kelebihan berat badan'
+  else                 kategori = '❌ Obesitas'
+
+  return { bmi: bmi.toFixed(2), kategori }
+}
+
+const main = async () => {
+  console.log('='.repeat(40))
+  console.log('       🏥 KALKULATOR BMI')
+  console.log('='.repeat(40))
+
+  const nama   = await tanya('Nama kamu    : ')
+  const berat  = parseFloat(await tanya('Berat (kg)   : '))
+  const tinggi = parseFloat(await tanya('Tinggi (cm)  : '))
+
+  if (isNaN(berat) || isNaN(tinggi)) {
+    console.log('❌ Input tidak valid!')
+    rl.close()
+    return
+  }
+
+  const { bmi, kategori } = hitungBMI(berat, tinggi)
+
+  console.log('\n' + '='.repeat(40))
+  console.log(`📊 Hasil BMI untuk ${nama}:`)
+  console.log(`   Berat  : ${berat} kg`)
+  console.log(`   Tinggi : ${tinggi} cm`)
+  console.log(`   BMI    : ${bmi}`)
+  console.log(`   Status : ${kategori}`)
+  console.log('='.repeat(40))
+
+  rl.close()
+}
+
+main()</code></pre>
+        </div>
+      </div>
+
+      <div class="box box-task">
+        <div class="box-icon">🎯</div>
+        <div class="box-body">
+          <strong>Tugas 2.5</strong>
+          <p>Buat CLI tool <code>konversi-suhu.js</code> yang interaktif:<br>
+          1. Tanya user: angka suhu dan satuan asal (C/F/K)<br>
+          2. Tanya user: konversi ke satuan apa (C/F/K)<br>
+          3. Tampilkan hasil konversi dengan rumus yang digunakan<br>
+          4. Tanya apakah mau konversi lagi (y/n)<br>
+          5. Jika y → ulangi dari awal, jika n → tampilkan pesan pamit dan keluar</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ STEP 2.6 ══ -->
+    <section class="section" id="step-2-6">
+      <div class="section-header">
+        <div class="section-number">6</div>
+        <div>
+          <h2>Step 2.6 — Streams & Buffer</h2>
+          <p>Membaca dan menulis data secara efisien dengan streaming</p>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Apa itu Buffer?</h3>
+        <p>Buffer adalah area penyimpanan data sementara di memory dalam bentuk <strong>binary (raw bytes)</strong>. Digunakan saat bekerja dengan data biner seperti gambar, audio, atau data jaringan.</p>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">buffer-demo.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">// Buat buffer dari string
+const buf1 = Buffer.from('Halo Node.js')
+console.log(buf1)            // &lt;Buffer 48 61 6c 6f 20 4e 6f 64 65 2e 6a 73&gt;
+console.log(buf1.toString()) // Halo Node.js
+console.log(buf1.length)     // 12 (bytes)
+
+// Buffer dari array (ASCII codes)
+const buf2 = Buffer.from([72, 97, 108, 111])
+console.log(buf2.toString()) // Halo
+
+// Buffer kosong dengan ukuran tetap
+const buf3 = Buffer.alloc(10) // 10 bytes, diisi 0
+console.log(buf3)             // &lt;Buffer 00 00 00 00 00 00 00 00 00 00&gt;
+
+// Konversi ke berbagai encoding
+const buf4 = Buffer.from('Hello World')
+console.log(buf4.toString('base64')) // SGVsbG8gV29ybGQ=
+console.log(buf4.toString('hex'))    // 48656c6c6f20576f726c64</code></pre>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Apa itu Stream?</h3>
+        <div class="arch-diagram">TANPA STREAM:          DENGAN STREAM:
+─────────────────      ─────────────────────────
+File 1GB               File 1GB dibaca chunk per chunk
+     ↓                      ↓          ↓          ↓
+Load ke memory          Chunk 1    Chunk 2    Chunk 3 ...
+     ↓                  proses     proses     proses
+Proses semua            langsung!  langsung!  langsung!
+😱 Butuh RAM 1GB+      😎 RAM minimal, performa optimal</div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">stream-demo.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">const fs = require('fs')
+
+// ── Readable Stream ──
+const readStream = fs.createReadStream('file-besar.txt', {
+  encoding     : 'utf-8',
+  highWaterMark: 64   // baca 64 bytes per chunk
+})
+
+readStream.on('data', (chunk) => {
+  console.log('Chunk diterima:', chunk.length, 'bytes')
+})
+
+readStream.on('end', () => {
+  console.log('✅ Selesai membaca file')
+})
+
+readStream.on('error', (err) => {
+  console.log('❌ Error:', err.message)
+})
+
+
+// ── Writable Stream ──
+const writeStream = fs.createWriteStream('output.txt')
+
+writeStream.write('Baris pertama\n')
+writeStream.write('Baris kedua\n')
+writeStream.write('Baris ketiga\n')
+writeStream.end() // tutup stream
+
+writeStream.on('finish', () => {
+  console.log('✅ Selesai menulis file')
+})
+
+
+// ── Pipe (hubungkan readable ke writable) ──
+// Cara paling efisien untuk copy file besar!
+const sumber  = fs.createReadStream('input.txt')
+const tujuan  = fs.createWriteStream('copy-output.txt')
+
+sumber.pipe(tujuan)
+
+tujuan.on('finish', () => {
+  console.log('✅ File berhasil di-copy via stream!')
+})</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ STEP 2.7 ══ -->
+    <section class="section" id="step-2-7">
+      <div class="section-header">
+        <div class="section-number">7</div>
+        <div>
+          <h2>Step 2.7 — Error Handling</h2>
+          <p>Menangani error dengan baik dan terstruktur</p>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Jenis-jenis Error di Node.js</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Jenis Error</th><th>Penyebab</th><th>Contoh</th></tr></thead>
+            <tbody>
+              <tr><td><code>TypeError</code></td><td>Tipe data salah</td><td><code>null.property</code></td></tr>
+              <tr><td><code>ReferenceError</code></td><td>Variable tidak ada</td><td><code>tidakAda + 1</code></td></tr>
+              <tr><td><code>SyntaxError</code></td><td>Kode tidak valid</td><td><code>eval("{{")</code></td></tr>
+              <tr><td><code>RangeError</code></td><td>Nilai di luar batas</td><td><code>new Array(-1)</code></td></tr>
+              <tr><td><code>URIError</code></td><td>URI tidak valid</td><td><code>decodeURIComponent("%")</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <h3>Custom Error Classes</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="file-name">errors/AppError.js</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="lang-badge lang-js">JS</span>
+              <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            </div>
+          </div>
+          <pre><code class="language-javascript">// ── Base Error ──
+class AppError extends Error {
+  constructor(message, code, statusCode = 500) {
+    super(message)
+    this.name       = this.constructor.name
+    this.code       = code
+    this.statusCode = statusCode
+    Error.captureStackTrace(this, this.constructor)
+  }
+}
+
+// ── Turunan Spesifik ──
+class ValidationError extends AppError {
+  constructor(message, field) {
+    super(message, 'VALIDATION_ERROR', 400)
+    this.field = field
+  }
+}
+
+class NotFoundError extends AppError {
+  constructor(resource, id) {
+    super(`${resource} dengan ID "${id}" tidak ditemukan`, 'NOT_FOUND', 404)
+    this.resource = resource
+    this.id       = id
+  }
+}
+
+class AuthError extends AppError {
+  constructor(msg = 'Tidak terautentikasi') {
+    super(msg, 'UNAUTHORIZED', 401)
+  }
+}
+
+// ── Error Handler Terpusat ──
+const handleError = (err) => {
+  if (err instanceof ValidationError) {
+    console.log(`⚠️  Validasi gagal di "${err.field}": ${err.message}`)
+  } else if (err instanceof NotFoundError) {
+    console.log(`🔍 ${err.message}`)
+  } else if (err instanceof AuthError) {
+    console.log(`🔐 Auth: ${err.message}`)
+  } else if (err instanceof AppError) {
+    console.log(`🚨 App Error [${err.code}]: ${err.message}`)
+  } else {
+    console.log(`💀 Unknown: ${err.message}`)
+    console.log(err.stack)
+  }
+}
+
+// ── Penggunaan ──
+const registrasi = async (data) => {
+  if (!data.nama)
+    throw new ValidationError('Nama wajib diisi', 'nama')
+  if (!data.email?.includes('@'))
+    throw new ValidationError('Format email tidak valid', 'email')
+  if (data.password.length < 8)
+    throw new ValidationError('Password minimal 8 karakter', 'password')
+
+  return { id: Date.now(), ...data }
+}
+
+;(async () => {
+  const tesKasus = [
+    { nama: '',    email: 'test@email.com', password: 'pass123456' },
+    { nama: 'Budi', email: 'bukan-email',  password: 'pass123456' },
+    { nama: 'Budi', email: 'budi@test.com', password: 'pass123456' },
+  ]
+
+  for (const data of tesKasus) {
+    try {
+      const user = await registrasi(data)
+      console.log(`✅ Registrasi berhasil: ${user.nama}`)
+    } catch (err) {
+      handleError(err)
+    }
+  }
+})()</code></pre>
+        </div>
+
+        <div class="box box-danger">
+          <div class="box-icon">🚫</div>
+          <div class="box-body">
+            <strong>Jangan Lakukan Ini!</strong>
+            <p>Jangan tangkap error lalu <strong>diam saja</strong> (empty catch block)! Selalu log error atau re-throw agar mudah di-debug. <code>catch(err) { }</code> adalah kebiasaan buruk yang membuat bug sulit ditemukan.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ MINI PROJECT ══ -->
+    <section class="section" id="mini-project">
+      <div class="section-header">
+        <div class="section-number">🏗️</div>
+        <div>
+          <h2>Mini Project Fase 2</h2>
+          <p>Menggabungkan semua konsep yang sudah dipelajari</p>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <h3>🗒️ Mini Project 1: Notes App CLI</h3>
+        <p>Aplikasi catatan sederhana yang dijalankan dari terminal. Data disimpan ke file JSON secara permanen.</p>
+        <p><strong>Konsep yang digunakan:</strong> <code>fs</code>, <code>path</code>, <code>process.argv</code>, JSON manipulation, error handling</p>
+        <div class="project-tags">
+          <span class="badge badge-blue">fs module</span>
+          <span class="badge badge-green">path module</span>
+          <span class="badge badge-yellow">process.argv</span>
+          <span class="badge badge-purple">JSON</span>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">notes-app/index.js</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="lang-badge lang-js">JS</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+        </div>
+        <pre><code class="language-javascript">const fs   = require('fs')
+const path = require('path')
+
+const FILE_PATH = path.join(__dirname, 'catatan.json')
+
+const loadCatatan = () => {
+  if (!fs.existsSync(FILE_PATH)) return []
+  return JSON.parse(fs.readFileSync(FILE_PATH, 'utf-8'))
+}
+
+const saveCatatan = (catatan) => {
+  fs.writeFileSync(FILE_PATH, JSON.stringify(catatan, null, 2))
+}
+
+const tambahCatatan = (judul, isi) => {
+  const catatan = loadCatatan()
+  const baru = {
+    id    : Date.now(),
+    judul,
+    isi,
+    dibuat: new Date().toLocaleString('id-ID'),
+    diubah: new Date().toLocaleString('id-ID')
+  }
+  catatan.push(baru)
+  saveCatatan(catatan)
+  console.log(`✅ Catatan "${judul}" berhasil ditambah!`)
+}
+
+const lihatCatatan = () => {
+  const catatan = loadCatatan()
+  if (catatan.length === 0) return console.log('📭 Belum ada catatan')
+  console.log(`\n📋 Total: ${catatan.length} catatan\n`)
+  catatan.forEach((c, i) => {
+    console.log(`${i + 1}. [ID: ${c.id}] ${c.judul}`)
+    console.log(`   📝 ${c.isi}`)
+    console.log(`   🕐 ${c.dibuat}\n`)
+  })
+}
+
+const cariCatatan = (keyword) => {
+  const catatan = loadCatatan()
+  const hasil   = catatan.filter(c =>
+    c.judul.toLowerCase().includes(keyword.toLowerCase()) ||
+    c.isi.toLowerCase().includes(keyword.toLowerCase())
+  )
+  if (hasil.length === 0) return console.log(`🔍 Tidak ditemukan: "${keyword}"`)
+  console.log(`\n🔍 Ditemukan ${hasil.length} catatan:`)
+  hasil.forEach(c => console.log(`- [${c.id}] ${c.judul}: ${c.isi}`))
+}
+
+const hapusCatatan = (id) => {
+  let catatan  = loadCatatan()
+  const before = catatan.length
+  catatan      = catatan.filter(c => c.id !== parseInt(id))
+  if (catatan.length === before) return console.log('❌ ID tidak ditemukan')
+  saveCatatan(catatan)
+  console.log(`🗑️  Catatan ID ${id} berhasil dihapus`)
+}
+
+const [,, perintah, ...args] = process.argv
+
+switch (perintah) {
+  case 'tambah': tambahCatatan(args[0], args[1]); break
+  case 'lihat':  lihatCatatan(); break
+  case 'cari':   cariCatatan(args[0]); break
+  case 'hapus':  hapusCatatan(args[0]); break
+  default:
+    console.log(`
+📌 Cara Pakai:
+  node index.js tambah "Judul" "Isi catatan"
+  node index.js lihat
+  node index.js cari "keyword"
+  node index.js hapus &lt;id&gt;
+    `)
+}</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">terminal — cara penggunaan</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="lang-badge lang-bash">BASH</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+        </div>
+        <pre><code class="language-bash">node index.js tambah "Belajar Node.js" "Hari ini belajar fs module"
+node index.js tambah "Meeting" "Meeting jam 2 siang"
+node index.js lihat
+node index.js cari "belajar"
+node index.js hapus 1234567890</code></pre>
+      </div>
+
+      <div class="project-card" style="margin-top:24px">
+        <h3>📊 Mini Project 2: Student Grade Manager</h3>
+        <p>Manajemen nilai siswa dengan file JSON, EventEmitter untuk notifikasi, dan custom error handling.</p>
+        <p><strong>Konsep yang digunakan:</strong> <code>fs</code>, <code>path</code>, <code>events</code>, <code>process</code>, Custom Error Class, EventEmitter</p>
+        <div class="project-tags">
+          <span class="badge badge-blue">fs module</span>
+          <span class="badge badge-green">EventEmitter</span>
+          <span class="badge badge-yellow">Custom Error</span>
+          <span class="badge badge-purple">process.argv</span>
+          <span class="badge badge-red">OOP</span>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="file-name">grade-manager/index.js</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span class="lang-badge lang-js">JS</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+        </div>
+        <pre><code class="language-javascript">const fs           = require('fs')
+const path         = require('path')
+const EventEmitter = require('events')
+
+// ── Custom Error ──
+class SiswaError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'SiswaError'
+  }
+}
+
+// ── Events ──
+class GradeEvents extends EventEmitter {}
+const events = new GradeEvents()
+
+events.on('siswa:tambah', (s) => console.log(`✅ Siswa "${s.nama}" ditambah`))
+events.on('nilai:tambah', (s) => console.log(`📝 Nilai "${s.nama}" disimpan`))
+events.on('siswa:hapus',  (n) => console.log(`🗑️  Siswa "${n}" dihapus`))
+
+// ── File Manager ──
+const FILE = path.join(__dirname, 'siswa.json')
+const load = () => !fs.existsSync(FILE) ? [] : JSON.parse(fs.readFileSync(FILE, 'utf-8'))
+const save = (data) => fs.writeFileSync(FILE, JSON.stringify(data, null, 2))
+
+// ── Logic ──
+const hitungRata = (nilai) => {
+  if (!nilai.length) return 0
+  return nilai.reduce((s, n) => s + n.nilai, 0) / nilai.length
+}
+
+const getGrade = (r) => r >= 90 ? 'A' : r >= 80 ? 'B' : r >= 70 ? 'C' : r >= 60 ? 'D' : 'E'
+
+const tambahSiswa = (nama, kelas) => {
+  const siswa = load()
+  if (siswa.find(s => s.nama.toLowerCase() === nama.toLowerCase()))
+    throw new SiswaError(`Siswa "${nama}" sudah ada!`)
+  const baru = { id: Date.now(), nama, kelas, nilai: [] }
+  siswa.push(baru)
+  save(siswa)
+  events.emit('siswa:tambah', baru)
+}
+
+const tambahNilai = (nama, mapel, nilai) => {
+  if (nilai < 0 || nilai > 100) throw new SiswaError('Nilai harus 0–100')
+  const siswa = load()
+  const idx   = siswa.findIndex(s => s.nama.toLowerCase() === nama.toLowerCase())
+  if (idx === -1) throw new SiswaError(`Siswa "${nama}" tidak ditemukan`)
+  siswa[idx].nilai.push({ mapel, nilai, tanggal: new Date().toLocaleDateString('id-ID') })
+  save(siswa)
+  events.emit('nilai:tambah', siswa[idx])
+}
+
+const lihatRangking = () => {
+  const siswa = load()
+  const ranked = siswa
+    .map(s => ({ ...s, rata: parseFloat(hitungRata(s.nilai).toFixed(2)) }))
+    .sort((a, b) => b.rata - a.rata)
+  console.log('\n🏆 RANGKING SISWA:')
+  ranked.forEach((s, i) => {
+    const medal = ['🥇','🥈','🥉'][i] || `${i+1}.`
+    console.log(`${medal} ${s.nama} (${s.kelas}) — Rata: ${s.rata} | Grade: ${getGrade(s.rata)}`)
+  })
+}
+
+// ── CLI ──
+const [,, cmd, ...args] = process.argv
+try {
+  switch (cmd) {
+    case 'tambah-siswa': tambahSiswa(args[0], args[1]); break
+    case 'tambah-nilai': tambahNilai(args[0], args[1], parseFloat(args[2])); break
+    case 'rangking':     lihatRangking(); break
+    default:
+      console.log('Perintah: tambah-siswa | tambah-nilai | rangking')
+  }
+} catch (err) {
+  console.log(`⚠️  ${err.message}`)
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- ══ EVALUASI ══ -->
+    <section class="section" id="evaluasi">
+      <div class="quiz-section">
+        <h2>📝 Evaluasi & Quiz Fase 2</h2>
+
+        <h3 style="color:var(--accent-cyan);margin:20px 0 14px;font-size:16px">A. Pilihan Ganda</h3>
+
+        <div class="quiz-item">
+          <span class="q-num">No. 1</span>
+          <p>Node.js menggunakan model I/O yang disebut...</p>
+          <p style="color:var(--text-dim);font-size:13px;margin-top:6px">a) Blocking I/O &nbsp; b) <strong>Non-Blocking I/O ✓</strong> &nbsp; c) Synchronous I/O &nbsp; d) Multi-Thread I/O</p>
+        </div>
+
+        <div class="quiz-item">
+          <span class="q-num">No. 2</span>
+          <p>Apa perbedaan utama antara <code>module.exports</code> dan <code>exports</code>?</p>
+          <p style="color:var(--text-dim);font-size:13px;margin-top:6px">a) Tidak ada bedanya &nbsp; b) <strong><code>exports</code> adalah shortcut ke <code>module.exports</code>, tapi jika di-reassign, <code>exports</code> tidak lagi mengacu ke objek yang sama ✓</strong> &nbsp; c) <code>exports</code> lebih cepat &nbsp; d) <code>module.exports</code> untuk ES Module</p>
+        </div>
+
+        <div class="quiz-item">
+          <span class="q-num">No. 3</span>
+          <p>Fungsi <code>package-lock.json</code> adalah...</p>
+          <p style="color:var(--text-dim);font-size:13px;margin-top:6px">a) Mengunci file agar tidak bisa diedit &nbsp; b) Daftar semua script yang bisa dijalankan &nbsp; c) <strong>Menjamin semua developer install versi dependencies yang persis sama ✓</strong> &nbsp; d) File konfigurasi NPM global</p>
+        </div>
+
+        <div class="quiz-item">
+          <span class="q-num">No. 4</span>
+          <p>Kapan sebaiknya menggunakan Stream dibanding <code>fs.readFile()</code>?</p>
+          <p style="color:var(--text-dim);font-size:13px;margin-top:6px">a) Saat file berukuran kecil (&lt;1KB) &nbsp; b) <strong>Saat file berukuran besar untuk menghemat memory ✓</strong> &nbsp; c) Stream selalu lebih lambat &nbsp; d) Keduanya sama saja</p>
+        </div>
+
+        <div class="quiz-item">
+          <span class="q-num">No. 5</span>
+          <p>Apa yang terjadi jika <code>require()</code> dipanggil dua kali ke file yang sama?</p>
+          <p style="color:var(--text-dim);font-size:13px;margin-top:6px">a) Error duplikasi &nbsp; b) File dijalankan dua kali &nbsp; c) <strong>Module di-cache, objek yang sama dikembalikan ✓</strong> &nbsp; d) Versi baru dimuat</p>
+        </div>
+
+        <div class="quiz-item">
+          <span class="q-num">No. 6</span>
+          <p>Perbedaan <code>dependencies</code> dan <code>devDependencies</code> di package.json adalah...</p>
+          <p style="color:var(--text-dim);font-size:13px;margin-top:6px">a) Tidak ada perbedaan &nbsp; b) <strong><code>dependencies</code> dibutuhkan saat production, <code>devDependencies</code> hanya saat development ✓</strong> &nbsp; c) <code>devDependencies</code> lebih baru &nbsp; d) Hanya penamaan berbeda</p>
+        </div>
+
+        <div class="quiz-item">
+          <span class="q-num">No. 7</span>
+          <p>Method <code>emitter.once('event', handler)</code> berarti...</p>
+          <p style="color:var(--text-dim);font-size:13px;margin-top:6px">a) Handler dipanggil sekali per detik &nbsp; b) <strong>Handler hanya dipanggil satu kali saja, lalu otomatis dihapus ✓</strong> &nbsp; c) Event hanya bisa di-emit sekali &nbsp; d) Sama dengan*

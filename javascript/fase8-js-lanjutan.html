@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fase 8 — JavaScript Lanjutan</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+
+    /* ===== COVER ===== */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1a3f 50%, #0f172a 100%);
+      padding: 40px;
+      page-break-after: always;
+    }
+
+    .cover .logo {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      border-radius: 20px;
+      display: flex; align-items: center;
+      justify-content: center;
+      font-size: 40px; margin-bottom: 32px;
+      box-shadow: 0 8px 32px rgba(139,92,246,0.4);
+    }
+
+    .cover h1 {
+      font-size: 44px; font-weight: 800;
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .cover h2 {
+      font-size: 22px; color: #94a3b8;
+      font-weight: 400; margin-bottom: 40px;
+    }
+
+    .cover .badge-list {
+      display: flex; gap: 12px;
+      flex-wrap: wrap; justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .cover .badge {
+      padding: 8px 20px; border-radius: 20px;
+      font-size: 14px; font-weight: 600;
+      background: rgba(139,92,246,0.15);
+      border: 1px solid rgba(139,92,246,0.3);
+      color: #c4b5fd;
+    }
+
+    .cover .info-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; padding: 24px 40px;
+      display: flex; gap: 40px;
+    }
+
+    .cover .info-box div { text-align: center; }
+    .cover .info-box span {
+      display: block; font-size: 28px;
+      font-weight: 700; color: #8b5cf6;
+    }
+    .cover .info-box p {
+      font-size: 13px; color: #94a3b8; margin-top: 4px;
+    }
+
+    /* ===== SECTION ===== */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      page-break-before: always;
+    }
+
+    .section-header {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 36px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(139,92,246,0.3);
+    }
+
+    .section-header .icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, #8b5cf6, #ec4899);
+      border-radius: 12px;
+      display: flex; align-items: center;
+      justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 26px; font-weight: 700; color: #f1f5f9;
+    }
+
+    .section-header p {
+      font-size: 14px; color: #94a3b8; margin-top: 2px;
+    }
+
+    /* ===== STEP TITLE ===== */
+    .step-title {
+      font-size: 20px; font-weight: 700;
+      color: #f1f5f9; margin: 36px 0 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .step-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px; height: 22px;
+      background: linear-gradient(180deg, #8b5cf6, #ec4899);
+      border-radius: 2px;
+    }
+
+    /* ===== CONCEPT BOX ===== */
+    .concept-box {
+      background: rgba(139,92,246,0.07);
+      border: 1px solid rgba(139,92,246,0.25);
+      border-left: 4px solid #8b5cf6;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+
+    .concept-box h3 {
+      font-size: 15px; color: #c4b5fd;
+      margin-bottom: 10px; font-weight: 600;
+    }
+
+    .concept-box p,
+    .concept-box li {
+      font-size: 14px; color: #cbd5e1; line-height: 1.9;
+    }
+
+    .concept-box ul { padding-left: 20px; }
+
+    .concept-box code {
+      background: rgba(139,92,246,0.15);
+      color: #c4b5fd;
+      padding: 1px 6px; border-radius: 4px;
+      font-size: 13px;
+    }
+
+    /* ===== TABLE ===== */
+    .table-wrap { overflow-x: auto; margin-bottom: 28px; }
+
+    table {
+      width: 100%; border-collapse: collapse; font-size: 14px;
+    }
+
+    thead tr { background: rgba(139,92,246,0.15); }
+
+    th {
+      padding: 12px 16px; text-align: left;
+      color: #c4b5fd; font-weight: 600;
+      border-bottom: 2px solid rgba(139,92,246,0.3);
+    }
+
+    td {
+      padding: 11px 16px; color: #cbd5e1;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    tr:hover td { background: rgba(255,255,255,0.03); }
+
+    /* ===== CODE BLOCK ===== */
+    .code-wrap { margin-bottom: 28px; }
+
+    .code-label {
+      display: inline-block;
+      background: rgba(139,92,246,0.15);
+      color: #c4b5fd; font-size: 12px;
+      font-weight: 600; padding: 4px 12px;
+      border-radius: 6px 6px 0 0;
+      border: 1px solid rgba(139,92,246,0.3);
+      border-bottom: none;
+    }
+
+    pre {
+      background: #0d1117;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 0 8px 8px 8px;
+      padding: 24px;
+      overflow-x: auto;
+      font-size: 13.5px;
+      line-height: 1.9;
+    }
+
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      color: #e2e8f0;
+    }
+
+    /* Syntax highlighting */
+    .kw  { color: #c792ea; font-weight: 600; }
+    .str { color: #c3e88d; }
+    .num { color: #f78c6c; }
+    .cm  { color: #546e7a; font-style: italic; }
+    .fn  { color: #82aaff; }
+    .cl  { color: #ffcb6b; }
+    .th  { color: #89ddff; }
+    .op  { color: #89ddff; }
+    .aw  { color: #c792ea; font-weight: 700; }
+
+    /* ===== NOTE ===== */
+    .note {
+      display: flex; gap: 12px; align-items: flex-start;
+      border-radius: 10px; padding: 14px 18px;
+      margin-bottom: 24px;
+    }
+
+    .note.info {
+      background: rgba(139,92,246,0.07);
+      border: 1px solid rgba(139,92,246,0.2);
+    }
+
+    .note.warn {
+      background: rgba(234,179,8,0.07);
+      border: 1px solid rgba(234,179,8,0.2);
+    }
+
+    .note.danger {
+      background: rgba(239,68,68,0.07);
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+
+    .note .icon { font-size: 18px; flex-shrink: 0; }
+    .note.info   p { font-size: 13px; color: #c4b5fd; }
+    .note.warn   p { font-size: 13px; color: #fde68a; }
+    .note.danger p { font-size: 13px; color: #fca5a5; }
+
+    /* ===== LATIHAN ===== */
+    .latihan-box {
+      background: rgba(139,92,246,0.05);
+      border: 1px solid rgba(139,92,246,0.2);
+      border-left: 4px solid #8b5cf6;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .latihan-header {
+      display: flex; align-items: center;
+      gap: 10px; margin-bottom: 14px;
+    }
+
+    .latihan-num {
+      background: #8b5cf6; color: white;
+      font-size: 12px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+    .latihan-num.medium { background: #f59e0b; }
+    .latihan-num.hard   { background: #ef4444; }
+
+    .latihan-box h3 {
+      font-size: 15px; color: #c4b5fd; font-weight: 600;
+    }
+
+    .latihan-box p {
+      font-size: 14px; color: #ddd6fe; margin-bottom: 12px;
+    }
+
+    .latihan-box pre {
+      background: #0a071a;
+      border-color: rgba(139,92,246,0.15);
+      font-size: 13px;
+      border-radius: 8px;
+    }
+
+    /* ===== ANSWER ===== */
+    .answer-box {
+      background: rgba(234,179,8,0.05);
+      border: 1px solid rgba(234,179,8,0.2);
+      border-left: 4px solid #eab308;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .answer-box summary {
+      cursor: pointer; color: #fde047;
+      font-weight: 600; font-size: 15px;
+      list-style: none;
+    }
+
+    .answer-box summary::before { content: '🔑 '; }
+
+    .answer-box pre {
+      margin-top: 16px;
+      background: #14110a;
+      border-color: rgba(234,179,8,0.15);
+      font-size: 13px;
+    }
+
+    /* ===== TAG ===== */
+    .tag {
+      display: inline-block; padding: 3px 10px;
+      border-radius: 20px; font-size: 12px;
+      font-weight: 600; margin: 2px;
+    }
+    .tag-purple { background: rgba(139,92,246,0.2); color: #c4b5fd; }
+    .tag-green  { background: rgba(16,185,129,0.2);  color: #6ee7b7; }
+    .tag-yellow { background: rgba(234,179,8,0.2);   color: #fde047; }
+    .tag-red    { background: rgba(239,68,68,0.2);   color: #fca5a5; }
+    .tag-blue   { background: rgba(59,130,246,0.2);  color: #93c5fd; }
+
+    /* ===== PRINT ===== */
+    @media print {
+      body { background: #0f172a !important; }
+      .cover { page-break-after: always; }
+      .section { page-break-before: always; }
+      pre { white-space: pre-wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<div class="cover">
+  <div class="logo">🔬</div>
+  <h1>JavaScript Lanjutan</h1>
+  <h2>Error Handling · Module · Generator · Proxy</h2>
+
+  <div class="badge-list">
+    <span class="badge">📕 Fase 8</span>
+    <span class="badge">🔴 Level Mahir</span>
+    <span class="badge">⏱️ 2–3 Minggu</span>
+    <span class="badge">💻 JavaScript ES6+</span>
+  </div>
+
+  <div class="info-box">
+    <div><span>4</span><p>Sub Materi</p></div>
+    <div><span>5</span><p>Latihan</p></div>
+    <div><span>1</span><p>Proyek Praktik</p></div>
+    <div><span>🔴</span><p>Level Mahir</p></div>
+  </div>
+</div>
+
+
+<!-- ==================== SECTION ==================== -->
+<div class="section">
+
+  <!-- ===== STEP 8.1: ERROR HANDLING ===== -->
+  <div class="section-header">
+    <div class="icon">⚠️</div>
+    <div>
+      <h2>Step 8.1 — Error Handling</h2>
+      <p>Menangani error agar program tidak crash</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <h3>📌 Jenis Error di JavaScript</h3>
+    <ul>
+      <li><strong style="color:#fca5a5">SyntaxError</strong> &nbsp;&nbsp;&nbsp;→ kesalahan penulisan kode</li>
+      <li><strong style="color:#fde047">ReferenceError</strong> → variabel tidak ditemukan</li>
+      <li><strong style="color:#c4b5fd">TypeError</strong> &nbsp;&nbsp;&nbsp;&nbsp;→ tipe data tidak sesuai</li>
+      <li><strong style="color:#6ee7b7">RangeError</strong> &nbsp;&nbsp;&nbsp;→ nilai di luar batas yang diizinkan</li>
+      <li><strong style="color:#93c5fd">CustomError</strong> &nbsp;&nbsp;→ error buatan sendiri</li>
+    </ul>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Try / Catch / Finally</span>
+    <pre><code><span class="cm">// Struktur dasar</span>
+<span class="kw">try</span> {
+  <span class="cm">// kode yang mungkin error</span>
+  <span class="kw">throw new</span> <span class="cl">Error</span>(<span class="str">"Terjadi kesalahan!"</span>);
+} <span class="kw">catch</span> (e) {
+  console.<span class="fn">log</span>(e.name);    <span class="cm">// Error</span>
+  console.<span class="fn">log</span>(e.message); <span class="cm">// Terjadi kesalahan!</span>
+  console.<span class="fn">log</span>(e.stack);   <span class="cm">// stack trace lengkap</span>
+} <span class="kw">finally</span> {
+  console.<span class="fn">log</span>(<span class="str">"Selalu dijalankan"</span>); <span class="cm">// meskipun ada error</span>
+}
+
+
+<span class="cm">// Contoh nyata: validasi input</span>
+<span class="kw">function</span> <span class="fn">bagi</span>(a, b) {
+  <span class="kw">if</span> (<span class="kw">typeof</span> a <span class="op">!==</span> <span class="str">"number"</span> <span class="op">||</span> <span class="kw">typeof</span> b <span class="op">!==</span> <span class="str">"number"</span>) {
+    <span class="kw">throw new</span> <span class="cl">TypeError</span>(<span class="str">"Input harus berupa angka!"</span>);
+  }
+  <span class="kw">if</span> (b <span class="op">===</span> <span class="num">0</span>) {
+    <span class="kw">throw new</span> <span class="cl">RangeError</span>(<span class="str">"Tidak bisa bagi dengan 0!"</span>);
+  }
+  <span class="kw">return</span> a <span class="op">/</span> b;
+}
+
+<span class="kw">try</span> {
+  console.<span class="fn">log</span>(<span class="fn">bagi</span>(<span class="num">10</span>, <span class="num">2</span>));   <span class="cm">// ✅ 5</span>
+  console.<span class="fn">log</span>(<span class="fn">bagi</span>(<span class="num">10</span>, <span class="num">0</span>));   <span class="cm">// ❌ RangeError</span>
+} <span class="kw">catch</span> (e) {
+  <span class="kw">if</span> (e <span class="kw">instanceof</span> <span class="cl">TypeError</span>) {
+    console.<span class="fn">log</span>(<span class="str">"❌ Tipe salah:"</span>, e.message);
+  } <span class="kw">else if</span> (e <span class="kw">instanceof</span> <span class="cl">RangeError</span>) {
+    console.<span class="fn">log</span>(<span class="str">"❌ Range salah:"</span>, e.message);
+  } <span class="kw">else</span> {
+    console.<span class="fn">log</span>(<span class="str">"❌ Error lain:"</span>, e.message);
+  }
+}</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Custom Error Class</span>
+    <pre><code><span class="cm">// Buat class Error sendiri</span>
+<span class="kw">class</span> <span class="cl">ValidationError</span> <span class="kw">extends</span> <span class="cl">Error</span> {
+  <span class="fn">constructor</span>(message, field) {
+    <span class="kw">super</span>(message);
+    <span class="th">this</span>.name  <span class="op">=</span> <span class="str">"ValidationError"</span>;
+    <span class="th">this</span>.field <span class="op">=</span> field;
+  }
+}
+
+<span class="kw">class</span> <span class="cl">NotFoundError</span> <span class="kw">extends</span> <span class="cl">Error</span> {
+  <span class="fn">constructor</span>(resource, id) {
+    <span class="kw">super</span>(<span class="str">`<span class="op">${</span>resource<span class="op">}</span> dengan id <span class="op">${</span>id<span class="op">}</span> tidak ditemukan`</span>);
+    <span class="th">this</span>.name     <span class="op">=</span> <span class="str">"NotFoundError"</span>;
+    <span class="th">this</span>.resource <span class="op">=</span> resource;
+    <span class="th">this</span>.id       <span class="op">=</span> id;
+  }
+}
+
+<span class="kw">function</span> <span class="fn">validasiSiswa</span>(siswa) {
+  <span class="kw">if</span> (<span class="op">!</span>siswa.nama) {
+    <span class="kw">throw new</span> <span class="cl">ValidationError</span>(<span class="str">"Nama wajib diisi!"</span>, <span class="str">"nama"</span>);
+  }
+  <span class="kw">if</span> (siswa.nilai <span class="op">&lt;</span> <span class="num">0</span> <span class="op">||</span> siswa.nilai <span class="op">&gt;</span> <span class="num">100</span>) {
+    <span class="kw">throw new</span> <span class="cl">ValidationError</span>(<span class="str">"Nilai harus antara 0-100!"</span>, <span class="str">"nilai"</span>);
+  }
+  <span class="kw">return</span> <span class="str">"✅ Data valid!"</span>;
+}
+
+<span class="kw">try</span> {
+  <span class="fn">validasiSiswa</span>({ nama: <span class="str">""</span>, nilai: <span class="num">85</span> });
+} <span class="kw">catch</span> (e) {
+  <span class="kw">if</span> (e <span class="kw">instanceof</span> <span class="cl">ValidationError</span>) {
+    console.<span class="fn">log</span>(<span class="str">`❌ [<span class="op">${</span>e.field<span class="op">}</span>] <span class="op">${</span>e.message<span class="op">}</span>`</span>);
+    <span class="cm">// ❌ [nama] Nama wajib diisi!</span>
+  }
+}</code></pre>
+  </div>
+
+
+  <!-- ===== STEP 8.2: MODULE ===== -->
+  <div class="step-title">Step 8.2 — ES Module</div>
+
+  <div class="concept-box">
+    <h3>📌 Konsep</h3>
+    <ul>
+      <li>Module = <strong style="color:#c4b5fd">memecah kode menjadi file terpisah</strong> agar lebih terorganisir</li>
+      <li><code>export</code> → kirim keluar dari file</li>
+      <li><code>import</code> → ambil dari file lain</li>
+      <li>Gunakan <code>type="module"</code> di tag script HTML</li>
+    </ul>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Jenis</th>
+          <th>Sintaks Export</th>
+          <th>Sintaks Import</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag tag-green">Named Export</span></td>
+          <td><code>export const x = ...</code></td>
+          <td><code>import { x } from "./file"</code></td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-purple">Default Export</span></td>
+          <td><code>export default function</code></td>
+          <td><code>import namaApa from "./file"</code></td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-blue">Import All</span></td>
+          <td><code>export { a, b, c }</code></td>
+          <td><code>import * as Nama from "./file"</code></td>
+        </tr>
+        <tr>
+          <td><span class="tag tag-yellow">Rename</span></td>
+          <td><code>export { x as y }</code></td>
+          <td><code>import { y as z } from "./file"</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 math.js — File Module</span>
+    <pre><code><span class="cm">// Named export</span>
+<span class="kw">export const</span> PI <span class="op">=</span> <span class="num">3.14159265</span>;
+
+<span class="kw">export function</span> <span class="fn">tambah</span>(a, b)   { <span class="kw">return</span> a <span class="op">+</span> b; }
+<span class="kw">export function</span> <span class="fn">kurang</span>(a, b)   { <span class="kw">return</span> a <span class="op">-</span> b; }
+<span class="kw">export function</span> <span class="fn">kali</span>(a, b)     { <span class="kw">return</span> a <span class="op">*</span> b; }
+<span class="kw">export function</span> <span class="fn">bagi</span>(a, b) {
+  <span class="kw">if</span> (b <span class="op">===</span> <span class="num">0</span>) <span class="kw">throw new</span> <span class="cl">Error</span>(<span class="str">"Tidak bisa bagi 0!"</span>);
+  <span class="kw">return</span> a <span class="op">/</span> b;
+}
+<span class="kw">export function</span> <span class="fn">pangkat</span>(base, exp) { <span class="kw">return</span> base <span class="op">**</span> exp; }
+
+<span class="cm">// Default export</span>
+<span class="kw">export default function</span> <span class="fn">kalkulator</span>(a, op, b) {
+  <span class="kw">switch</span>(op) {
+    <span class="kw">case</span> <span class="str">"+"</span>: <span class="kw">return</span> <span class="fn">tambah</span>(a, b);
+    <span class="kw">case</span> <span class="str">"-"</span>: <span class="kw">return</span> <span class="fn">kurang</span>(a, b);
+    <span class="kw">case</span> <span class="str">"*"</span>: <span class="kw">return</span> <span class="fn">kali</span>(a, b);
+    <span class="kw">case</span> <span class="str">"/"</span>: <span class="kw">return</span> <span class="fn">bagi</span>(a, b);
+    <span class="kw">default</span>: <span class="kw">throw new</span> <span class="cl">Error</span>(<span class="str">"Operator tidak dikenal!"</span>);
+  }
+}</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 app.js — File Utama</span>
+    <pre><code><span class="cm">// Import default</span>
+<span class="kw">import</span> kalkulator <span class="kw">from</span> <span class="str">"./math.js"</span>;
+
+<span class="cm">// Import named</span>
+<span class="kw">import</span> { PI, tambah, pangkat } <span class="kw">from</span> <span class="str">"./math.js"</span>;
+
+<span class="cm">// Import semua</span>
+<span class="kw">import</span> <span class="op">*</span> <span class="kw">as</span> Math <span class="kw">from</span> <span class="str">"./math.js"</span>;
+
+<span class="cm">// Import dengan rename</span>
+<span class="kw">import</span> { tambah <span class="kw">as</span> add, kurang <span class="kw">as</span> subtract } <span class="kw">from</span> <span class="str">"./math.js"</span>;
+
+console.<span class="fn">log</span>(PI);                    <span class="cm">// 3.14159265</span>
+console.<span class="fn">log</span>(<span class="fn">tambah</span>(<span class="num">5</span>, <span class="num">3</span>));          <span class="cm">// 8</span>
+console.<span class="fn">log</span>(<span class="fn">pangkat</span>(<span class="num">2</span>, <span class="num">10</span>));        <span class="cm">// 1024</span>
+console.<span class="fn">log</span>(<span class="fn">kalkulator</span>(<span class="num">10</span>, <span class="str">"*"</span>, <span class="num">5</span>)); <span class="cm">// 50</span>
+console.<span class="fn">log</span>(Math.<span class="fn">bagi</span>(<span class="num">20</span>, <span class="num">4</span>));      <span class="cm">// 5</span>
+
+<span class="cm">// Dynamic import (lazy loading)</span>
+<span class="kw">async function</span> <span class="fn">muatModule</span>() {
+  <span class="kw">const</span> { tambah } <span class="op">=</span> <span class="aw">await</span> <span class="kw">import</span>(<span class="str">"./math.js"</span>);
+  console.<span class="fn">log</span>(<span class="fn">tambah</span>(<span class="num">3</span>, <span class="num">4</span>)); <span class="cm">// 7</span>
+}</code></pre>
+  </div>
+
+
+  <!-- ===== STEP 8.3: ITERATOR & GENERATOR ===== -->
+  <div class="step-title">Step 8.3 — Iterator & Generator</div>
+
+  <div class="concept-box">
+    <h3>📌 Konsep</h3>
+    <ul>
+      <li><strong style="color:#c4b5fd">Iterator</strong> → object yang punya method <code>next()</code> untuk iterasi satu per satu</li>
+      <li><strong style="color:#6ee7b7">Generator</strong> → function khusus yang bisa <strong>dijeda</strong> dan <strong>dilanjutkan</strong></li>
+      <li>Tandai dengan <code>function*</code> dan gunakan <code>yield</code> untuk menghasilkan nilai</li>
+    </ul>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Iterator</span>
+    <pre><code><span class="cm">// Membuat iterator manual</span>
+<span class="kw">function</span> <span class="fn">buatIterator</span>(arr) {
+  <span class="kw">let</span> index <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">return</span> {
+    <span class="fn">next</span>() {
+      <span class="kw">return</span> index <span class="op">&lt;</span> arr.length
+        <span class="op">?</span> { value: arr[index<span class="op">++</span>], done: <span class="kw">false</span> }
+        <span class="op">:</span> { value: <span class="kw">undefined</span>,   done: <span class="kw">true</span>  };
+    }
+  };
+}
+
+<span class="kw">const</span> iter <span class="op">=</span> <span class="fn">buatIterator</span>([<span class="str">"Apel"</span>, <span class="str">"Mangga"</span>, <span class="str">"Jeruk"</span>]);
+console.<span class="fn">log</span>(iter.<span class="fn">next</span>()); <span class="cm">// { value: "Apel",   done: false }</span>
+console.<span class="fn">log</span>(iter.<span class="fn">next</span>()); <span class="cm">// { value: "Mangga", done: false }</span>
+console.<span class="fn">log</span>(iter.<span class="fn">next</span>()); <span class="cm">// { value: "Jeruk",  done: false }</span>
+console.<span class="fn">log</span>(iter.<span class="fn">next</span>()); <span class="cm">// { value: undefined, done: true }</span></code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Generator Function</span>
+    <pre><code><span class="cm">// Generator → function* + yield</span>
+<span class="kw">function*</span> <span class="fn">hitungMundur</span>(n) {
+  <span class="kw">while</span> (n <span class="op">&gt;</span> <span class="num">0</span>) {
+    <span class="kw">yield</span> n<span class="op">--</span>; <span class="cm">// pause di sini, kirim nilai, lanjut nanti</span>
+  }
+}
+
+<span class="kw">const</span> gen <span class="op">=</span> <span class="fn">hitungMundur</span>(<span class="num">3</span>);
+console.<span class="fn">log</span>(gen.<span class="fn">next</span>()); <span class="cm">// { value: 3, done: false }</span>
+console.<span class="fn">log</span>(gen.<span class="fn">next</span>()); <span class="cm">// { value: 2, done: false }</span>
+console.<span class="fn">log</span>(gen.<span class="fn">next</span>()); <span class="cm">// { value: 1, done: false }</span>
+console.<span class="fn">log</span>(gen.<span class="fn">next</span>()); <span class="cm">// { value: undefined, done: true }</span>
+
+<span class="cm">// Generator bisa dipakai di for...of</span>
+<span class="kw">for</span> (<span class="kw">let</span> n <span class="kw">of</span> <span class="fn">hitungMundur</span>(<span class="num">5</span>)) {
+  console.<span class="fn">log</span>(n); <span class="cm">// 5, 4, 3, 2, 1</span>
+}
+
+<span class="cm">// Generator infinite (tak terbatas)</span>
+<span class="kw">function*</span> <span class="fn">idGenerator</span>() {
+  <span class="kw">let</span> id <span class="op">=</span> <span class="num">1</span>;
+  <span class="kw">while</span> (<span class="kw">true</span>) {
+    <span class="kw">yield</span> id<span class="op">++</span>;
+  }
+}
+
+<span class="kw">const</span> buatId <span class="op">=</span> <span class="fn">idGenerator</span>();
+console.<span class="fn">log</span>(buatId.<span class="fn">next</span>().value); <span class="cm">// 1</span>
+console.<span class="fn">log</span>(buatId.<span class="fn">next</span>().value); <span class="cm">// 2</span>
+console.<span class="fn">log</span>(buatId.<span class="fn">next</span>().value); <span class="cm">// 3</span>
+
+<span class="cm">// Generator dengan yield*</span>
+<span class="kw">function*</span> <span class="fn">gabung</span>(arr1, arr2) {
+  <span class="kw">yield*</span> arr1; <span class="cm">// delegasikan ke array lain</span>
+  <span class="kw">yield*</span> arr2;
+}
+
+<span class="kw">const</span> hasil <span class="op">=</span> [...<span class="fn">gabung</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], [<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>])];
+console.<span class="fn">log</span>(hasil); <span class="cm">// [1, 2, 3, 4, 5, 6]</span></code></pre>
+  </div>
+
+
+  <!-- ===== STEP 8.4: PROXY & REFLECT ===== -->
+  <div class="step-title">Step 8.4 — Proxy & Reflect</div>
+
+  <div class="concept-box">
+    <h3>📌 Konsep</h3>
+    <ul>
+      <li><strong style="color:#c4b5fd">Proxy</strong> → membuat "perantara" untuk object, bisa intercept operasi (get, set, dll)</li>
+      <li><strong style="color:#6ee7b7">Reflect</strong> → API standar untuk operasi object (pasangan dari Proxy)</li>
+      <li>Gunakan untuk: <strong>validasi</strong>, <strong>logging</strong>, <strong>caching</strong>, <strong>access control</strong></li>
+    </ul>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Proxy Dasar</span>
+    <pre><code><span class="cm">// Proxy dengan handler get & set</span>
+<span class="kw">const</span> siswa <span class="op">=</span> { nama: <span class="str">"Budi"</span>, nilai: <span class="num">85</span>, umur: <span class="num">17</span> };
+
+<span class="kw">const</span> handler <span class="op">=</span> {
+  <span class="cm">// Intercept saat READ property</span>
+  <span class="fn">get</span>(target, key) {
+    console.<span class="fn">log</span>(<span class="str">`📖 Mengakses: <span class="op">${</span>key<span class="op">}</span>`</span>);
+    <span class="kw">return</span> <span class="cl">Reflect</span>.<span class="fn">get</span>(target, key);
+  },
+
+  <span class="cm">// Intercept saat WRITE property</span>
+  <span class="fn">set</span>(target, key, value) {
+    <span class="kw">if</span> (key <span class="op">===</span> <span class="str">"nilai"</span> <span class="op">&amp;&amp;</span> (value <span class="op">&lt;</span> <span class="num">0</span> <span class="op">||</span> value <span class="op">&gt;</span> <span class="num">100</span>)) {
+      <span class="kw">throw new</span> <span class="cl">RangeError</span>(<span class="str">"Nilai harus antara 0-100!"</span>);
+    }
+    console.<span class="fn">log</span>(<span class="str">`✏️ Mengubah <span class="op">${</span>key<span class="op">}</span>: <span class="op">${</span>target[key]<span class="op">}</span> → <span class="op">${</span>value<span class="op">}</span>`</span>);
+    <span class="kw">return</span> <span class="cl">Reflect</span>.<span class="fn">set</span>(target, key, value);
+  },
+
+  <span class="cm">// Intercept saat DELETE property</span>
+  <span class="fn">deleteProperty</span>(target, key) {
+    console.<span class="fn">log</span>(<span class="str">`🗑️ Menghapus: <span class="op">${</span>key<span class="op">}</span>`</span>);
+    <span class="kw">return</span> <span class="cl">Reflect</span>.<span class="fn">deleteProperty</span>(target, key);
+  }
+};
+
+<span class="kw">const</span> siswaProxy <span class="op">=</span> <span class="kw">new</span> <span class="cl">Proxy</span>(siswa, handler);
+
+console.<span class="fn">log</span>(siswaProxy.nama);  <span class="cm">// 📖 Mengakses: nama → Budi</span>
+siswaProxy.nilai <span class="op">=</span> <span class="num">95</span>;          <span class="cm">// ✏️ Mengubah nilai: 85 → 95</span>
+siswaProxy.nilai <span class="op">=</span> <span class="num">150</span>;         <span class="cm">// ❌ RangeError: Nilai harus 0-100!</span>
+<span class="kw">delete</span> siswaProxy.umur;         <span class="cm">// 🗑️ Menghapus: umur</span></code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Proxy untuk Validasi Form</span>
+    <pre><code><span class="cm">// Contoh nyata: validasi form otomatis dengan Proxy</span>
+<span class="kw">function</span> <span class="fn">buatFormValidator</span>(schema) {
+  <span class="kw">const</span> data <span class="op">=</span> {};
+
+  <span class="kw">return new</span> <span class="cl">Proxy</span>(data, {
+    <span class="fn">set</span>(target, field, value) {
+      <span class="kw">const</span> rules <span class="op">=</span> schema[field];
+      <span class="kw">if</span> (<span class="op">!</span>rules) <span class="kw">throw new</span> <span class="cl">Error</span>(<span class="str">`Field "<span class="op">${</span>field<span class="op">}</span>" tidak diizinkan!`</span>);
+
+      <span class="kw">if</span> (rules.required <span class="op">&amp;&amp;</span> <span class="op">!</span>value) {
+        <span class="kw">throw new</span> <span class="cl">Error</span>(<span class="str">`"<span class="op">${</span>field<span class="op">}</span>" wajib diisi!`</span>);
+      }
+      <span class="kw">if</span> (rules.minLength <span class="op">&amp;&amp;</span> value.length <span class="op">&lt;</span> rules.minLength) {
+        <span class="kw">throw new</span> <span class="cl">Error</span>(<span class="str">`"<span class="op">${</span>field<span class="op">}</span>" minimal <span class="op">${</span>rules.minLength<span class="op">}</span> karakter!`</span>);
+      }
+      <span class="kw">if</span> (rules.type <span class="op">&amp;&amp;</span> <span class="kw">typeof</span> value <span class="op">!==</span> rules.type) {
+        <span class="kw">throw new</span> <span class="cl">TypeError</span>(<span class="str">`"<span class="op">${</span>field<span class="op">}</span>" harus bertipe <span class="op">${</span>rules.type<span class="op">}</span>!`</span>);
+      }
+
+      <span class="kw">return</span> <span class="cl">Reflect</span>.<span class="fn">set</span>(target, field, value);
+    }
+  });
+}
+
+<span class="kw">const</span> formSiswa <span class="op">=</span> <span class="fn">buatFormValidator</span>({
+  nama : { required: <span class="kw">true</span>, minLength: <span class="num">3</span>, type: <span class="str">"string"</span> },
+  email: { required: <span class="kw">true</span>, type: <span class="str">"string"</span> },
+  nilai: { required: <span class="kw">true</span>, type: <span class="str">"number"</span> },
+});
+
+<span class="kw">try</span> {
+  formSiswa.nama  <span class="op">=</span> <span class="str">"Budi Santoso"</span>; <span class="cm">// ✅</span>
+  formSiswa.email <span class="op">=</span> <span class="str">"budi@email.com"</span>; <span class="cm">// ✅</span>
+  formSiswa.nilai <span class="op">=</span> <span class="str">"sembilan puluh"</span>; <span class="cm">// ❌ TypeError</span>
+} <span class="kw">catch</span> (e) {
+  console.<span class="fn">log</span>(<span class="str">"❌"</span>, e.message);
+  <span class="cm">// ❌ "nilai" harus bertipe number!</span>
+}</code></pre>
+  </div>
+
+
+  <!-- ===== LATIHAN ===== -->
+  <div class="step-title">📝 Latihan Praktik</div>
+
+  <!-- Latihan 1 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 1</span>
+      <h3>Error Handling — Try/Catch</h3>
+    </div>
+    <p>Lengkapi bagian <strong style="color:#c4b5fd">______</strong> dengan jawaban yang tepat:</p>
+    <pre><code>// 1A: Lengkapi try/catch berikut
+function hitungAkar(angka) {
+  ______ {
+    if (typeof angka !== ______) {
+      throw new ______("Input harus berupa angka!");
+    }
+    if (angka ______ 0) {
+      throw new ______("Tidak bisa akar kuadrat angka negatif!");
+    }
+    return Math.______(angka);
+  } ______ (e) {
+    if (e instanceof ______) {
+      return `❌ TypeError: ${e.______}`;
+    }
+    return `❌ RangeError: ${e.______}`;
+  }
+}
+
+console.log(hitungAkar(25));    // 5
+console.log(hitungAkar(-4));    // ❌ RangeError: ...
+console.log(hitungAkar("abc")); // ❌ TypeError: ...
+
+
+// 1B: Error di dalam async function
+async function ambilData(url) {
+  ______ {
+    const response = await fetch(______);
+    if (!response.______) {
+      throw new ______(`Gagal: ${response.______}`);
+    }
+    return await response.______();
+  } ______ (error) {
+    console.log("❌ Fetch error:", error.______);
+    return null;
+  } ______ {
+    console.log("🏁 Request selesai");
+  }
+}</code></pre>
+  </div>
+
+  <!-- Latihan 2 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 2</span>
+      <h3>Custom Error Class</h3>
+    </div>
+    <p>Buat custom error class untuk sistem login:</p>
+    <pre><code>// Buat 2 custom error class
+class ______ extends Error {
+  constructor(message) {
+    ______(message);
+    this.name = "______";
+  }
+}
+
+class ______ extends Error {
+  constructor(message, sisaPercobaan) {
+    ______(message);
+    this.name            = "______";
+    this.sisaPercobaan   = ______;
+  }
+}
+
+// Gunakan di function login
+function login(username, password, percobaan) {
+  if (username !== "admin") {
+    throw new ______("Username tidak ditemukan!");
+  }
+  if (password !== "12345") {
+    throw new ______("Password salah!", 3 - percobaan);
+  }
+  return "✅ Login berhasil!";
+}
+
+try {
+  console.log(login("admin", "wrong", 1));
+} catch (e) {
+  if (e instanceof ______) {
+    console.log(`❌ ${e.message} | Sisa: ${e.______} percobaan`);
+  } else if (e instanceof ______) {
+    console.log(`❌ ${e.message}`);
+  }
+}</code></pre>
+  </div>
+
+  <!-- Latihan 3 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num medium">LATIHAN 3</span>
+      <h3>ES Module — Export & Import</h3>
+    </div>
+    <p>Lengkapi file module berikut:</p>
+    <pre><code>// ===== utils.js =====
+// Named export: konstanta dan function
+______ const VERSI = "1.0.0";
+
+______ function formatRupiah(angka) {
+  return `Rp${angka.toLocaleString("id-ID")}`;
+}
+
+______ function formatTanggal(date) {
+  return new Date(date).toLocaleDateString("id-ID");
+}
+
+______ function hitungDiskon(harga, persen) {
+  return harga - (harga * persen / 100);
+}
+
+// Default export
+______ ______ class StringHelper {
+  static kapitalisasi(str) {
+    return str.split(" ")
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+  }
+  static balik(str) {
+    return str.split("").reverse().join("");
+  }
+}
+
+
+// ===== app.js =====
+// Import default dan named
+______ StringHelper ______ "./utils.js";
+______ { VERSI, formatRupiah, hitungDiskon } ______ "./utils.js";
+______ * ______ Utils ______ "./utils.js";
+
+console.log(VERSI);                          // 1.0.0
+console.log(formatRupiah(15000000));         // Rp15.000.000
+console.log(hitungDiskon(100000, 20));       // 80000
+console.log(StringHelper.kapitalisasi("budi santoso")); // Budi Santoso
+console.log(Utils.formatTanggal("2025-01-01")); // 1/1/2025</code></pre>
+  </div>
+
+  <!-- Latihan 4 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num medium">LATIHAN 4</span>
+      <h3>Generator Function</h3>
+    </div>
+    <p>Lengkapi generator function berikut:</p>
+    <pre><code>// 4A: Generator bilangan genap
+function______ bilanganGenap(max) {
+  for (let i = 2; i <= ______; i += ______) {
+    ______ i;
+  }
+}
+
+const genap = bilanganGenap(10);
+console.log(genap.______.value); // 2
+console.log(genap.______.value); // 4
+console.log(genap.______.value); // 6
+
+// Atau pakai for...of
+for (let n of bilanganGenap(______)) {
+  console.log(n); // 2, 4, 6, 8, 10
+}
+
+
+// 4B: Generator ID unik
+function______ buatIdUnik(prefix = "ID") {
+  let nomor = ______;
+  while (______) {
+    ______ `${prefix}-${String(nomor______).padStart(4, "0")}`;
+  }
+}
+
+const idGen = buatIdUnik("USR");
+console.log(idGen.next().value); // USR-0001
+console.log(idGen.next().value); // USR-0002
+console.log(idGen.next().value); // USR-0003
+
+
+// 4C: Generator fibonacci
+function______ fibonacci() {
+  let [a, b] = [______, ______];
+  while (true) {
+    ______ a;
+    [a, b] = [______, ______];
+  }
+}
+
+const fib = fibonacci();
+for (let i = 0; i < 8; i++) {
+  process.stdout.write(fib.______.______ + " ");
+}
+// 0 1 1 2 3 5 8 13</code></pre>
+  </div>
+
+  <!-- Latihan 5 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num hard">LATIHAN 5 🔴</span>
+      <h3>Challenge — Proxy Validasi</h3>
+    </div>
+    <p>Buat Proxy untuk validasi data produk toko:</p>
+    <pre><code>// Buat validator produk dengan Proxy
+function buatProdukValidator() {
+  const data = {};
+
+  return new ______(data, {
+    ______(target, field, value) {
+
+      // Validasi field "nama": wajib, min 3 karakter, harus string
+      if (field === "nama") {
+        if (typeof value !== ______) throw new TypeError("Nama harus string!");
+        if (value.______ < 3) throw new Error("Nama min 3 karakter!");
+      }
+
+      // Validasi field "harga": wajib number, tidak boleh negatif
+      if (field === "harga") {
+        if (typeof value !== ______) throw new TypeError("Harga harus number!");
+        if (value ______ 0) throw new RangeError("Harga tidak boleh negatif!");
+      }
+
+      // Validasi field "stok": harus number, tidak boleh negatif
+      if (field === "stok") {
+        if (typeof value !== "number") throw new TypeError("Stok harus number!");
+        if (value < ______) throw new RangeError("Stok tidak boleh negatif!");
+      }
+
+      // Validasi field "kategori": harus salah satu dari list
+      if (field === "kategori") {
+        const boleh = ["Elektronik", "Aksesori", "Storage"];
+        if (!boleh.______(value)) {
+          throw new Error(`Kategori harus: ${boleh.______(", ")}`);
+        }
+      }
+
+      return Reflect.______(target, field, value);
+    }
+  });
+}
+
+// Test
+const produk = buatProdukValidator();
+
+try {
+  produk.nama      = "Laptop ASUS";     // ✅
+  produk.harga     = 8500000;           // ✅
+  produk.stok      = 10;                // ✅
+  produk.kategori  = "Elektronik";      // ✅
+  console.log("✅ Semua valid:", produk);
+} catch (e) {
+  console.log("❌", e.message);
+}
+
+try {
+  produk.harga = -5000; // ❌ RangeError
+} catch (e) {
+  console.log("❌", e.______); // Harga tidak boleh negatif!
+}
+
+try {
+  produk.kategori = "Makanan"; // ❌ Error
+} catch (e) {
+  console.log("❌", e.______); // Kategori harus: Elektronik, Aksesori, Storage
+}</code></pre>
+  </div>
+
+  <!-- KUNCI JAWABAN -->
+  <div class="answer-box">
+    <details>
+      <summary>Kunci Jawaban — Klik untuk buka</summary>
+      <pre><code>// LATIHAN 1A
+try | "number" | TypeError | < 0 | RangeError | sqrt
+catch | TypeError | message | message
+
+// LATIHAN 1B
+try | url | ok | Error | status
+json() | catch | message | finally
+
+// LATIHAN 2
+class AuthError extends Error | super(message) | "AuthError"
+class WrongPasswordError extends Error | super(message) | "WrongPasswordError"
+this.sisaPercobaan = sisaPercobaan
+throw new AuthError | throw new WrongPasswordError
+WrongPasswordError | sisaPercobaan | AuthError
+
+// LATIHAN 3
+export const VERSI
+export function formatRupiah
+export function formatTanggal
+export function hitungDiskon
+export default class StringHelper
+
+import StringHelper from
+import { VERSI, formatRupiah, hitungDiskon } from
+import * as Utils from
+
+// LATIHAN 4A
+function* bilanganGenap | max | 2 | yield i
+next() | next() | next() | 10
+
+// LATIHAN 4B
+function* buatIdUnik | 1 | true | yield | ++
+
+// LATIHAN 4C
+function* fibonacci | 0 | 1 | yield a
+b | a + b | next | value
+
+// LATIHAN 5
+Proxy | set
+"string" | length
+"number" | < 0 | 0
+includes | join
+set | message | message</code></pre>
+    </details>
+  </div>
+
+</div><!-- end section -->
+
+</body>
+</html>

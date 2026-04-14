@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fase 9 — Web APIs & DOM Manipulation</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+
+    /* ===== COVER ===== */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #0f172a 100%);
+      padding: 40px;
+      page-break-after: always;
+    }
+
+    .cover .logo {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      border-radius: 20px;
+      display: flex; align-items: center;
+      justify-content: center;
+      font-size: 40px; margin-bottom: 32px;
+      box-shadow: 0 8px 32px rgba(245,158,11,0.4);
+    }
+
+    .cover h1 {
+      font-size: 44px; font-weight: 800;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .cover h2 {
+      font-size: 22px; color: #94a3b8;
+      font-weight: 400; margin-bottom: 40px;
+    }
+
+    .cover .badge-list {
+      display: flex; gap: 12px;
+      flex-wrap: wrap; justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .cover .badge {
+      padding: 8px 20px; border-radius: 20px;
+      font-size: 14px; font-weight: 600;
+      background: rgba(245,158,11,0.15);
+      border: 1px solid rgba(245,158,11,0.3);
+      color: #fcd34d;
+    }
+
+    .cover .info-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; padding: 24px 40px;
+      display: flex; gap: 40px;
+    }
+
+    .cover .info-box div { text-align: center; }
+    .cover .info-box span {
+      display: block; font-size: 28px;
+      font-weight: 700; color: #f59e0b;
+    }
+    .cover .info-box p {
+      font-size: 13px; color: #94a3b8; margin-top: 4px;
+    }
+
+    /* ===== SECTION ===== */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      page-break-before: always;
+    }
+
+    .section-header {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 36px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(245,158,11,0.3);
+    }
+
+    .section-header .icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      border-radius: 12px;
+      display: flex; align-items: center;
+      justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 26px; font-weight: 700; color: #f1f5f9;
+    }
+
+    .section-header p {
+      font-size: 14px; color: #94a3b8; margin-top: 2px;
+    }
+
+    /* ===== STEP TITLE ===== */
+    .step-title {
+      font-size: 20px; font-weight: 700;
+      color: #f1f5f9; margin: 36px 0 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .step-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px; height: 22px;
+      background: linear-gradient(180deg, #f59e0b, #ef4444);
+      border-radius: 2px;
+    }
+
+    /* ===== CONCEPT BOX ===== */
+    .concept-box {
+      background: rgba(245,158,11,0.07);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-left: 4px solid #f59e0b;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+
+    .concept-box h3 {
+      font-size: 15px; color: #fcd34d;
+      margin-bottom: 10px; font-weight: 600;
+    }
+
+    .concept-box p,
+    .concept-box li {
+      font-size: 14px; color: #cbd5e1; line-height: 1.9;
+    }
+
+    .concept-box ul { padding-left: 20px; }
+
+    .concept-box code {
+      background: rgba(245,158,11,0.15);
+      color: #fcd34d;
+      padding: 1px 6px; border-radius: 4px;
+      font-size: 13px;
+    }
+
+    /* ===== DOM TREE ===== */
+    .dom-tree {
+      background: #0d1117;
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 28px;
+      font-family: 'Cascadia Code', monospace;
+      font-size: 13px;
+    }
+
+    .dom-tree .node {
+      color: #fcd34d; margin: 3px 0;
+    }
+
+    .dom-tree .node span {
+      color: #c3e88d;
+    }
+
+    .dom-tree .node em {
+      color: #94a3b8; font-style: normal;
+    }
+
+    /* ===== TABLE ===== */
+    .table-wrap { overflow-x: auto; margin-bottom: 28px; }
+
+    table {
+      width: 100%; border-collapse: collapse; font-size: 14px;
+    }
+
+    thead tr { background: rgba(245,158,11,0.12); }
+
+    th {
+      padding: 12px 16px; text-align: left;
+      color: #fcd34d; font-weight: 600;
+      border-bottom: 2px solid rgba(245,158,11,0.3);
+    }
+
+    td {
+      padding: 11px 16px; color: #cbd5e1;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    td code {
+      background: rgba(245,158,11,0.1);
+      color: #fcd34d; padding: 1px 6px;
+      border-radius: 4px; font-size: 12px;
+    }
+
+    tr:hover td { background: rgba(255,255,255,0.03); }
+
+    /* ===== CODE BLOCK ===== */
+    .code-wrap { margin-bottom: 28px; }
+
+    .code-label {
+      display: inline-block;
+      background: rgba(245,158,11,0.15);
+      color: #fcd34d; font-size: 12px;
+      font-weight: 600; padding: 4px 12px;
+      border-radius: 6px 6px 0 0;
+      border: 1px solid rgba(245,158,11,0.3);
+      border-bottom: none;
+    }
+
+    pre {
+      background: #0d1117;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 0 8px 8px 8px;
+      padding: 24px;
+      overflow-x: auto;
+      font-size: 13.5px;
+      line-height: 1.9;
+    }
+
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      color: #e2e8f0;
+    }
+
+    /* Syntax highlighting */
+    .kw  { color: #c792ea; font-weight: 600; }
+    .str { color: #c3e88d; }
+    .num { color: #f78c6c; }
+    .cm  { color: #546e7a; font-style: italic; }
+    .fn  { color: #82aaff; }
+    .cl  { color: #ffcb6b; }
+    .th  { color: #89ddff; }
+    .op  { color: #89ddff; }
+    .tg  { color: #f07178; }
+    .at  { color: #fcd34d; }
+
+    /* ===== NOTE ===== */
+    .note {
+      display: flex; gap: 12px; align-items: flex-start;
+      border-radius: 10px; padding: 14px 18px;
+      margin-bottom: 24px;
+    }
+
+    .note.info {
+      background: rgba(245,158,11,0.07);
+      border: 1px solid rgba(245,158,11,0.2);
+    }
+
+    .note.warn {
+      background: rgba(234,179,8,0.07);
+      border: 1px solid rgba(234,179,8,0.2);
+    }
+
+    .note.danger {
+      background: rgba(239,68,68,0.07);
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+
+    .note .icon { font-size: 18px; flex-shrink: 0; }
+    .note.info   p { font-size: 13px; color: #fcd34d; }
+    .note.warn   p { font-size: 13px; color: #fde68a; }
+    .note.danger p { font-size: 13px; color: #fca5a5; }
+
+    /* ===== LATIHAN ===== */
+    .latihan-box {
+      background: rgba(245,158,11,0.05);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-left: 4px solid #f59e0b;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .latihan-header {
+      display: flex; align-items: center;
+      gap: 10px; margin-bottom: 14px;
+    }
+
+    .latihan-num {
+      background: #f59e0b; color: #0f172a;
+      font-size: 12px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+    .latihan-num.medium { background: #f59e0b; }
+    .latihan-num.hard   { background: #ef4444; color: white; }
+
+    .latihan-box h3 {
+      font-size: 15px; color: #fcd34d; font-weight: 600;
+    }
+
+    .latihan-box p {
+      font-size: 14px; color: #fde68a; margin-bottom: 12px;
+    }
+
+    .latihan-box pre {
+      background: #100d00;
+      border-color: rgba(245,158,11,0.15);
+      font-size: 13px;
+      border-radius: 8px;
+    }
+
+    /* ===== ANSWER ===== */
+    .answer-box {
+      background: rgba(234,179,8,0.05);
+      border: 1px solid rgba(234,179,8,0.2);
+      border-left: 4px solid #eab308;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .answer-box summary {
+      cursor: pointer; color: #fde047;
+      font-weight: 600; font-size: 15px;
+      list-style: none;
+    }
+
+    .answer-box summary::before { content: '🔑 '; }
+
+    .answer-box pre {
+      margin-top: 16px;
+      background: #14110a;
+      border-color: rgba(234,179,8,0.15);
+      font-size: 13px;
+    }
+
+    /* ===== TAG ===== */
+    .tag {
+      display: inline-block; padding: 3px 10px;
+      border-radius: 20px; font-size: 12px;
+      font-weight: 600; margin: 2px;
+    }
+    .tag-orange { background: rgba(245,158,11,0.2); color: #fcd34d; }
+    .tag-green  { background: rgba(16,185,129,0.2);  color: #6ee7b7; }
+    .tag-blue   { background: rgba(59,130,246,0.2);  color: #93c5fd; }
+    .tag-red    { background: rgba(239,68,68,0.2);   color: #fca5a5; }
+    .tag-purple { background: rgba(139,92,246,0.2);  color: #c4b5fd; }
+
+    /* ===== PRINT ===== */
+    @media print {
+      body { background: #0f172a !important; }
+      .cover { page-break-after: always; }
+      .section { page-break-before: always; }
+      pre { white-space: pre-wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<div class="cover">
+  <div class="logo">🌐</div>
+  <h1>Web APIs & DOM</h1>
+  <h2>Manipulation · Events · Storage · BOM</h2>
+
+  <div class="badge-list">
+    <span class="badge">📙 Fase 9</span>
+    <span class="badge">🟡 Level Menengah</span>
+    <span class="badge">⏱️ 2–3 Minggu</span>
+    <span class="badge">💻 Browser JavaScript</span>
+  </div>
+
+  <div class="info-box">
+    <div><span>5</span><p>Sub Materi</p></div>
+    <div><span>5</span><p>Latihan</p></div>
+    <div><span>1</span><p>Proyek Praktik</p></div>
+    <div><span>🌐</span><p>Browser API</p></div>
+  </div>
+</div>
+
+
+<!-- ==================== SECTION ==================== -->
+<div class="section">
+
+  <!-- ===== STEP 9.1: APA ITU DOM ===== -->
+  <div class="section-header">
+    <div class="icon">🌳</div>
+    <div>
+      <h2>Step 9.1 — Apa itu DOM?</h2>
+      <p>Document Object Model — representasi HTML sebagai object</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <h3>📌 Definisi</h3>
+    <ul>
+      <li><strong style="color:#fcd34d">DOM</strong> = Document Object Model</li>
+      <li>Representasi halaman HTML sebagai <strong>struktur pohon (tree)</strong> dari object</li>
+      <li>JavaScript bisa <strong>membaca</strong>, <strong>mengubah</strong>, <strong>menambah</strong>, dan <strong>menghapus</strong> elemen HTML melalui DOM</li>
+      <li>Entry point: <code>document</code> → object utama untuk mengakses DOM</li>
+    </ul>
+  </div>
+
+  <!-- DOM Tree Visual -->
+  <div class="dom-tree">
+    <div class="node">📄 <span>document</span></div>
+    <div class="node" style="margin-left:20px">└── 🌐 <span>&lt;html&gt;</span></div>
+    <div class="node" style="margin-left:40px">├── 🗂️ <span>&lt;head&gt;</span></div>
+    <div class="node" style="margin-left:60px">│ &nbsp;&nbsp;├── <span>&lt;title&gt;</span> <em>"Belajar JS"</em></div>
+    <div class="node" style="margin-left:60px">│ &nbsp;&nbsp;└── <span>&lt;meta&gt;</span></div>
+    <div class="node" style="margin-left:40px">└── 📦 <span>&lt;body&gt;</span></div>
+    <div class="node" style="margin-left:60px">&nbsp;&nbsp;&nbsp;&nbsp;├── <span>&lt;h1&gt;</span> <em>id="judul"</em></div>
+    <div class="node" style="margin-left:60px">&nbsp;&nbsp;&nbsp;&nbsp;├── <span>&lt;div&gt;</span> <em>class="container"</em></div>
+    <div class="node" style="margin-left:80px">&nbsp;&nbsp;&nbsp;&nbsp;│ &nbsp;&nbsp;├── <span>&lt;p&gt;</span></div>
+    <div class="node" style="margin-left:80px">&nbsp;&nbsp;&nbsp;&nbsp;│ &nbsp;&nbsp;└── <span>&lt;button&gt;</span></div>
+    <div class="node" style="margin-left:60px">&nbsp;&nbsp;&nbsp;&nbsp;└── <span>&lt;script&gt;</span></div>
+  </div>
+
+
+  <!-- ===== STEP 9.2: SELEKSI ELEMEN ===== -->
+  <div class="step-title">Step 9.2 — Seleksi Elemen</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Selector</th>
+          <th>Return</th>
+          <th>Contoh</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>getElementById</code></td>
+          <td>ID</td>
+          <td>1 elemen / null</td>
+          <td><code>document.getElementById("judul")</code></td>
+        </tr>
+        <tr>
+          <td><code>getElementsByClassName</code></td>
+          <td>Class</td>
+          <td>HTMLCollection (live)</td>
+          <td><code>document.getElementsByClassName("card")</code></td>
+        </tr>
+        <tr>
+          <td><code>getElementsByTagName</code></td>
+          <td>Tag</td>
+          <td>HTMLCollection (live)</td>
+          <td><code>document.getElementsByTagName("p")</code></td>
+        </tr>
+        <tr>
+          <td><code>querySelector</code> ✅</td>
+          <td>CSS Selector</td>
+          <td>1 elemen pertama / null</td>
+          <td><code>document.querySelector(".card")</code></td>
+        </tr>
+        <tr>
+          <td><code>querySelectorAll</code> ✅</td>
+          <td>CSS Selector</td>
+          <td>NodeList (static)</td>
+          <td><code>document.querySelectorAll("li")</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Seleksi Elemen</span>
+    <pre><code><span class="cm">// By ID → paling spesifik</span>
+<span class="kw">const</span> judul <span class="op">=</span> document.<span class="fn">getElementById</span>(<span class="str">"judul"</span>);
+
+<span class="cm">// querySelector → paling fleksibel (pakai CSS selector)</span>
+<span class="kw">const</span> tombol     <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">"button"</span>);
+<span class="kw">const</span> firstCard  <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">".card"</span>);
+<span class="kw">const</span> mainTitle  <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">"#judul"</span>);
+<span class="kw">const</span> firstLi    <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">"ul > li:first-child"</span>);
+<span class="kw">const</span> inputEmail <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">"input[type='email']"</span>);
+
+<span class="cm">// querySelectorAll → semua elemen yang cocok</span>
+<span class="kw">const</span> semuaCard  <span class="op">=</span> document.<span class="fn">querySelectorAll</span>(<span class="str">".card"</span>);
+<span class="kw">const</span> semuaLi    <span class="op">=</span> document.<span class="fn">querySelectorAll</span>(<span class="str">"li"</span>);
+<span class="kw">const</span> semuaInput <span class="op">=</span> document.<span class="fn">querySelectorAll</span>(<span class="str">"input"</span>);
+
+<span class="cm">// Loop NodeList</span>
+semuaCard.<span class="fn">forEach</span>(card <span class="op">=&gt;</span> {
+  console.<span class="fn">log</span>(card.textContent);
+});
+
+<span class="cm">// Seleksi dari elemen tertentu (bukan dari document)</span>
+<span class="kw">const</span> container <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">".container"</span>);
+<span class="kw">const</span> tombolDalam <span class="op">=</span> container.<span class="fn">querySelector</span>(<span class="str">"button"</span>); <span class="cm">// dalam .container saja</span></code></pre>
+  </div>
+
+
+  <!-- ===== STEP 9.3: MANIPULASI ELEMEN ===== -->
+  <div class="step-title">Step 9.3 — Manipulasi Elemen</div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Baca & Ubah Konten</span>
+    <pre><code><span class="kw">const</span> el <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">"#kotak"</span>);
+
+<span class="cm">// ===== BACA & UBAH ISI =====</span>
+el.textContent;             <span class="cm">// baca teks (tidak termasuk HTML tag)</span>
+el.textContent <span class="op">=</span> <span class="str">"Teks Baru"</span>; <span class="cm">// ubah teks (aman, tidak parsing HTML)</span>
+
+el.innerHTML;               <span class="cm">// baca HTML di dalam elemen</span>
+el.innerHTML  <span class="op">=</span> <span class="str">`&lt;b&gt;Tebal&lt;/b&gt; biasa`</span>; <span class="cm">// ubah HTML (hati-hati XSS!)</span>
+
+el.outerHTML;               <span class="cm">// baca HTML termasuk elemen itu sendiri</span>
+
+<span class="cm">// ===== BACA & UBAH ATRIBUT =====</span>
+el.<span class="fn">getAttribute</span>(<span class="str">"href"</span>);      <span class="cm">// baca atribut</span>
+el.<span class="fn">setAttribute</span>(<span class="str">"href"</span>, <span class="str">"#"</span>); <span class="cm">// ubah/tambah atribut</span>
+el.<span class="fn">removeAttribute</span>(<span class="str">"href"</span>);  <span class="cm">// hapus atribut</span>
+el.<span class="fn">hasAttribute</span>(<span class="str">"disabled"</span>);  <span class="cm">// cek ada/tidak → boolean</span>
+
+<span class="cm">// Atribut langsung (shortcut)</span>
+el.id;         el.id       <span class="op">=</span> <span class="str">"baru"</span>;
+el.className;  el.className <span class="op">=</span> <span class="str">"aktif"</span>;
+el.src;        el.src       <span class="op">=</span> <span class="str">"gambar.jpg"</span>;
+el.href;       el.href      <span class="op">=</span> <span class="str">"https://..."</span>;
+el.value;      el.value     <span class="op">=</span> <span class="str">"isi input"</span>;
+el.disabled;   el.disabled  <span class="op">=</span> <span class="kw">true</span>;
+el.checked;    el.checked   <span class="op">=</span> <span class="kw">true</span>;</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Manipulasi Class</span>
+    <pre><code><span class="kw">const</span> el <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">".kartu"</span>);
+
+<span class="cm">// classList → cara modern mengelola class ✅</span>
+el.classList.<span class="fn">add</span>(<span class="str">"aktif"</span>);           <span class="cm">// tambah class</span>
+el.classList.<span class="fn">add</span>(<span class="str">"besar"</span>, <span class="str">"merah"</span>);   <span class="cm">// tambah beberapa sekaligus</span>
+el.classList.<span class="fn">remove</span>(<span class="str">"aktif"</span>);        <span class="cm">// hapus class</span>
+el.classList.<span class="fn">toggle</span>(<span class="str">"hidden"</span>);      <span class="cm">// tambah jika tidak ada, hapus jika ada</span>
+el.classList.<span class="fn">contains</span>(<span class="str">"aktif"</span>);     <span class="cm">// cek ada/tidak → boolean</span>
+el.classList.<span class="fn">replace</span>(<span class="str">"lama"</span>, <span class="str">"baru"</span>); <span class="cm">// ganti class</span>
+
+<span class="cm">// Contoh toggle dark mode</span>
+<span class="kw">const</span> btnToggle <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">"#toggleDark"</span>);
+btnToggle.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, () <span class="op">=&gt;</span> {
+  document.body.classList.<span class="fn">toggle</span>(<span class="str">"dark-mode"</span>);
+  btnToggle.textContent <span class="op">=</span>
+    document.body.classList.<span class="fn">contains</span>(<span class="str">"dark-mode"</span>)
+      <span class="op">?</span> <span class="str">"☀️ Light Mode"</span>
+      <span class="op">:</span> <span class="str">"🌙 Dark Mode"</span>;
+});</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Manipulasi Style</span>
+    <pre><code><span class="kw">const</span> el <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">".kotak"</span>);
+
+<span class="cm">// Ubah style langsung (inline style)</span>
+el.style.color           <span class="op">=</span> <span class="str">"red"</span>;
+el.style.backgroundColor <span class="op">=</span> <span class="str">"#f0f0f0"</span>; <span class="cm">// camelCase!</span>
+el.style.fontSize        <span class="op">=</span> <span class="str">"18px"</span>;
+el.style.display         <span class="op">=</span> <span class="str">"none"</span>;    <span class="cm">// sembunyikan</span>
+el.style.display         <span class="op">=</span> <span class="str">"block"</span>;   <span class="cm">// tampilkan</span>
+el.style.transform       <span class="op">=</span> <span class="str">"rotate(45deg)"</span>;
+
+<span class="cm">// Baca computed style (style aktual setelah CSS)</span>
+<span class="kw">const</span> computed <span class="op">=</span> <span class="fn">getComputedStyle</span>(el);
+console.<span class="fn">log</span>(computed.color);
+console.<span class="fn">log</span>(computed.fontSize);
+
+<span class="cm">// Reset style</span>
+el.style.cssText <span class="op">=</span> <span class="str">""</span>; <span class="cm">// hapus semua inline style</span></code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Buat & Hapus Elemen</span>
+    <pre><code><span class="cm">// ===== BUAT ELEMEN =====</span>
+<span class="kw">const</span> p     <span class="op">=</span> document.<span class="fn">createElement</span>(<span class="str">"p"</span>);
+<span class="kw">const</span> div   <span class="op">=</span> document.<span class="fn">createElement</span>(<span class="str">"div"</span>);
+<span class="kw">const</span> teks  <span class="op">=</span> document.<span class="fn">createTextNode</span>(<span class="str">"Teks baru"</span>);
+
+p.textContent    <span class="op">=</span> <span class="str">"Paragraf baru"</span>;
+p.className      <span class="op">=</span> <span class="str">"keterangan"</span>;
+p.style.color    <span class="op">=</span> <span class="str">"blue"</span>;
+
+<span class="cm">// ===== SISIPKAN ELEMEN =====</span>
+<span class="kw">const</span> container <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">".container"</span>);
+
+container.<span class="fn">appendChild</span>(p);                   <span class="cm">// tambah di AKHIR</span>
+container.<span class="fn">prepend</span>(p);                        <span class="cm">// tambah di AWAL</span>
+container.<span class="fn">insertBefore</span>(p, container.firstChild); <span class="cm">// sebelum elemen tertentu</span>
+
+<span class="cm">// insertAdjacentHTML → paling fleksibel ✅</span>
+container.<span class="fn">insertAdjacentHTML</span>(<span class="str">"beforebegin"</span>, <span class="str">"&lt;p&gt;Sebelum container&lt;/p&gt;"</span>);
+container.<span class="fn">insertAdjacentHTML</span>(<span class="str">"afterbegin"</span>,  <span class="str">"&lt;p&gt;Awal dalam container&lt;/p&gt;"</span>);
+container.<span class="fn">insertAdjacentHTML</span>(<span class="str">"beforeend"</span>,  <span class="str">"&lt;p&gt;Akhir dalam container&lt;/p&gt;"</span>);
+container.<span class="fn">insertAdjacentHTML</span>(<span class="str">"afterend"</span>,   <span class="str">"&lt;p&gt;Setelah container&lt;/p&gt;"</span>);
+
+<span class="cm">// ===== HAPUS ELEMEN =====</span>
+p.<span class="fn">remove</span>();                           <span class="cm">// hapus elemen itu sendiri</span>
+container.<span class="fn">removeChild</span>(p);             <span class="cm">// hapus child tertentu</span>
+container.innerHTML <span class="op">=</span> <span class="str">""</span>;              <span class="cm">// hapus semua isi</span>
+
+<span class="cm">// ===== CLONE ELEMEN =====</span>
+<span class="kw">const</span> kartuAsli  <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">".kartu"</span>);
+<span class="kw">const</span> kartuKopi  <span class="op">=</span> kartuAsli.<span class="fn">cloneNode</span>(<span class="kw">true</span>); <span class="cm">// true = beserta isinya</span>
+container.<span class="fn">appendChild</span>(kartuKopi);</code></pre>
+  </div>
+
+
+  <!-- ===== STEP 9.4: EVENT ===== -->
+  <div class="step-title">Step 9.4 — Event Handling</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Kategori</th><th>Event</th><th>Keterangan</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td rowspan="4"><span class="tag tag-orange">Mouse</span></td>
+          <td><code>click</code></td>
+          <td>Klik kiri mouse</td>
+        </tr>
+        <tr>
+          <td><code>dblclick</code></td>
+          <td>Double klik</td>
+        </tr>
+        <tr>
+          <td><code>mouseover / mouseout</code></td>
+          <td>Mouse masuk / keluar elemen</td>
+        </tr>
+        <tr>
+          <td><code>mousedown / mouseup</code></td>
+          <td>Tombol mouse ditekan / dilepas</td>
+        </tr>
+        <tr>
+          <td rowspan="3"><span class="tag tag-blue">Keyboard</span></td>
+          <td><code>keydown</code></td>
+          <td>Tombol keyboard ditekan</td>
+        </tr>
+        <tr>
+          <td><code>keyup</code></td>
+          <td>Tombol keyboard dilepas</td>
+        </tr>
+        <tr>
+          <td><code>keypress</code></td>
+          <td>Tombol keyboard ditekan (deprecated)</td>
+        </tr>
+        <tr>
+          <td rowspan="4"><span class="tag tag-green">Form</span></td>
+          <td><code>submit</code></td>
+          <td>Form dikirim</td>
+        </tr>
+        <tr>
+          <td><code>change</code></td>
+          <td>Nilai input berubah (setelah blur)</td>
+        </tr>
+        <tr>
+          <td><code>input</code></td>
+          <td>Nilai input berubah (realtime)</td>
+        </tr>
+        <tr>
+          <td><code>focus / blur</code></td>
+          <td>Input dapat / kehilangan fokus</td>
+        </tr>
+        <tr>
+          <td rowspan="2"><span class="tag tag-purple">Window</span></td>
+          <td><code>load</code></td>
+          <td>Halaman selesai dimuat</td>
+        </tr>
+        <tr>
+          <td><code>resize / scroll</code></td>
+          <td>Window di-resize / di-scroll</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 addEventListener</span>
+    <pre><code><span class="kw">const</span> tombol <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">"#tombol"</span>);
+
+<span class="cm">// Cara 1: addEventListener ✅ (DIREKOMENDASIKAN)</span>
+tombol.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>(event) {
+  console.<span class="fn">log</span>(<span class="str">"Diklik!"</span>);
+  console.<span class="fn">log</span>(event.target);    <span class="cm">// elemen yang diklik</span>
+  console.<span class="fn">log</span>(event.type);     <span class="cm">// "click"</span>
+});
+
+<span class="cm">// Cara 2: Arrow function</span>
+tombol.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, (e) <span class="op">=&gt;</span> {
+  e.<span class="fn">preventDefault</span>();   <span class="cm">// cegah perilaku default (misal: submit form)</span>
+  e.<span class="fn">stopPropagation</span>(); <span class="cm">// hentikan event bubbling</span>
+});
+
+<span class="cm">// ===== EVENT OBJECT =====</span>
+document.<span class="fn">addEventListener</span>(<span class="str">"keydown"</span>, (e) <span class="op">=&gt;</span> {
+  console.<span class="fn">log</span>(e.key);        <span class="cm">// "Enter", "a", "ArrowUp", dll</span>
+  console.<span class="fn">log</span>(e.code);       <span class="cm">// "KeyA", "Enter", dll</span>
+  console.<span class="fn">log</span>(e.ctrlKey);    <span class="cm">// true jika Ctrl ditekan</span>
+  console.<span class="fn">log</span>(e.shiftKey);   <span class="cm">// true jika Shift ditekan</span>
+  <span class="kw">if</span> (e.key <span class="op">===</span> <span class="str">"Enter"</span>) console.<span class="fn">log</span>(<span class="str">"Enter ditekan!"</span>);
+});
+
+<span class="cm">// ===== EVENT DELEGATION =====</span>
+<span class="cm">// Pasang 1 event listener di parent → tangkap semua child</span>
+<span class="kw">const</span> list <span class="op">=</span> document.<span class="fn">querySelector</span>(<span class="str">"#daftarSiswa"</span>);
+
+list.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, (e) <span class="op">=&gt;</span> {
+  <span class="kw">if</span> (e.target.<span class="fn">matches</span>(<span class="str">".btn-hapus"</span>)) {
+    e.target.closest(<span class="str">"li"</span>).<span class="fn">remove</span>();
+  }
+  <span class="kw">if</span> (e.target.<span class="fn">matches</span>(<span class="str">".btn-edit"</span>)) {
+    <span class="kw">const</span> nama <span class="op">=</span> e.target.closest(<span class="str">"li"</span>).<span class="fn">querySelector</span>(<span class="str">".nama"</span>).textContent;
+    console.<span class="fn">log</span>(<span class="str">"Edit:"</span>, nama);
+  }
+});
+
+<span class="cm">// ===== HAPUS EVENT LISTENER =====</span>
+<span class="kw">function</span> <span class="fn">handleKlik</span>() { console.<span class="fn">log</span>(<span class="str">"Klik!"</span>); }
+tombol.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, handleKlik);
+tombol.<span class="fn">removeEventListener</span>(<span class="str">"click"</span>, handleKlik); <span class="cm">// hapus listener</span></code></pre>
+  </div>
+
+
+  <!-- ===== STEP 9.5: WEB STORAGE ===== -->
+  <div class="step-title">Step 9.5 — Web Storage</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fitur</th>
+          <th>localStorage</th>
+          <th>sessionStorage</th>
+          <th>Cookie</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Kapasitas</td>
+          <td>~5-10 MB</td>
+          <td>~5-10 MB</td>
+          <td>~4 KB</td>
+        </tr>
+        <tr>
+          <td>Kadaluarsa</td>
+          <td>Tidak pernah</td>
+          <td>Saat tab ditutup</td>
+          <td>Bisa diatur</td>
+        </tr>
+        <tr>
+          <td>Akses Server</td>
+          <td>❌ Tidak</td>
+          <td>❌ Tidak</td>
+          <td>✅ Ya (via header)</td>
+        </tr>
+        <tr>
+          <td>Lintas Tab</td>
+          <td>✅ Ya</td>
+          <td>❌ Tidak</td>
+          <td>✅ Ya</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 localStorage & sessionStorage</span>
+    <pre><code><span class="cm">// ===== localStorage =====</span>
+<span class="cm">// Simpan string</span>
+localStorage.<span class="fn">setItem</span>(<span class="str">"nama"</span>, <span class="str">"Budi"</span>);
+localStorage.<span class="fn">setItem</span>(<span class="str">"umur"</span>, <span class="str">"17"</span>);
+
+<span class="cm">// Simpan object (harus di-JSON.stringify dulu)</span>
+<span class="kw">const</span> siswa <span class="op">=</span> { nama: <span class="str">"Budi"</span>, kelas: <span class="str">"XII"</span>, nilai: <span class="num">85</span> };
+localStorage.<span class="fn">setItem</span>(<span class="str">"siswa"</span>, JSON.<span class="fn">stringify</span>(siswa));
+
+<span class="cm">// Baca data</span>
+<span class="kw">const</span> nama <span class="op">=</span> localStorage.<span class="fn">getItem</span>(<span class="str">"nama"</span>); <span class="cm">// "Budi"</span>
+<span class="kw">const</span> dataObj <span class="op">=</span> JSON.<span class="fn">parse</span>(localStorage.<span class="fn">getItem</span>(<span class="str">"siswa"</span>));
+
+<span class="cm">// Hapus data</span>
+localStorage.<span class="fn">removeItem</span>(<span class="str">"nama"</span>);     <span class="cm">// hapus satu</span>
+localStorage.<span class="fn">clear</span>();              <span class="cm">// hapus semua</span>
+
+<span class="cm">// Cek ada/tidak</span>
+<span class="kw">const</span> ada <span class="op">=</span> localStorage.<span class="fn">getItem</span>(<span class="str">"nama"</span>) <span class="op">!==</span> <span class="kw">null</span>;
+
+
+<span class="cm">// ===== Helper functions untuk localStorage =====</span>
+<span class="kw">const</span> storage <span class="op">=</span> {
+  <span class="fn">simpan</span>(key, value) {
+    localStorage.<span class="fn">setItem</span>(key, JSON.<span class="fn">stringify</span>(value));
+  },
+  <span class="fn">ambil</span>(key, defaultVal <span class="op">=</span> <span class="kw">null</span>) {
+    <span class="kw">const</span> data <span class="op">=</span> localStorage.<span class="fn">getItem</span>(key);
+    <span class="kw">return</span> data <span class="op">?</span> JSON.<span class="fn">parse</span>(data) <span class="op">:</span> defaultVal;
+  },
+  <span class="fn">hapus</span>(key) { localStorage.<span class="fn">removeItem</span>(key); },
+  <span class="fn">bersih</span>()   { localStorage.<span class="fn">clear</span>(); }
+};
+
+storage.<span class="fn">simpan</span>(<span class="str">"user"</span>, { nama: <span class="str">"Budi"</span>, role: <span class="str">"admin"</span> });
+<span class="kw">const</span> user <span class="op">=</span> storage.<span class="fn">ambil</span>(<span class="str">"user"</span>);
+console.<span class="fn">log</span>(user.nama); <span class="cm">// Budi</span></code></pre>
+  </div>
+
+
+  <!-- ===== STEP 9.6: BOM ===== -->
+  <div class="step-title">Step 9.6 — Browser Object Model (BOM)</div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Window, Location, History, Navigator</span>
+    <pre><code><span class="cm">// ===== WINDOW =====</span>
+window.innerWidth;    <span class="cm">// lebar viewport</span>
+window.innerHeight;   <span class="cm">// tinggi viewport</span>
+window.scrollY;       <span class="cm">// posisi scroll vertikal</span>
+window.scrollX;       <span class="cm">// posisi scroll horizontal</span>
+window.<span class="fn">scrollTo</span>(<span class="num">0</span>, <span class="num">0</span>);       <span class="cm">// scroll ke atas</span>
+window.<span class="fn">scrollTo</span>({ top: <span class="num">500</span>, behavior: <span class="str">"smooth"</span> });
+
+<span class="cm">// Timer</span>
+<span class="kw">const</span> timer <span class="op">=</span> <span class="fn">setTimeout</span>(() <span class="op">=&gt;</span> { <span class="cm">/* ... */</span> }, <span class="num">2000</span>);
+<span class="fn">clearTimeout</span>(timer);  <span class="cm">// batalkan</span>
+
+<span class="kw">const</span> interval <span class="op">=</span> <span class="fn">setInterval</span>(() <span class="op">=&gt;</span> { <span class="cm">/* ... */</span> }, <span class="num">1000</span>);
+<span class="fn">clearInterval</span>(interval); <span class="cm">// hentikan interval</span>
+
+
+<span class="cm">// ===== LOCATION =====</span>
+location.href;              <span class="cm">// URL lengkap</span>
+location.hostname;          <span class="cm">// "localhost"</span>
+location.pathname;          <span class="cm">// "/halaman/ini"</span>
+location.search;            <span class="cm">// "?nama=budi&kelas=xii"</span>
+location.hash;              <span class="cm">// "#section"</span>
+
+location.href <span class="op">=</span> <span class="str">"https://google.com"</span>; <span class="cm">// redirect</span>
+location.<span class="fn">reload</span>();             <span class="cm">// refresh halaman</span>
+location.<span class="fn">replace</span>(<span class="str">"/halaman"</span>);  <span class="cm">// redirect (tanpa history)</span>
+
+<span class="cm">// URLSearchParams → baca query string</span>
+<span class="kw">const</span> params <span class="op">=</span> <span class="kw">new</span> <span class="cl">URLSearchParams</span>(location.search);
+console.<span class="fn">log</span>(params.<span class="fn">get</span>(<span class="str">"nama"</span>));  <span class="cm">// "budi"</span>
+
+
+<span class="cm">// ===== HISTORY =====</span>
+history.<span class="fn">back</span>();                    <span class="cm">// halaman sebelumnya</span>
+history.<span class="fn">forward</span>();                 <span class="cm">// halaman berikutnya</span>
+history.<span class="fn">go</span>(<span class="op">-</span><span class="num">2</span>);                    <span class="cm">// 2 halaman ke belakang</span>
+history.<span class="fn">pushState</span>({}, <span class="str">""</span>, <span class="str">"/baru"</span>); <span class="cm">// ubah URL tanpa reload</span>
+
+
+<span class="cm">// ===== NAVIGATOR =====</span>
+navigator.userAgent;      <span class="cm">// info browser</span>
+navigator.language;       <span class="cm">// "id-ID"</span>
+navigator.onLine;         <span class="cm">// true jika ada koneksi internet</span>
+navigator.platform;       <span class="cm">// "Win32", "Linux", dll</span>
+
+<span class="cm">// Geolocation</span>
+navigator.geolocation.<span class="fn">getCurrentPosition</span>(
+  (pos) <span class="op">=&gt;</span> {
+    console.<span class="fn">log</span>(pos.coords.latitude);
+    console.<span class="fn">log</span>(pos.coords.longitude);
+  },
+  (err) <span class="op">=&gt;</span> console.<span class="fn">log</span>(<span class="str">"❌ Gagal:"</span>, err.message)
+);</code></pre>
+  </div>
+
+
+  <!-- ===== LATIHAN ===== -->
+  <div class="step-title">📝 Latihan Praktik</div>
+
+  <!-- Latihan 1 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 1</span>
+      <h3>Seleksi & Baca Elemen</h3>
+    </div>
+    <p>Diberikan HTML berikut, lengkapi JavaScript-nya:</p>
+    <pre><code>&lt;!-- HTML --&gt;
+&lt;h1 id="judul"&gt;Selamat Datang&lt;/h1&gt;
+&lt;p class="deskripsi"&gt;Ini adalah paragraf.&lt;/p&gt;
+&lt;ul id="daftar"&gt;
+  &lt;li class="item"&gt;Apel&lt;/li&gt;
+  &lt;li class="item"&gt;Mangga&lt;/li&gt;
+  &lt;li class="item"&gt;Jeruk&lt;/li&gt;
+&lt;/ul&gt;
+&lt;input type="text" id="nama" value="Budi"&gt;
+&lt;button id="tombol"&gt;Klik Saya&lt;/button&gt;
+
+&lt;!-- JavaScript --&gt;
+// 1A: Seleksi elemen
+const judul   = document.______("______");        // by ID
+const deskripsi = document.______("______");      // by class (querySelector)
+const daftar  = document.______("______");        // by ID
+const semuaItem = document.______("______");      // semua .item
+const input   = document.______("[type='text']"); // by attribute
+
+// 1B: Baca isi elemen
+console.log(judul.______);                        // "Selamat Datang"
+console.log(deskripsi.______);                    // "Ini adalah paragraf."
+console.log(semuaItem.______);                    // 3
+console.log(input.______);                        // "Budi"
+
+// 1C: Loop semua item dan tampilkan
+semuaItem.______(item => {
+  console.log(item.______);   // Apel, Mangga, Jeruk
+});</code></pre>
+  </div>
+
+  <!-- Latihan 2 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 2</span>
+      <h3>Manipulasi Konten & Style</h3>
+    </div>
+    <p>Lengkapi bagian <strong style="color:#fcd34d">______</strong>:</p>
+    <pre><code>const kotak = document.querySelector("#kotak");
+
+// 2A: Ubah teks
+kotak.______ = "Teks sudah diubah!";
+
+// 2B: Ubah HTML di dalam
+kotak.______ = `&lt;h3&gt;Judul Baru&lt;/h3&gt;&lt;p&gt;Paragraf baru&lt;/p&gt;`;
+
+// 2C: Tambah class
+kotak.classList.______("aktif");
+kotak.classList.______("highlight", "besar");
+
+// 2D: Toggle class
+kotak.classList.______("hidden");
+
+// 2E: Cek apakah punya class
+if (kotak.classList.______("aktif")) {
+  console.log("Elemen aktif!");
+}
+
+// 2F: Ubah style langsung
+kotak.style.______ = "20px";
+kotak.style.______ = "#3182ce";
+kotak.style.______ = "white";
+kotak.style.______ = "10px";
+
+// 2G: Ubah atribut
+const gambar = document.querySelector("img");
+gambar.______("src", "foto-baru.jpg");
+gambar.______("alt", "Foto Baru");
+console.log(gambar.______("src")); // "foto-baru.jpg"</code></pre>
+  </div>
+
+  <!-- Latihan 3 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 3</span>
+      <h3>Buat & Hapus Elemen</h3>
+    </div>
+    <p>Lengkapi bagian <strong style="color:#fcd34d">______</strong>:</p>
+    <pre><code>const container = document.querySelector("#container");
+
+// 3A: Buat elemen baru
+const kartu = document.______("div");
+kartu.______ = "kartu";
+kartu.______ = `
+  &lt;h3&gt;Produk Baru&lt;/h3&gt;
+  &lt;p&gt;Harga: Rp150.000&lt;/p&gt;
+  &lt;button class="btn-hapus"&gt;Hapus&lt;/button&gt;
+`;
+
+// 3B: Sisipkan ke container
+container.______(kartu);              // tambah di akhir
+
+// 3C: Sisipkan di awal
+const header = document.______("h2");
+header.______ = "Daftar Produk";
+container.______(header);             // tambah di awal
+
+// 3D: insertAdjacentHTML
+container.______("______", "&lt;p&gt;Elemen baru di akhir container&lt;/p&gt;");
+
+// 3E: Hapus elemen
+const elHapus = document.querySelector(".hapus-saya");
+elHapus.______();                     // hapus diri sendiri
+
+// 3F: Hapus semua isi container
+container.______ = ______;</code></pre>
+  </div>
+
+  <!-- Latihan 4 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num medium">LATIHAN 4</span>
+      <h3>Event Handling</h3>
+    </div>
+    <p>Lengkapi event listener berikut:</p>
+    <pre><code>// 4A: Click event
+const tombol = document.querySelector("#tombol");
+tombol.______("______", (e) => {
+  console.log("Diklik!", e.______);  // elemen yang diklik
+});
+
+// 4B: Input event (realtime)
+const inputNama = document.querySelector("#inputNama");
+const preview   = document.querySelector("#preview");
+inputNama.______("______", (e) => {
+  preview.textContent = "Halo, " + e.______.______; // nilai input
+});
+
+// 4C: Form submit
+const form = document.querySelector("#formLogin");
+form.______("______", (e) => {
+  e.______();   // cegah reload halaman
+  const username = document.querySelector("#username").______;
+  const password = document.querySelector("#password").______;
+
+  if (!username || !password) {
+    alert("Username dan password wajib diisi!");
+    return;
+  }
+  console.log("Login:", username, password);
+});
+
+// 4D: Keyboard event
+document.______("______", (e) => {
+  if (e.______ === "Escape") {
+    console.log("ESC ditekan — tutup modal");
+  }
+  if (e.ctrlKey &amp;&amp; e.______ === "s") {
+    e.______();  // cegah save browser
+    console.log("Ctrl+S ditekan — simpan data");
+  }
+});
+
+// 4E: Event delegation
+const daftarTodo = document.querySelector("#daftarTodo");
+daftarTodo.______("______", (e) => {
+  if (e.______.____(". btn-selesai")) {
+    e.target.______("li").classList.______("selesai");
+  }
+  if (e.target.______(".btn-hapus")) {
+    e.target.______("li").______();
+  }
+});</code></pre>
+  </div>
+
+  <!-- Latihan 5 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num hard">LATIHAN 5 🔴</span>
+      <h3>Challenge — Aplikasi Todo List dengan localStorage</h3>
+    </div>
+    <p>Buat aplikasi Todo List lengkap dengan DOM manipulation dan localStorage:</p>
+    <pre><code>// ===== todo.js =====
+
+// 1. Muat data dari localStorage (default: array kosong)
+let todos = JSON.______(localStorage.______("todos")) ______ [];
+
+// 2. Simpan ke localStorage
+function simpanTodos() {
+  localStorage.______("todos", JSON.______(______));
+}
+
+// 3. Render semua todo ke DOM
+function renderTodos() {
+  const list = document.querySelector("#listTodo");
+  list.______ = "";  // bersihkan dulu
+
+  ______.______(todo => {
+    const li = document.______("li");
+    li.className = todo.selesai ? "selesai" : "";
+    li.______ = `
+      &lt;span class="teks ${todo.selesai ? 'coret' : ''}"&gt;
+        ${todo.______}
+      &lt;/span&gt;
+      &lt;div class="aksi"&gt;
+        &lt;button class="btn-toggle" data-id="${todo.______}"&gt;
+          ${todo.selesai ? "↩️ Batal" : "✅ Selesai"}
+        &lt;/button&gt;
+        &lt;button class="btn-hapus" data-id="${todo.______}"&gt;🗑️&lt;/button&gt;
+      &lt;/div&gt;
+    `;
+    list.______(li);
+  });
+
+  // Update counter
+  const selesai = todos.______( t => t.______).______;
+  document.querySelector("#counter").textContent =
+    `${selesai} / ${todos.______} selesai`;
+}
+
+// 4. Tambah todo baru
+function tambahTodo(teks) {
+  if (!teks.______()) return;
+  todos.______({
+    id     : Date.______(),
+    teks   : teks.______(),
+    selesai: ______
+  });
+  ______();  // simpan
+  ______();  // render
+}
+
+// 5. Toggle selesai
+function toggleTodo(id) {
+  todos = todos.______(t =>
+    t.id === ______(id) ? { ______t, selesai: !t.______ } : t
+  );
+  ______(); ______();
+}
+
+// 6. Hapus todo
+function hapusTodo(id) {
+  todos = todos.______(t => t.id !== ______(id));
+  ______(); ______();
+}
+
+// 7. Event Listeners
+document.querySelector("#formTodo").______("______", (e) => {
+  e.______();
+  const input = document.querySelector("#inputTodo");
+  ______(input.______);
+  input.______ = "";
+  input.______();
+});
+
+document.querySelector("#listTodo").______("______", (e) => {
+  const id = e.target.dataset.______;
+  if (e.target.______(".btn-toggle")) ______(id);
+  if (e.target.matches("______"))     ______(id);
+});
+
+// 8. Inisialisasi
+______();</code></pre>
+  </div>
+
+  <!-- KUNCI JAWABAN -->
+  <div class="answer-box">
+    <details>
+      <summary>Kunci Jawaban — Klik untuk buka</summary>
+      <pre><code>// LATIHAN 1
+getElementById("judul")
+querySelector(".deskripsi")
+getElementById("daftar")
+querySelectorAll(".item")
+querySelector("[type='text']")
+textContent | textContent | length | value
+forEach | textContent
+
+// LATIHAN 2
+textContent | innerHTML
+classList.add("aktif")
+classList.add("highlight","besar")
+classList.toggle("hidden")
+classList.contains("aktif")
+fontSize="20px" | color="#3182ce"
+color="white" | borderRadius="10px"
+setAttribute | setAttribute | getAttribute
+
+// LATIHAN 3
+createElement("div")
+className = "kartu"
+innerHTML = `...`
+appendChild(kartu)
+createElement("h2")
+textContent = "Daftar Produk"
+prepend(header)
+insertAdjacentHTML("beforeend", ...)
+remove()
+innerHTML = ""
+
+// LATIHAN 4
+addEventListener("click") | e.target
+addEventListener("input") | e.target.value
+addEventListener("submit") | preventDefault()
+.value | .value
+addEventListener("keydown") | e.key
+e.key === "s" | preventDefault()
+addEventListener("click") | e.target.matches(".btn-selesai")
+closest("li").classList.toggle("selesai")
+target.matches(".btn-hapus")
+closest("li").remove()
+
+// LATIHAN 5
+JSON.parse | getItem("todos") || []
+setItem("todos", JSON.stringify(todos))
+innerHTML = ""
+todos.forEach | createElement("li")
+innerHTML | todo.teks | todo.id | todo.id
+appendChild(li)
+filter(t => t.selesai).length
+todos.length
+tambahTodo | teks.trim() | todos.push
+Date.now() | teks.trim() | false
+simpanTodos() | renderTodos()
+todos.map | Number(id) | {...t, selesai: !t.selesai}
+simpanTodos() | renderTodos()
+todos.filter | Number(id)
+addEventListener("submit") | preventDefault()
+tambahTodo(input.value) | input.value="" | input.focus()
+addEventListener("click") | e.target.dataset.id
+matches(".btn-toggle") | toggleTodo(id)
+".btn-hapus" | hapusTodo(id)
+renderTodos()</code></pre>
+    </details>
+  </div>
+
+</div><!-- end section -->
+
+</body>
+</html>

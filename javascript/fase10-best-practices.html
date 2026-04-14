@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fase 10 — Best Practices & Project Akhir</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+
+    /* ===== COVER ===== */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1a3a2a 50%, #0f172a 100%);
+      padding: 40px;
+      page-break-after: always;
+    }
+
+    .cover .logo {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #06b6d4, #3b82f6);
+      border-radius: 20px;
+      display: flex; align-items: center;
+      justify-content: center;
+      font-size: 40px; margin-bottom: 32px;
+      box-shadow: 0 8px 32px rgba(6,182,212,0.4);
+    }
+
+    .cover h1 {
+      font-size: 44px; font-weight: 800;
+      background: linear-gradient(135deg, #06b6d4, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .cover h2 {
+      font-size: 22px; color: #94a3b8;
+      font-weight: 400; margin-bottom: 40px;
+    }
+
+    .cover .badge-list {
+      display: flex; gap: 12px;
+      flex-wrap: wrap; justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .cover .badge {
+      padding: 8px 20px; border-radius: 20px;
+      font-size: 14px; font-weight: 600;
+      background: rgba(6,182,212,0.15);
+      border: 1px solid rgba(6,182,212,0.3);
+      color: #67e8f9;
+    }
+
+    .cover .info-box {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px; padding: 24px 40px;
+      display: flex; gap: 40px;
+    }
+
+    .cover .info-box div { text-align: center; }
+    .cover .info-box span {
+      display: block; font-size: 28px;
+      font-weight: 700; color: #06b6d4;
+    }
+    .cover .info-box p {
+      font-size: 13px; color: #94a3b8; margin-top: 4px;
+    }
+
+    /* ===== SECTION ===== */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      page-break-before: always;
+    }
+
+    .section-header {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 36px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid rgba(6,182,212,0.3);
+    }
+
+    .section-header .icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, #06b6d4, #3b82f6);
+      border-radius: 12px;
+      display: flex; align-items: center;
+      justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+
+    .section-header h2 {
+      font-size: 26px; font-weight: 700; color: #f1f5f9;
+    }
+
+    .section-header p {
+      font-size: 14px; color: #94a3b8; margin-top: 2px;
+    }
+
+    /* ===== STEP TITLE ===== */
+    .step-title {
+      font-size: 20px; font-weight: 700;
+      color: #f1f5f9; margin: 36px 0 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .step-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px; height: 22px;
+      background: linear-gradient(180deg, #06b6d4, #3b82f6);
+      border-radius: 2px;
+    }
+
+    /* ===== CONCEPT BOX ===== */
+    .concept-box {
+      background: rgba(6,182,212,0.07);
+      border: 1px solid rgba(6,182,212,0.25);
+      border-left: 4px solid #06b6d4;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+
+    .concept-box h3 {
+      font-size: 15px; color: #67e8f9;
+      margin-bottom: 10px; font-weight: 600;
+    }
+
+    .concept-box p,
+    .concept-box li {
+      font-size: 14px; color: #cbd5e1; line-height: 1.9;
+    }
+
+    .concept-box ul { padding-left: 20px; }
+
+    .concept-box code {
+      background: rgba(6,182,212,0.15);
+      color: #67e8f9;
+      padding: 1px 6px; border-radius: 4px;
+      font-size: 13px;
+    }
+
+    /* ===== COMPARE ===== */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .compare-card {
+      border-radius: 10px;
+      padding: 18px;
+      font-size: 13px;
+    }
+
+    .compare-card.bad {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+    }
+
+    .compare-card.good {
+      background: rgba(6,182,212,0.08);
+      border: 1px solid rgba(6,182,212,0.25);
+    }
+
+    .compare-card h4 {
+      font-size: 13px; font-weight: 700; margin-bottom: 12px;
+    }
+
+    .compare-card.bad  h4 { color: #fca5a5; }
+    .compare-card.good h4 { color: #67e8f9; }
+
+    .compare-card pre {
+      background: transparent;
+      border: none; padding: 0;
+      font-size: 12.5px; line-height: 1.8;
+    }
+
+    /* ===== CHECKLIST ===== */
+    .checklist {
+      background: rgba(6,182,212,0.05);
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+
+    .checklist h3 {
+      font-size: 15px; color: #67e8f9;
+      margin-bottom: 14px; font-weight: 600;
+    }
+
+    .check-item {
+      display: flex; align-items: flex-start;
+      gap: 10px; padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 14px; color: #cbd5e1;
+    }
+
+    .check-item:last-child { border-bottom: none; }
+
+    .check-item .dot {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex; align-items: center;
+      justify-content: center;
+      font-size: 11px; flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .dot.done   { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+    .dot.warn   { background: rgba(234,179,8,0.2);  color: #fde047; }
+    .dot.danger { background: rgba(239,68,68,0.2);  color: #fca5a5; }
+
+    /* ===== TABLE ===== */
+    .table-wrap { overflow-x: auto; margin-bottom: 28px; }
+
+    table {
+      width: 100%; border-collapse: collapse; font-size: 14px;
+    }
+
+    thead tr { background: rgba(6,182,212,0.12); }
+
+    th {
+      padding: 12px 16px; text-align: left;
+      color: #67e8f9; font-weight: 600;
+      border-bottom: 2px solid rgba(6,182,212,0.3);
+    }
+
+    td {
+      padding: 11px 16px; color: #cbd5e1;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    td code {
+      background: rgba(6,182,212,0.1);
+      color: #67e8f9; padding: 1px 6px;
+      border-radius: 4px; font-size: 12px;
+    }
+
+    tr:hover td { background: rgba(255,255,255,0.03); }
+
+    /* ===== CODE BLOCK ===== */
+    .code-wrap { margin-bottom: 28px; }
+
+    .code-label {
+      display: inline-block;
+      background: rgba(6,182,212,0.15);
+      color: #67e8f9; font-size: 12px;
+      font-weight: 600; padding: 4px 12px;
+      border-radius: 6px 6px 0 0;
+      border: 1px solid rgba(6,182,212,0.3);
+      border-bottom: none;
+    }
+
+    pre {
+      background: #0d1117;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 0 8px 8px 8px;
+      padding: 24px;
+      overflow-x: auto;
+      font-size: 13.5px;
+      line-height: 1.9;
+    }
+
+    code {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      color: #e2e8f0;
+    }
+
+    /* Syntax highlighting */
+    .kw  { color: #c792ea; font-weight: 600; }
+    .str { color: #c3e88d; }
+    .num { color: #f78c6c; }
+    .cm  { color: #546e7a; font-style: italic; }
+    .fn  { color: #82aaff; }
+    .cl  { color: #ffcb6b; }
+    .th  { color: #89ddff; }
+    .op  { color: #89ddff; }
+    .aw  { color: #c792ea; font-weight: 700; }
+
+    /* ===== NOTE ===== */
+    .note {
+      display: flex; gap: 12px; align-items: flex-start;
+      border-radius: 10px; padding: 14px 18px;
+      margin-bottom: 24px;
+    }
+
+    .note.info {
+      background: rgba(6,182,212,0.07);
+      border: 1px solid rgba(6,182,212,0.2);
+    }
+
+    .note.warn {
+      background: rgba(234,179,8,0.07);
+      border: 1px solid rgba(234,179,8,0.2);
+    }
+
+    .note.success {
+      background: rgba(16,185,129,0.07);
+      border: 1px solid rgba(16,185,129,0.2);
+    }
+
+    .note .icon { font-size: 18px; flex-shrink: 0; }
+    .note.info    p { font-size: 13px; color: #67e8f9; }
+    .note.warn    p { font-size: 13px; color: #fde68a; }
+    .note.success p { font-size: 13px; color: #6ee7b7; }
+
+    /* ===== PROJECT BOX ===== */
+    .project-box {
+      background: linear-gradient(135deg,
+        rgba(6,182,212,0.1) 0%,
+        rgba(59,130,246,0.1) 100%);
+      border: 1px solid rgba(6,182,212,0.3);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+
+    .project-box h3 {
+      font-size: 18px; color: #67e8f9;
+      font-weight: 700; margin-bottom: 8px;
+    }
+
+    .project-box .sub {
+      font-size: 13px; color: #94a3b8;
+      margin-bottom: 20px;
+    }
+
+    .project-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .feature-item {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px; color: #cbd5e1;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ===== LATIHAN ===== */
+    .latihan-box {
+      background: rgba(6,182,212,0.05);
+      border: 1px solid rgba(6,182,212,0.2);
+      border-left: 4px solid #06b6d4;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .latihan-header {
+      display: flex; align-items: center;
+      gap: 10px; margin-bottom: 14px;
+    }
+
+    .latihan-num {
+      background: #06b6d4; color: #0f172a;
+      font-size: 12px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+    .latihan-num.medium { background: #f59e0b; }
+    .latihan-num.hard   { background: #ef4444; color: white; }
+
+    .latihan-box h3 {
+      font-size: 15px; color: #67e8f9; font-weight: 600;
+    }
+
+    .latihan-box p {
+      font-size: 14px; color: #a5f3fc; margin-bottom: 12px;
+    }
+
+    .latihan-box pre {
+      background: #050d14;
+      border-color: rgba(6,182,212,0.15);
+      font-size: 13px;
+      border-radius: 8px;
+    }
+
+    /* ===== ANSWER ===== */
+    .answer-box {
+      background: rgba(234,179,8,0.05);
+      border: 1px solid rgba(234,179,8,0.2);
+      border-left: 4px solid #eab308;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .answer-box summary {
+      cursor: pointer; color: #fde047;
+      font-weight: 600; font-size: 15px;
+      list-style: none;
+    }
+
+    .answer-box summary::before { content: '🔑 '; }
+
+    .answer-box pre {
+      margin-top: 16px;
+      background: #14110a;
+      border-color: rgba(234,179,8,0.15);
+      font-size: 13px;
+    }
+
+    /* ===== TAG ===== */
+    .tag {
+      display: inline-block; padding: 3px 10px;
+      border-radius: 20px; font-size: 12px;
+      font-weight: 600; margin: 2px;
+    }
+    .tag-cyan   { background: rgba(6,182,212,0.2);  color: #67e8f9; }
+    .tag-green  { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+    .tag-yellow { background: rgba(234,179,8,0.2);  color: #fde047; }
+    .tag-red    { background: rgba(239,68,68,0.2);  color: #fca5a5; }
+    .tag-blue   { background: rgba(59,130,246,0.2); color: #93c5fd; }
+
+    /* ===== FINAL CARD ===== */
+    .final-card {
+      background: linear-gradient(135deg, #0f172a, #1e3a5f);
+      border: 2px solid rgba(6,182,212,0.4);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .final-card .trophy { font-size: 64px; margin-bottom: 16px; }
+
+    .final-card h2 {
+      font-size: 28px; font-weight: 800;
+      background: linear-gradient(135deg, #06b6d4, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .final-card p {
+      font-size: 15px; color: #94a3b8;
+      max-width: 500px; margin: 0 auto 24px;
+      line-height: 1.8;
+    }
+
+    .skill-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .skill-item {
+      background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.25);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 13px; color: #a5f3fc;
+      text-align: center;
+    }
+
+    .skill-item .skill-icon { font-size: 22px; margin-bottom: 4px; }
+
+    /* ===== PRINT ===== */
+    @media print {
+      body { background: #0f172a !important; }
+      .cover { page-break-after: always; }
+      .section { page-break-before: always; }
+      pre { white-space: pre-wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<div class="cover">
+  <div class="logo">🏆</div>
+  <h1>Best Practices & Project Akhir</h1>
+  <h2>Clean Code · Optimasi · Project Nyata</h2>
+
+  <div class="badge-list">
+    <span class="badge">📗 Fase 10</span>
+    <span class="badge">🔴 Level Mahir</span>
+    <span class="badge">⏱️ 2–3 Minggu</span>
+    <span class="badge">🏆 Fase Terakhir</span>
+  </div>
+
+  <div class="info-box">
+    <div><span>4</span><p>Sub Materi</p></div>
+    <div><span>3</span><p>Latihan</p></div>
+    <div><span>1</span><p>Project Akhir</p></div>
+    <div><span>🏆</span><p>Final Phase</p></div>
+  </div>
+</div>
+
+
+<!-- ==================== SECTION ==================== -->
+<div class="section">
+
+  <!-- ===== STEP 10.1: CLEAN CODE ===== -->
+  <div class="section-header">
+    <div class="icon">✨</div>
+    <div>
+      <h2>Step 10.1 — Clean Code</h2>
+      <p>Menulis kode yang rapi, mudah dibaca, dan mudah di-maintain</p>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <h3>📌 Prinsip Clean Code</h3>
+    <ul>
+      <li><strong style="color:#67e8f9">Readable</strong> &nbsp;&nbsp;&nbsp;→ kode mudah dibaca oleh orang lain (dan dirimu sendiri 6 bulan kemudian!)</li>
+      <li><strong style="color:#6ee7b7">Meaningful</strong> → nama variabel / function menjelaskan tujuannya</li>
+      <li><strong style="color:#fde047">Simple</strong> &nbsp;&nbsp;&nbsp;&nbsp;→ satu function satu tugas (Single Responsibility)</li>
+      <li><strong style="color:#fca5a5">DRY</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ Don't Repeat Yourself — hindari duplikasi kode</li>
+    </ul>
+  </div>
+
+  <!-- Penamaan -->
+  <div class="step-title">🔤 Penamaan yang Baik</div>
+
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <h4>❌ Penamaan Buruk</h4>
+      <pre><code style="color:#fca5a5;font-size:12.5px">// Tidak jelas
+let x = 85;
+let arr = [];
+let flag = true;
+
+function fn(a, b) {
+  return a + b;
+}
+
+function p(u) {
+  console.log(u.n);
+}
+
+const d = new Date();
+let t = d.getTime();</code></pre>
+    </div>
+    <div class="compare-card good">
+      <h4>✅ Penamaan Baik</h4>
+      <pre><code style="color:#67e8f9;font-size:12.5px">// Jelas & deskriptif
+let nilaiUjian = 85;
+let daftarSiswa = [];
+let isLoggedIn = true;
+
+function hitungTotal(harga, jumlah) {
+  return harga * jumlah;
+}
+
+function tampilProfil(user) {
+  console.log(user.nama);
+}
+
+const sekarang = new Date();
+let timestampSekarang = sekarang.getTime();</code></pre>
+    </div>
+  </div>
+
+  <!-- Konvensi Penamaan -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Tipe</th>
+          <th>Konvensi</th>
+          <th>Contoh</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Variabel & Function</td>
+          <td><span class="tag tag-cyan">camelCase</span></td>
+          <td><code>nilaiSiswa</code>, <code>hitungTotal()</code></td>
+        </tr>
+        <tr>
+          <td>Class & Constructor</td>
+          <td><span class="tag tag-blue">PascalCase</span></td>
+          <td><code>Siswa</code>, <code>RekeningBank</code></td>
+        </tr>
+        <tr>
+          <td>Konstanta Global</td>
+          <td><span class="tag tag-yellow">UPPER_SNAKE_CASE</span></td>
+          <td><code>MAX_NILAI</code>, <code>BASE_URL</code></td>
+        </tr>
+        <tr>
+          <td>Private (konvensi)</td>
+          <td><span class="tag tag-red">_camelCase / #field</span></td>
+          <td><code>_saldo</code>, <code>#pin</code></td>
+        </tr>
+        <tr>
+          <td>Boolean</td>
+          <td><span class="tag tag-green">is / has / can</span></td>
+          <td><code>isActive</code>, <code>hasError</code>, <code>canEdit</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Function yang baik -->
+  <div class="step-title">⚙️ Function yang Baik</div>
+
+  <div class="compare-grid">
+    <div class="compare-card bad">
+      <h4>❌ Function Buruk</h4>
+      <pre><code style="color:#fca5a5;font-size:12px">// Terlalu banyak tugas!
+function prosesData(siswa) {
+  // validasi
+  if (!siswa.nama) return;
+  if (siswa.nilai < 0) return;
+
+  // hitung
+  let grade;
+  if (siswa.nilai >= 90) grade = "A";
+  else if (siswa.nilai >= 80) grade = "B";
+  else grade = "C";
+
+  // simpan
+  localStorage.setItem("siswa",
+    JSON.stringify(siswa));
+
+  // tampilkan
+  document.getElementById("hasil")
+    .textContent = grade;
+
+  // kirim ke server
+  fetch("/api/siswa", {
+    method: "POST",
+    body: JSON.stringify(siswa)
+  });
+}</code></pre>
+    </div>
+    <div class="compare-card good">
+      <h4>✅ Function Baik (SRP)</h4>
+      <pre><code style="color:#67e8f9;font-size:12px">// Satu function, satu tugas!
+
+function validasiSiswa(siswa) {
+  if (!siswa.nama) throw new Error("...");
+  if (siswa.nilai < 0) throw new Error("...");
+}
+
+function hitungGrade(nilai) {
+  if (nilai >= 90) return "A";
+  if (nilai >= 80) return "B";
+  return "C";
+}
+
+function simpanSiswa(siswa) {
+  localStorage.setItem("siswa",
+    JSON.stringify(siswa));
+}
+
+function tampilGrade(grade) {
+  document.getElementById("hasil")
+    .textContent = grade;
+}
+
+async function kirimSiswa(siswa) {
+  await fetch("/api/siswa", { ... });
+}</code></pre>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Contoh Clean Code Lengkap</span>
+    <pre><code><span class="cm">// ===== KONSTANTA =====</span>
+<span class="kw">const</span> NILAI_LULUS   <span class="op">=</span> <span class="num">75</span>;
+<span class="kw">const</span> MAX_PERCOBAAN <span class="op">=</span> <span class="num">3</span>;
+<span class="kw">const</span> BASE_URL      <span class="op">=</span> <span class="str">"https://api.sekolah.id"</span>;
+
+<span class="cm">// ===== VALIDASI =====</span>
+<span class="kw">function</span> <span class="fn">isNilaiValid</span>(nilai) {
+  <span class="kw">return</span> <span class="kw">typeof</span> nilai <span class="op">===</span> <span class="str">"number"</span>
+    <span class="op">&amp;&amp;</span> nilai <span class="op">&gt;=</span> <span class="num">0</span>
+    <span class="op">&amp;&amp;</span> nilai <span class="op">&lt;=</span> <span class="num">100</span>;
+}
+
+<span class="kw">function</span> <span class="fn">isNamaValid</span>(nama) {
+  <span class="kw">return</span> <span class="kw">typeof</span> nama <span class="op">===</span> <span class="str">"string"</span>
+    <span class="op">&amp;&amp;</span> nama.<span class="fn">trim</span>().length <span class="op">&gt;=</span> <span class="num">3</span>;
+}
+
+<span class="cm">// ===== BUSINESS LOGIC =====</span>
+<span class="kw">function</span> <span class="fn">hitungGrade</span>(nilai) {
+  <span class="kw">if</span> (<span class="op">!</span><span class="fn">isNilaiValid</span>(nilai)) <span class="kw">throw new</span> <span class="cl">TypeError</span>(<span class="str">"Nilai tidak valid"</span>);
+
+  <span class="kw">const</span> gradeMap <span class="op">=</span> [
+    { min: <span class="num">90</span>, grade: <span class="str">"A"</span> },
+    { min: <span class="num">80</span>, grade: <span class="str">"B"</span> },
+    { min: <span class="num">70</span>, grade: <span class="str">"C"</span> },
+    { min: <span class="num">60</span>, grade: <span class="str">"D"</span> },
+    { min: <span class="num">0</span>,  grade: <span class="str">"E"</span> },
+  ];
+
+  <span class="kw">return</span> gradeMap.<span class="fn">find</span>(g <span class="op">=&gt;</span> nilai <span class="op">&gt;=</span> g.min).grade;
+}
+
+<span class="kw">function</span> <span class="fn">isLulus</span>(nilai) {
+  <span class="kw">return</span> nilai <span class="op">&gt;=</span> NILAI_LULUS;
+}
+
+<span class="cm">// ===== EARLY RETURN (hindari nested if) =====</span>
+<span class="cm">// ❌ Buruk</span>
+<span class="kw">function</span> <span class="fn">prosesLoginBuruk</span>(user) {
+  <span class="kw">if</span> (user) {
+    <span class="kw">if</span> (user.aktif) {
+      <span class="kw">if</span> (user.terverifikasi) {
+        <span class="kw">return</span> <span class="str">"✅ Berhasil"</span>;
+      }
+    }
+  }
+  <span class="kw">return</span> <span class="str">"❌ Gagal"</span>;
+}
+
+<span class="cm">// ✅ Baik (early return)</span>
+<span class="kw">function</span> <span class="fn">prosesLogin</span>(user) {
+  <span class="kw">if</span> (<span class="op">!</span>user)              <span class="kw">return</span> <span class="str">"❌ User tidak ditemukan"</span>;
+  <span class="kw">if</span> (<span class="op">!</span>user.aktif)         <span class="kw">return</span> <span class="str">"❌ Akun nonaktif"</span>;
+  <span class="kw">if</span> (<span class="op">!</span>user.terverifikasi) <span class="kw">return</span> <span class="str">"❌ Belum terverifikasi"</span>;
+  <span class="kw">return</span> <span class="str">"✅ Login berhasil"</span>;
+}</code></pre>
+  </div>
+
+
+  <!-- ===== STEP 10.2: OPTIMASI PERFORMA ===== -->
+  <div class="step-title">Step 10.2 — Optimasi Performa</div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 Teknik Optimasi</span>
+    <pre><code><span class="cm">// ===== 1. DEBOUNCE — tunda eksekusi sampai user berhenti ketik =====</span>
+<span class="kw">function</span> <span class="fn">debounce</span>(func, delay) {
+  <span class="kw">let</span> timer;
+  <span class="kw">return function</span>(...args) {
+    <span class="fn">clearTimeout</span>(timer);
+    timer <span class="op">=</span> <span class="fn">setTimeout</span>(() <span class="op">=&gt;</span> <span class="fn">func</span>.<span class="fn">apply</span>(<span class="th">this</span>, args), delay);
+  };
+}
+
+<span class="kw">const</span> cariDebounced <span class="op">=</span> <span class="fn">debounce</span>((keyword) <span class="op">=&gt;</span> {
+  console.<span class="fn">log</span>(<span class="str">"Mencari:"</span>, keyword); <span class="cm">// hanya dipanggil setelah 500ms berhenti</span>
+}, <span class="num">500</span>);
+
+document.<span class="fn">querySelector</span>(<span class="str">"#search"</span>)
+  .<span class="fn">addEventListener</span>(<span class="str">"input"</span>, (e) <span class="op">=&gt;</span> <span class="fn">cariDebounced</span>(e.target.value));
+
+
+<span class="cm">// ===== 2. THROTTLE — batasi eksekusi maksimal 1x per interval =====</span>
+<span class="kw">function</span> <span class="fn">throttle</span>(func, limit) {
+  <span class="kw">let</span> inThrottle;
+  <span class="kw">return function</span>(...args) {
+    <span class="kw">if</span> (<span class="op">!</span>inThrottle) {
+      <span class="fn">func</span>.<span class="fn">apply</span>(<span class="th">this</span>, args);
+      inThrottle <span class="op">=</span> <span class="kw">true</span>;
+      <span class="fn">setTimeout</span>(() <span class="op">=&gt;</span> inThrottle <span class="op">=</span> <span class="kw">false</span>, limit);
+    }
+  };
+}
+
+<span class="kw">const</span> handleScrollThrottled <span class="op">=</span> <span class="fn">throttle</span>(() <span class="op">=&gt;</span> {
+  console.<span class="fn">log</span>(<span class="str">"Scroll!"</span>, window.scrollY); <span class="cm">// max 1x per 200ms</span>
+}, <span class="num">200</span>);
+
+window.<span class="fn">addEventListener</span>(<span class="str">"scroll"</span>, handleScrollThrottled);
+
+
+<span class="cm">// ===== 3. MEMOIZE — cache hasil komputasi berat =====</span>
+<span class="kw">function</span> <span class="fn">memoize</span>(func) {
+  <span class="kw">const</span> cache <span class="op">=</span> <span class="kw">new</span> <span class="cl">Map</span>();
+  <span class="kw">return function</span>(...args) {
+    <span class="kw">const</span> key <span class="op">=</span> JSON.<span class="fn">stringify</span>(args);
+    <span class="kw">if</span> (cache.<span class="fn">has</span>(key)) {
+      console.<span class="fn">log</span>(<span class="str">"📦 Dari cache"</span>);
+      <span class="kw">return</span> cache.<span class="fn">get</span>(key);
+    }
+    <span class="kw">const</span> result <span class="op">=</span> <span class="fn">func</span>.<span class="fn">apply</span>(<span class="th">this</span>, args);
+    cache.<span class="fn">set</span>(key, result);
+    <span class="kw">return</span> result;
+  };
+}
+
+<span class="kw">const</span> faktorialMemo <span class="op">=</span> <span class="fn">memoize</span>(<span class="kw">function</span> <span class="fn">faktorial</span>(n) {
+  <span class="kw">return</span> n <span class="op">&lt;=</span> <span class="num">1</span> <span class="op">?</span> <span class="num">1</span> <span class="op">:</span> n <span class="op">*</span> <span class="fn">faktorial</span>(n <span class="op">-</span> <span class="num">1</span>);
+});
+
+console.<span class="fn">log</span>(<span class="fn">faktorialMemo</span>(<span class="num">10</span>)); <span class="cm">// hitung</span>
+console.<span class="fn">log</span>(<span class="fn">faktorialMemo</span>(<span class="num">10</span>)); <span class="cm">// 📦 Dari cache — langsung!</span>
+
+
+<span class="cm">// ===== 4. LAZY LOADING — muat konten hanya saat dibutuhkan =====</span>
+<span class="kw">const</span> observer <span class="op">=</span> <span class="kw">new</span> <span class="cl">IntersectionObserver</span>((entries) <span class="op">=&gt;</span> {
+  entries.<span class="fn">forEach</span>(entry <span class="op">=&gt;</span> {
+    <span class="kw">if</span> (entry.isIntersecting) {
+      <span class="kw">const</span> img <span class="op">=</span> entry.target;
+      img.src <span class="op">=</span> img.dataset.src; <span class="cm">// load gambar saat terlihat</span>
+      observer.<span class="fn">unobserve</span>(img);
+    }
+  });
+});
+
+document.<span class="fn">querySelectorAll</span>(<span class="str">"img[data-src]"</span>)
+  .<span class="fn">forEach</span>(img <span class="op">=&gt;</span> observer.<span class="fn">observe</span>(img));</code></pre>
+  </div>
+
+
+  <!-- ===== STEP 10.3: CHECKLIST BEST PRACTICES ===== -->
+  <div class="step-title">Step 10.3 — Checklist Best Practices</div>
+
+  <div class="checklist">
+    <h3>✅ Checklist Sebelum Submit Kode</h3>
+    <div class="check-item">
+      <div class="dot done">✓</div>
+      <span>Gunakan <strong>const</strong> untuk nilai tetap, <strong>let</strong> untuk yang berubah. Hindari <strong>var</strong></span>
+    </div>
+    <div class="check-item">
+      <div class="dot done">✓</div>
+      <span>Nama variabel / function <strong>deskriptif</strong> dan mengikuti konvensi camelCase / PascalCase</span>
+    </div>
+    <div class="check-item">
+      <div class="dot done">✓</div>
+      <span>Setiap function punya <strong>satu tanggung jawab</strong> (Single Responsibility Principle)</span>
+    </div>
+    <div class="check-item">
+      <div class="dot done">✓</div>
+      <span>Gunakan <strong>async/await</strong> dengan try/catch untuk semua operasi async</span>
+    </div>
+    <div class="check-item">
+      <div class="dot done">✓</div>
+      <span>Validasi semua <strong>input dari user</strong> sebelum diproses</span>
+    </div>
+    <div class="check-item">
+      <div class="dot done">✓</div>
+      <span>Hindari <strong>magic number</strong> — simpan di konstanta bernama</span>
+    </div>
+    <div class="check-item">
+      <div class="dot warn">!</div>
+      <span>Gunakan <strong>event delegation</strong> untuk elemen yang dibuat secara dinamis</span>
+    </div>
+    <div class="check-item">
+      <div class="dot warn">!</div>
+      <span>Jangan lupa <strong>removeEventListener</strong> jika elemen sudah tidak dipakai</span>
+    </div>
+    <div class="check-item">
+      <div class="dot warn">!</div>
+      <span>Hindari <strong>innerHTML</strong> dengan data dari user (gunakan textContent atau sanitasi)</span>
+    </div>
+    <div class="check-item">
+      <div class="dot danger">✗</div>
+      <span>Jangan simpan <strong>data sensitif</strong> (password, token) di localStorage</span>
+    </div>
+    <div class="check-item">
+      <div class="dot danger">✗</div>
+      <span>Jangan gunakan <strong>eval()</strong> — sangat berbahaya!</span>
+    </div>
+    <div class="check-item">
+      <div class="dot danger">✗</div>
+      <span>Jangan biarkan <strong>console.log()</strong> di kode produksi</span>
+    </div>
+  </div>
+
+
+  <!-- ===== LATIHAN 1 ===== -->
+  <div class="step-title">📝 Latihan Praktik</div>
+
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num">LATIHAN 1</span>
+      <h3>Refactor Kode — Clean Code</h3>
+    </div>
+    <p>Refactor kode berikut agar lebih bersih dan readable:</p>
+    <pre><code>// ===== SEBELUM (kode kotor) — refactor menjadi lebih baik! =====
+
+// 1A: Perbaiki penamaan variabel
+let x   = 100000;
+let y   = 0.1;
+let z   = x - (x * y);
+let arr = [];
+let flg = false;
+
+// Refactor:
+const ______ = 100000;     // harga asli
+const ______ = 0.1;        // persen diskon (10%)
+const ______ = ______ - (______ * ______); // harga setelah diskon
+const ______ = [];          // daftar produk
+let   ______ = false;       // apakah sudah login
+
+
+// 1B: Pecah function besar menjadi function kecil
+// ❌ SEBELUM: satu function banyak tugas
+function handle(d) {
+  if (!d.n || d.n.length < 3) return "err1";
+  if (!d.e || !d.e.includes("@")) return "err2";
+  if (d.v < 0 || d.v > 100) return "err3";
+  const g = d.v >= 90 ? "A" : d.v >= 80 ? "B"
+    : d.v >= 70 ? "C" : "D";
+  return { nama: d.n, email: d.e, nilai: d.v, grade: g };
+}
+
+// ✅ SESUDAH: pisahkan menjadi function kecil
+function ______(nama) {
+  if (!nama || nama.______ < 3)
+    throw new Error("Nama minimal 3 karakter!");
+}
+
+function ______(email) {
+  if (!email || !email.______("@"))
+    throw new Error("Email tidak valid!");
+}
+
+function ______(nilai) {
+  if (nilai < 0 || nilai > 100)
+    throw new Error("Nilai harus 0-100!");
+}
+
+function ______(nilai) {
+  const grades = [
+    { min: 90, grade: "A" }, { min: 80, grade: "B" },
+    { min: 70, grade: "C" }, { min: 0,  grade: "D" },
+  ];
+  return grades.______(g => nilai >= g.min).______;
+}
+
+function ______(data) {
+  ______(data.nama);
+  ______(data.email);
+  ______(data.nilai);
+  return {
+    nama : data.nama,
+    email: data.email,
+    nilai: data.nilai,
+    grade: ______(data.nilai)
+  };
+}
+
+
+// 1C: Ubah ke early return
+// ❌ SEBELUM
+function cekAksesBuruk(user, halaman) {
+  let boleh = false;
+  if (user) {
+    if (user.aktif) {
+      if (user.role === "admin") {
+        boleh = true;
+      } else {
+        if (halaman !== "admin") {
+          boleh = true;
+        }
+      }
+    }
+  }
+  return boleh;
+}
+
+// ✅ SESUDAH: gunakan early return
+function cekAkses(______, ______) {
+  if (!______)               return ______;
+  if (!______.aktif)         return ______;
+  if (______.role === "admin") return ______;
+  if (halaman === ______)    return ______;
+  return ______;
+}</code></pre>
+  </div>
+
+  <!-- Latihan 2 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num medium">LATIHAN 2</span>
+      <h3>Optimasi — Debounce & Throttle</h3>
+    </div>
+    <p>Lengkapi implementasi debounce dan throttle:</p>
+    <pre><code>// 2A: Implementasi Debounce
+function debounce(func, ______) {
+  let ______;
+  return function(...______) {
+    ______(______);  // batalkan timer sebelumnya
+    timer = ______(() => {
+      func.______(____, args);
+    }, delay);
+  };
+}
+
+// Test debounce
+const handleSearch = debounce((keyword) => {
+  console.log("🔍 Mencari:", keyword);
+}, 500);
+
+// Simulasi user ketik cepat (hanya eksekusi sekali setelah berhenti)
+handleSearch("J");
+handleSearch("Ja");
+handleSearch("Jav");
+handleSearch("Java");
+handleSearch("JavaS");    // ← hanya ini yang dieksekusi (500ms kemudian)
+
+
+// 2B: Implementasi Throttle
+function throttle(func, ______) {
+  let ______;
+  return function(...args) {
+    if (!______) {
+      ______.apply(this, args);
+      inThrottle = ______;
+      ______(() => {
+        inThrottle = ______;
+      }, ______);
+    }
+  };
+}
+
+// Test throttle
+const handleScroll = throttle(() => {
+  console.log("📜 Scroll position:", window.scrollY);
+}, 200);
+
+window.addEventListener("______", handleScroll);
+
+
+// 2C: Memoize
+function memoize(______) {
+  const cache = new ______();
+  return function(...args) {
+    const key = JSON.______(args);
+    if (cache.______(key)) {
+      return cache.______(key);  // kembalikan dari cache
+    }
+    const result = ______.apply(this, args);
+    cache.______(key, result);   // simpan ke cache
+    return ______;
+  };
+}
+
+const hitungFib = memoize(function fib(n) {
+  if (n <= 1) return n;
+  return ______(n - 1) + ______(n - 2); // rekursi
+});
+
+console.log(hitungFib(40)); // cepat karena memoize!</code></pre>
+  </div>
+
+  <!-- Latihan 3 -->
+  <div class="latihan-box">
+    <div class="latihan-header">
+      <span class="latihan-num hard">LATIHAN 3 🔴</span>
+      <h3>Challenge — Code Review</h3>
+    </div>
+    <p>Temukan <strong style="color:#fca5a5">minimal 8 masalah</strong> pada kode berikut, lalu perbaiki:</p>
+    <pre><code>// ===== KODE BERMASALAH — temukan dan perbaiki! =====
+
+var nama = "Budi"
+var UMUR = 17
+var x = true
+
+function a(n, u, v) {
+  var hasil = {}
+  if (n != undefined) {
+    if (n.length > 0) {
+      if (u > 0) {
+        if (v >= 0 && v <= 100) {
+          hasil.n = n
+          hasil.u = u
+          hasil.v = v
+          if (v >= 90) { hasil.g = "A" }
+          else if (v >= 80) { hasil.g = "B" }
+          else if (v >= 70) { hasil.g = "C" }
+          else { hasil.g = "D" }
+          hasil.l = v >= 75 ? true : false
+        }
+      }
+    }
+  }
+  return hasil
+}
+
+function b() {
+  var d = localStorage.getItem("siswa")
+  if (d != null) {
+    var p = JSON.parse(d)
+    document.getElementById("nm").innerHTML = p.n
+    document.getElementById("nl").innerHTML = p.v
+    document.getElementById("gr").innerHTML = p.g
+  }
+}
+
+async function c(url) {
+  var r = await fetch(url)
+  var d = await r.json()
+  return d
+}
+
+// Tulis perbaikanmu di bawah ini:
+// Masalah 1: ______
+// Masalah 2: ______
+// Masalah 3: ______
+// Masalah 4: ______
+// Masalah 5: ______
+// Masalah 6: ______
+// Masalah 7: ______
+// Masalah 8: ______</code></pre>
+  </div>
+
+  <!-- KUNCI JAWABAN -->
+  <div class="answer-box">
+    <details>
+      <summary>Kunci Jawaban — Klik untuk buka</summary>
+      <pre><code>// LATIHAN 1A
+hargaAsli | persenDiskon | hargaDiskon | hargaAsli | hargaAsli | persenDiskon
+daftarProduk | isLoggedIn
+
+// LATIHAN 1B
+validasiNama  | nama.length
+validasiEmail | email.includes
+validasiNilai
+hitungGrade   | grades.find | .grade
+prosesDataSiswa
+validasiNama(data.nama) | validasiEmail(data.email) | validasiNilai(data.nilai)
+hitungGrade(data.nilai)
+
+// LATIHAN 1C
+function cekAkses(user, halaman)
+if (!user)               return false
+if (!user.aktif)         return false
+if (user.role === "admin") return true
+if (halaman === "admin") return false
+return true
+
+// LATIHAN 2A
+delay | timer | args
+clearTimeout(timer)
+setTimeout | func.apply(this
+
+// LATIHAN 2B
+limit | inThrottle
+if (!inThrottle) | func
+inThrottle = true
+setTimeout(() => { inThrottle = false; }, limit)
+addEventListener("scroll")
+
+// LATIHAN 2C
+func | Map()
+JSON.stringify(args)
+cache.has(key) | cache.get(key)
+func.apply | cache.set(key, result) | result
+hitungFib(n-1) + hitungFib(n-2)
+
+// LATIHAN 3 — 8 Masalah:
+// 1. Gunakan const/let, hindari var
+// 2. Penamaan buruk (a, b, c, n, u, v, d, r → deskriptif)
+// 3. Nested if terlalu dalam → gunakan early return
+// 4. Tidak ada error handling di async function c()
+// 5. Gunakan textContent bukan innerHTML (XSS risk)
+// 6. hasil.l = v >= 75 ? true : false → langsung: hasil.lulus = v >= 75
+// 7. Tidak ada semicolon konsisten
+// 8. Tidak ada validasi response.ok di fetch</code></pre>
+    </details>
+  </div>
+
+
+  <!-- ===== PROJECT AKHIR ===== -->
+  <div class="step-title">🏆 Project Akhir — Sistem Manajemen Nilai Siswa</div>
+
+  <div class="project-box">
+    <h3>📋 Sistem Manajemen Nilai Siswa</h3>
+    <p class="sub">Aplikasi web lengkap yang mengintegrasikan semua materi dari Fase 1–10</p>
+
+    <div class="project-features">
+      <div class="feature-item">📦 <span>Fase 4 — Array</span></div>
+      <div class="feature-item">🗂️ <span>Fase 5 — Object</span></div>
+      <div class="feature-item">🏗️ <span>Fase 6 — OOP/Class</span></div>
+      <div class="feature-item">⚡ <span>Fase 7 — Async/Fetch</span></div>
+      <div class="feature-item">🌐 <span>Fase 9 — DOM/Event</span></div>
+      <div class="feature-item">💾 <span>Fase 9 — localStorage</span></div>
+      <div class="feature-item">✨ <span>Fase 10 — Clean Code</span></div>
+      <div class="feature-item">⚠️ <span>Fase 8 — Error Handling</span></div>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 index.html</span>
+    <pre><code><span class="tg">&lt;!DOCTYPE html&gt;</span>
+<span class="tg">&lt;html</span> <span class="at">lang</span>=<span class="str">"id"</span><span class="tg">&gt;</span>
+<span class="tg">&lt;head&gt;</span>
+  <span class="tg">&lt;meta</span> <span class="at">charset</span>=<span class="str">"UTF-8"</span><span class="tg">&gt;</span>
+  <span class="tg">&lt;title&gt;</span>Sistem Nilai Siswa<span class="tg">&lt;/title&gt;</span>
+  <span class="tg">&lt;link</span> <span class="at">rel</span>=<span class="str">"stylesheet"</span> <span class="at">href</span>=<span class="str">"style.css"</span><span class="tg">&gt;</span>
+<span class="tg">&lt;/head&gt;</span>
+<span class="tg">&lt;body&gt;</span>
+  <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="str">"app"</span><span class="tg">&gt;</span>
+
+    <span class="cm">&lt;!-- HEADER --&gt;</span>
+    <span class="tg">&lt;header&gt;</span>
+      <span class="tg">&lt;h1&gt;</span>📊 Sistem Nilai Siswa<span class="tg">&lt;/h1&gt;</span>
+      <span class="tg">&lt;div</span> <span class="at">id</span>=<span class="str">"summary"</span><span class="tg">&gt;&lt;/div&gt;</span>
+    <span class="tg">&lt;/header&gt;</span>
+
+    <span class="cm">&lt;!-- FORM TAMBAH SISWA --&gt;</span>
+    <span class="tg">&lt;section</span> <span class="at">class</span>=<span class="str">"form-section"</span><span class="tg">&gt;</span>
+      <span class="tg">&lt;h2&gt;</span>➕ Tambah Siswa<span class="tg">&lt;/h2&gt;</span>
+      <span class="tg">&lt;form</span> <span class="at">id</span>=<span class="str">"formSiswa"</span><span class="tg">&gt;</span>
+        <span class="tg">&lt;input</span> <span class="at">type</span>=<span class="str">"text"</span>   <span class="at">id</span>=<span class="str">"inputNama"</span>  <span class="at">placeholder</span>=<span class="str">"Nama Siswa"</span>  <span class="at">required</span><span class="tg">&gt;</span>
+        <span class="tg">&lt;input</span> <span class="at">type</span>=<span class="str">"text"</span>   <span class="at">id</span>=<span class="str">"inputKelas"</span> <span class="at">placeholder</span>=<span class="str">"Kelas"</span>        <span class="at">required</span><span class="tg">&gt;</span>
+        <span class="tg">&lt;input</span> <span class="at">type</span>=<span class="str">"number"</span> <span class="at">id</span>=<span class="str">"inputNilai"</span> <span class="at">placeholder</span>=<span class="str">"Nilai (0-100)"</span>
+               <span class="at">min</span>=<span class="str">"0"</span> <span class="at">max</span>=<span class="str">"100"</span> <span class="at">required</span><span class="tg">&gt;</span>
+        <span class="tg">&lt;button</span> <span class="at">type</span>=<span class="str">"submit"</span><span class="tg">&gt;</span>Tambah<span class="tg">&lt;/button&gt;</span>
+      <span class="tg">&lt;/form&gt;</span>
+      <span class="tg">&lt;div</span> <span class="at">id</span>=<span class="str">"errorMsg"</span> <span class="at">class</span>=<span class="str">"error hidden"</span><span class="tg">&gt;&lt;/div&gt;</span>
+    <span class="tg">&lt;/section&gt;</span>
+
+    <span class="cm">&lt;!-- FILTER & SEARCH --&gt;</span>
+    <span class="tg">&lt;section</span> <span class="at">class</span>=<span class="str">"filter-section"</span><span class="tg">&gt;</span>
+      <span class="tg">&lt;input</span> <span class="at">type</span>=<span class="str">"text"</span> <span class="at">id</span>=<span class="str">"searchInput"</span> <span class="at">placeholder</span>=<span class="str">"🔍 Cari nama..."</span><span class="tg">&gt;</span>
+      <span class="tg">&lt;select</span> <span class="at">id</span>=<span class="str">"filterKelas"</span><span class="tg">&gt;</span>
+        <span class="tg">&lt;option</span> <span class="at">value</span>=<span class="str">""</span><span class="tg">&gt;</span>Semua Kelas<span class="tg">&lt;/option&gt;</span>
+      <span class="tg">&lt;/select&gt;</span>
+      <span class="tg">&lt;select</span> <span class="at">id</span>=<span class="str">"sortBy"</span><span class="tg">&gt;</span>
+        <span class="tg">&lt;option</span> <span class="at">value</span>=<span class="str">"nama"</span><span class="tg">&gt;</span>Urut Nama<span class="tg">&lt;/option&gt;</span>
+        <span class="tg">&lt;option</span> <span class="at">value</span>=<span class="str">"nilai"</span><span class="tg">&gt;</span>Urut Nilai<span class="tg">&lt;/option&gt;</span>
+      <span class="tg">&lt;/select&gt;</span>
+      <span class="tg">&lt;button</span> <span class="at">id</span>=<span class="str">"btnExport"</span><span class="tg">&gt;</span>📥 Export JSON<span class="tg">&lt;/button&gt;</span>
+      <span class="tg">&lt;button</span> <span class="at">id</span>=<span class="str">"btnHapusSemua"</span><span class="tg">&gt;</span>🗑️ Hapus Semua<span class="tg">&lt;/button&gt;</span>
+    <span class="tg">&lt;/section&gt;</span>
+
+    <span class="cm">&lt;!-- TABEL SISWA --&gt;</span>
+    <span class="tg">&lt;section</span> <span class="at">class</span>=<span class="str">"table-section"</span><span class="tg">&gt;</span>
+      <span class="tg">&lt;table</span> <span class="at">id</span>=<span class="str">"tabelSiswa"</span><span class="tg">&gt;</span>
+        <span class="tg">&lt;thead&gt;</span>
+          <span class="tg">&lt;tr&gt;</span>
+            <span class="tg">&lt;th&gt;</span>No<span class="tg">&lt;/th&gt;&lt;th&gt;</span>Nama<span class="tg">&lt;/th&gt;&lt;th&gt;</span>Kelas<span class="tg">&lt;/th&gt;</span>
+            <span class="tg">&lt;th&gt;</span>Nilai<span class="tg">&lt;/th&gt;&lt;th&gt;</span>Grade<span class="tg">&lt;/th&gt;&lt;th&gt;</span>Status<span class="tg">&lt;/th&gt;&lt;th&gt;</span>Aksi<span class="tg">&lt;/th&gt;</span>
+          <span class="tg">&lt;/tr&gt;</span>
+        <span class="tg">&lt;/thead&gt;</span>
+        <span class="tg">&lt;tbody</span> <span class="at">id</span>=<span class="str">"bodyTabel"</span><span class="tg">&gt;&lt;/tbody&gt;</span>
+      <span class="tg">&lt;/table&gt;</span>
+      <span class="tg">&lt;p</span> <span class="at">id</span>=<span class="str">"emptyMsg"</span> <span class="at">class</span>=<span class="str">"hidden"</span><span class="tg">&gt;</span>Belum ada data siswa.<span class="tg">&lt;/p&gt;</span>
+    <span class="tg">&lt;/section&gt;</span>
+
+  <span class="tg">&lt;/div&gt;</span>
+  <span class="tg">&lt;script</span> <span class="at">src</span>=<span class="str">"app.js"</span><span class="tg">&gt;&lt;/script&gt;</span>
+<span class="tg">&lt;/body&gt;</span>
+<span class="tg">&lt;/html&gt;</span></code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <span class="code-label">📄 app.js — Kode Utama</span>
+    <pre><code><span class="cm">// ===== KONSTANTA =====</span>
+<span class="kw">const</span> STORAGE_KEY  <span class="op">=</span> <span class="str">"dataSiswa"</span>;
+<span class="kw">const</span> NILAI_LULUS  <span class="op">=</span> <span class="num">75</span>;
+
+<span class="cm">// ===== CLASS SISWA =====</span>
+<span class="kw">class</span> <span class="cl">Siswa</span> {
+  <span class="fn">constructor</span>(nama, kelas, nilai) {
+    <span class="th">this</span>.id    <span class="op">=</span> Date.<span class="fn">now</span>();
+    <span class="th">this</span>.nama  <span class="op">=</span> nama.<span class="fn">trim</span>();
+    <span class="th">this</span>.kelas <span class="op">=</span> kelas.<span class="fn">trim</span>();
+    <span class="th">this</span>.nilai <span class="op">=</span> <span class="fn">Number</span>(nilai);
+  }
+
+  <span class="kw">get</span> <span class="fn">grade</span>() {
+    <span class="kw">const</span> g <span class="op">=</span> [
+      { min: <span class="num">90</span>, val: <span class="str">"A"</span> }, { min: <span class="num">80</span>, val: <span class="str">"B"</span> },
+      { min: <span class="num">70</span>, val: <span class="str">"C"</span> }, { min: <span class="num">60</span>, val: <span class="str">"D"</span> },
+      { min: <span class="num">0</span>,  val: <span class="str">"E"</span> },
+    ];
+    <span class="kw">return</span> g.<span class="fn">find</span>(x <span class="op">=&gt;</span> <span class="th">this</span>.nilai <span class="op">&gt;=</span> x.min).val;
+  }
+
+  <span class="kw">get</span> <span class="fn">isLulus</span>() {
+    <span class="kw">return</span> <span class="th">this</span>.nilai <span class="op">&gt;=</span> NILAI_LULUS;
+  }
+}
+
+<span class="cm">// ===== STORAGE SERVICE =====</span>
+<span class="kw">const</span> StorageService <span class="op">=</span> {
+  <span class="fn">ambil</span>()        { <span class="kw">return</span> JSON.<span class="fn">parse</span>(localStorage.<span class="fn">getItem</span>(STORAGE_KEY)) <span class="op">||</span> []; },
+  <span class="fn">simpan</span>(data)   { localStorage.<span class="fn">setItem</span>(STORAGE_KEY, JSON.<span class="fn">stringify</span>(data)); },
+  <span class="fn">bersihkan</span>()   { localStorage.<span class="fn">removeItem</span>(STORAGE_KEY); }
+};
+
+<span class="cm">// ===== VALIDASI =====</span>
+<span class="kw">const</span> Validasi <span class="op">=</span> {
+  <span class="fn">nama</span>(nama) {
+    <span class="kw">if</span> (<span class="op">!</span>nama <span class="op">||</span> nama.<span class="fn">trim</span>().length <span class="op">&lt;</span> <span class="num">3</span>)
+      <span class="kw">throw new</span> <span class="cl">Error</span>(<span class="str">"Nama minimal 3 karakter!"</span>);
+  },
+  <span class="fn">kelas</span>(kelas) {
+    <span class="kw">if</span> (<span class="op">!</span>kelas <span class="op">||</span> kelas.<span class="fn">trim</span>() <span class="op">===</span> <span class="str">""</span>)
+      <span class="kw">throw new</span> <span class="cl">Error</span>(<span class="str">"Kelas wajib diisi!"</span>);
+  },
+  <span class="fn">nilai</span>(nilai) {
+    <span class="kw">const</span> n <span class="op">=</span> <span class="fn">Number</span>(nilai);
+    <span class="kw">if</span> (isNaN(n) <span class="op">||</span> n <span class="op">&lt;</span> <span class="num">0</span> <span class="op">||</span> n <span class="op">&gt;</span> <span class="num">100</span>)
+      <span class="kw">throw new</span> <span class="cl">Error</span>(<span class="str">"Nilai harus antara 0 - 100!"</span>);
+  }
+};
+
+<span class="cm">// ===== STATE =====</span>
+<span class="kw">let</span> dataSiswa   <span class="op">=</span> StorageService.<span class="fn">ambil</span>();
+<span class="kw">let</span> filterNama  <span class="op">=</span> <span class="str">""</span>;
+<span class="kw">let</span> filterKelas <span class="op">=</span> <span class="str">""</span>;
+<span class="kw">let</span> sortBy      <span class="op">=</span> <span class="str">"nama"</span>;
+
+<span class="cm">// ===== HELPER =====</span>
+<span class="kw">function</span> <span class="fn">debounce</span>(func, delay) {
+  <span class="kw">let</span> timer;
+  <span class="kw">return</span> (...args) <span class="op">=&gt;</span> {
+    <span class="fn">clearTimeout</span>(timer);
+    timer <span class="op">=</span> <span class="fn">setTimeout</span>(() <span class="op">=&gt;</span> <span class="fn">func</span>(...args), delay);
+  };
+}
+
+<span class="kw">function</span> <span class="fn">tampilError</span>(pesan) {
+  <span class="kw">const</span> el <span class="op">=</span> document.<span class="fn">getElementById</span>(<span class="str">"errorMsg"</span>);
+  el.textContent <span class="op">=</span> pesan;
+  el.classList.<span class="fn">remove</span>(<span class="str">"hidden"</span>);
+  <span class="fn">setTimeout</span>(() <span class="op">=&gt;</span> el.classList.<span class="fn">add</span>(<span class="str">"hidden"</span>), <span class="num">3000</span>);
+}
+
+<span class="kw">function</span> <span class="fn">getDataTerfilter</span>() {
+  <span class="kw">return</span> dataSiswa
+    .<span class="fn">filter</span>(s <span class="op">=&gt;</span> s.nama.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(filterNama.<span class="fn">toLowerCase</span>()))
+    .<span class="fn">filter</span>(s <span class="op">=&gt;</span> filterKelas <span class="op">?</span> s.kelas <span class="op">===</span> filterKelas <span class="op">:</span> <span class="kw">true</span>)
+    .<span class="fn">sort</span>((a, b) <span class="op">=&gt;</span>
+      sortBy <span class="op">===</span> <span class="str">"nilai"</span>
+        <span class="op">?</span> b.nilai <span class="op">-</span> a.nilai
+        <span class="op">:</span> a.nama.<span class="fn">localeCompare</span>(b.nama)
+    );
+}
+
+<span class="cm">// ===== RENDER =====</span>
+<span class="kw">function</span> <span class="fn">renderSummary</span>() {
+  <span class="kw">const</span> total    <span class="op">=</span> dataSiswa.length;
+  <span class="kw">const</span> lulus    <span class="op">=</span> dataSiswa.<span class="fn">filter</span>(s <span class="op">=&gt;</span> s.nilai <span class="op">&gt;=</span> NILAI_LULUS).length;
+  <span class="kw">const</span> rataRata <span class="op">=</span> total
+    <span class="op">?</span> (dataSiswa.<span class="fn">reduce</span>((acc, s) <span class="op">=&gt;</span> acc <span class="op">+</span> s.nilai, <span class="num">0</span>) <span class="op">/</span> total).<span class="fn">toFixed</span>(<span class="num">1</span>)
+    <span class="op">:</span> <span class="num">0</span>;
+
+  document.<span class="fn">getElementById</span>(<span class="str">"summary"</span>).innerHTML <span class="op">=</span> <span class="str">`
+    &lt;span&gt;👥 Total: &lt;b&gt;<span class="op">${</span>total<span class="op">}</span>&lt;/b&gt;&lt;/span&gt;
+    &lt;span&gt;✅ Lulus: &lt;b&gt;<span class="op">${</span>lulus<span class="op">}</span>&lt;/b&gt;&lt;/span&gt;
+    &lt;span&gt;❌ Tidak: &lt;b&gt;<span class="op">${</span>total <span class="op">-</span> lulus<span class="op">}</span>&lt;/b&gt;&lt;/span&gt;
+    &lt;span&gt;📊 Rata²: &lt;b&gt;<span class="op">${</span>rataRata<span class="op">}</span>&lt;/b&gt;&lt;/span&gt;
+  `</span>;
+}
+
+<span class="kw">function</span> <span class="fn">renderTabel</span>() {
+  <span class="kw">const</span> data    <span class="op">=</span> <span class="fn">getDataTerfilter</span>();
+  <span class="kw">const</span> tbody   <span class="op">=</span> document.<span class="fn">getElementById</span>(<span class="str">"bodyTabel"</span>);
+  <span class="kw">const</span> emptyEl <span class="op">=</span> document.<span class="fn">getElementById</span>(<span class="str">"emptyMsg"</span>);
+
+  tbody.innerHTML <span class="op">=</span> <span class="str">""</span>;
+
+  <span class="kw">if</span> (data.length <span class="op">===</span> <span class="num">0</span>) {
+    emptyEl.classList.<span class="fn">remove</span>(<span class="str">"hidden"</span>);
+    <span class="kw">return</span>;
+  }
+
+  emptyEl.classList.<span class="fn">add</span>(<span class="str">"hidden"</span>);
+  data.<span class="fn">forEach</span>((siswa, i) <span class="op">=&gt;</span> {
+    <span class="kw">const</span> tr <span class="op">=</span> document.<span class="fn">createElement</span>(<span class="str">"tr"</span>);
+    tr.innerHTML <span class="op">=</span> <span class="str">`
+      &lt;td&gt;<span class="op">${</span>i <span class="op">+</span> <span class="num">1</span><span class="op">}</span>&lt;/td&gt;
+      &lt;td&gt;<span class="op">${</span>siswa.nama<span class="op">}</span>&lt;/td&gt;
+      &lt;td&gt;<span class="op">${</span>siswa.kelas<span class="op">}</span>&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;<span class="op">${</span>siswa.nilai<span class="op">}</span>&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;span class="grade grade-<span class="op">${</span>siswa.grade<span class="op">}</span>"&gt;<span class="op">${</span>siswa.grade<span class="op">}</span>&lt;/span&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;span class="status <span class="op">${</span>siswa.nilai <span class="op">&gt;=</span> NILAI_LULUS <span class="op">?</span> <span class="str">"lulus"</span> <span class="op">:</span> <span class="str">"tidak"</span><span class="op">}</span>"&gt;
+        <span class="op">${</span>siswa.nilai <span class="op">&gt;=</span> NILAI_LULUS <span class="op">?</span> <span class="str">"✅ Lulus"</span> <span class="op">:</span> <span class="str">"❌ Tidak"</span><span class="op">}</span>
+      &lt;/span&gt;&lt;/td&gt;
+      &lt;td&gt;
+        &lt;button class="btn-edit"  data-id="<span class="op">${</span>siswa.id<span class="op">}</span>"&gt;✏️&lt;/button&gt;
+        &lt;button class="btn-hapus" data-id="<span class="op">${</span>siswa.id<span class="op">}</span>"&gt;🗑️&lt;/button&gt;
+      &lt;/td&gt;
+    `</span>;
+    tbody.<span class="fn">appendChild</span>(tr);
+  });
+}
+
+<span class="kw">function</span> <span class="fn">updateFilterKelas</span>() {
+  <span class="kw">const</span> kelasList <span class="op">=</span> [...<span class="kw">new</span> <span class="cl">Set</span>(dataSiswa.<span class="fn">map</span>(s <span class="op">=&gt;</span> s.kelas))].<span class="fn">sort</span>();
+  <span class="kw">const</span> select    <span class="op">=</span> document.<span class="fn">getElementById</span>(<span class="str">"filterKelas"</span>);
+  <span class="kw">const</span> current   <span class="op">=</span> select.value;
+  select.innerHTML <span class="op">=</span> <span class="str">'&lt;option value=""&gt;Semua Kelas&lt;/option&gt;'</span>
+    <span class="op">+</span> kelasList.<span class="fn">map</span>(k <span class="op">=&gt;</span> <span class="str">`&lt;option value="<span class="op">${</span>k<span class="op">}</span>"&gt;<span class="op">${</span>k<span class="op">}</span>&lt;/option&gt;`</span>).<span class="fn">join</span>(<span class="str">""</span>);
+  select.value <span class="op">=</span> current;
+}
+
+<span class="kw">function</span> <span class="fn">render</span>() {
+  <span class="fn">renderSummary</span>();
+  <span class="fn">renderTabel</span>();
+  <span class="fn">updateFilterKelas</span>();
+}
+
+<span class="cm">// ===== AKSI =====</span>
+<span class="kw">function</span> <span class="fn">tambahSiswa</span>(nama, kelas, nilai) {
+  <span class="kw">try</span> {
+    Validasi.<span class="fn">nama</span>(nama);
+    Validasi.<span class="fn">kelas</span>(kelas);
+    Validasi.<span class="fn">nilai</span>(nilai);
+
+    <span class="kw">const</span> siswa <span class="op">=</span> <span class="kw">new</span> <span class="cl">Siswa</span>(nama, kelas, nilai);
+    dataSiswa.<span class="fn">push</span>(siswa);
+    StorageService.<span class="fn">simpan</span>(dataSiswa);
+    <span class="fn">render</span>();
+    <span class="kw">return</span> <span class="kw">true</span>;
+  } <span class="kw">catch</span> (e) {
+    <span class="fn">tampilError</span>(e.message);
+    <span class="kw">return</span> <span class="kw">false</span>;
+  }
+}
+
+<span class="kw">function</span> <span class="fn">hapusSiswa</span>(id) {
+  <span class="kw">if</span> (<span class="op">!</span>confirm(<span class="str">"Hapus siswa ini?"</span>)) <span class="kw">return</span>;
+  dataSiswa <span class="op">=</span> dataSiswa.<span class="fn">filter</span>(s <span class="op">=&gt;</span> s.id <span class="op">!==</span> <span class="fn">Number</span>(id));
+  StorageService.<span class="fn">simpan</span>(dataSiswa);
+  <span class="fn">render</span>();
+}
+
+<span class="kw">function</span> <span class="fn">editSiswa</span>(id) {
+  <span class="kw">const</span> siswa <span class="op">=</span> dataSiswa.<span class="fn">find</span>(s <span class="op">=&gt;</span> s.id <span class="op">===</span> <span class="fn">Number</span>(id));
+  <span class="kw">if</span> (<span class="op">!</span>siswa) <span class="kw">return</span>;
+
+  <span class="kw">const</span> nilaBaru <span class="op">=</span> prompt(<span class="str">`Edit nilai untuk <span class="op">${</span>siswa.nama<span class="op">}</span>:`</span>, siswa.nilai);
+  <span class="kw">if</span> (nilaBaru <span class="op">===</span> <span class="kw">null</span>) <span class="kw">return</span>;
+
+  <span class="kw">try</span> {
+    Validasi.<span class="fn">nilai</span>(nilaBaru);
+    siswa.nilai <span class="op">=</span> <span class="fn">Number</span>(nilaBaru);
+    StorageService.<span class="fn">simpan</span>(dataSiswa);
+    <span class="fn">render</span>();
+  } <span class="kw">catch</span> (e) {
+    <span class="fn">tampilError</span>(e.message);
+  }
+}
+
+<span class="kw">function</span> <span class="fn">exportJSON</span>() {
+  <span class="kw">const</span> blob <span class="op">=</span> <span class="kw">new</span> <span class="cl">Blob</span>(
+    [JSON.<span class="fn">stringify</span>(dataSiswa, <span class="kw">null</span>, <span class="num">2</span>)],
+    { type: <span class="str">"application/json"</span> }
+  );
+  <span class="kw">const</span> url  <span class="op">=</span> URL.<span class="fn">createObjectURL</span>(blob);
+  <span class="kw">const</span> a    <span class="op">=</span> document.<span class="fn">createElement</span>(<span class="str">"a"</span>);
+  a.href     <span class="op">=</span> url;
+  a.download <span class="op">=</span> <span class="str">"data-siswa.json"</span>;
+  a.<span class="fn">click</span>();
+  URL.<span class="fn">revokeObjectURL</span>(url);
+}
+
+<span class="cm">// ===== EVENT LISTENERS =====</span>
+document.<span class="fn">getElementById</span>(<span class="str">"formSiswa"</span>)
+  .<span class="fn">addEventListener</span>(<span class="str">"submit"</span>, (e) <span class="op">=&gt;</span> {
+    e.<span class="fn">preventDefault</span>();
+    <span class="kw">const</span> nama  <span class="op">=</span> document.<span class="fn">getElementById</span>(<span class="str">"inputNama"</span>).value;
+    <span class="kw">const</span> kelas <span class="op">=</span> document.<span class="fn">getElementById</span>(<span class="str">"inputKelas"</span>).value;
+    <span class="kw">const</span> nilai <span class="op">=</span> document.<span class="fn">getElementById</span>(<span class="str">"inputNilai"</span>).value;
+    <span class="kw">const</span> berhasil <span class="op">=</span> <span class="fn">tambahSiswa</span>(nama, kelas, nilai);
+    <span class="kw">if</span> (berhasil) e.target.<span class="fn">reset</span>();
+  });
+
+document.<span class="fn">getElementById</span>(<span class="str">"searchInput"</span>)
+  .<span class="fn">addEventListener</span>(<span class="str">"input"</span>, <span class="fn">debounce</span>((e) <span class="op">=&gt;</span> {
+    filterNama <span class="op">=</span> e.target.value;
+    <span class="fn">renderTabel</span>();
+  }, <span class="num">300</span>));
+
+document.<span class="fn">getElementById</span>(<span class="str">"filterKelas"</span>)
+  .<span class="fn">addEventListener</span>(<span class="str">"change"</span>, (e) <span class="op">=&gt;</span> {
+    filterKelas <span class="op">=</span> e.target.value;
+    <span class="fn">renderTabel</span>();
+  });
+
+document.<span class="fn">getElementById</span>(<span class="str">"sortBy"</span>)
+  .<span class="fn">addEventListener</span>(<span class="str">"change"</span>, (e) <span class="op">=&gt;</span> {
+    sortBy <span class="op">=</span> e.target.value;
+    <span class="fn">renderTabel</span>();
+  });
+
+document.<span class="fn">getElementById</span>(<span class="str">"btnExport"</span>)
+  .<span class="fn">addEventListener</span>(<span class="str">"click"</span>, exportJSON);
+
+document.<span class="fn">getElementById</span>(<span class="str">"btnHapusSemua"</span>)
+  .<span class="fn">addEventListener</span>(<span class="str">"click"</span>, () <span class="op">=&gt;</span> {
+    <span class="kw">if</span> (<span class="op">!</span>confirm(<span class="str">"Hapus semua data?"</span>)) <span class="kw">return</span>;
+    dataSiswa <span class="op">=</span> [];
+    StorageService.<span class="fn">bersihkan</span>();
+    <span class="fn">render</span>();
+  });
+
+<span class="cm">// Event delegation untuk tombol di tabel</span>
+document.<span class="fn">getElementById</span>(<span class="str">"bodyTabel"</span>)
+  .<span class="fn">addEventListener</span>(<span class="str">"click"</span>, (e) <span class="op">=&gt;</span> {
+    <span class="kw">const</span> id <span class="op">=</span> e.target.dataset.id;
+    <span class="kw">if</span> (<span class="op">!</span>id) <span class="kw">return</span>;
+    <span class="kw">if</span> (e.target.<span class="fn">matches</span>(<span class="str">".btn-hapus"</span>)) <span class="fn">hapusSiswa</span>(id);
+    <span class="kw">if</span> (e.target.<span class="fn">matches</span>(<span class="str">".btn-edit"</span>))  <span class="fn">editSiswa</span>(id);
+  });
+
+<span class="cm">// ===== INIT =====</span>
+<span class="fn">render</span>();</code></pre>
+  </div>
+
+
+  <!-- ===== FINAL CARD ===== -->
+  <div class="final-card">
+    <div class="trophy">🏆</div>
+    <h2>Selamat! Kamu Sudah Menyelesaikan Semua Fase!</h2>
+    <p>
+      Kamu telah mempelajari JavaScript dari dasar hingga mahir.
+      Sekarang saatnya membangun project nyata dan terus berlatih!
+    </p>
+
+    <div class="skill-grid">
+      <div class="skill-item">
+        <div class="skill-icon">📦</div>
+        Variable & Tipe Data
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">🔀</div>
+        Control Flow
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">⚙️</div>
+        Function & Scope
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">📋</div>
+        Array & Method
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">🗂️</div>
+        Object & Destructuring
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">🏗️</div>
+        OOP & Class
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">⚡</div>
+        Async & Promise
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">🔬</div>
+        JS Lanjutan
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">🌐</div>
+        DOM & Web APIs
+      </div>
+      <div class="skill-item">
+        <div class="skill-icon">✨</div>
+        Best Practices
+      </div>
+    </div>
+  </div>
+
+</div><!-- end section -->
+
+</body>
+</html>
